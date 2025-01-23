@@ -4,10 +4,17 @@ class Strings{
   static const username = 'Nombre de usuario';
   static const password = 'Contraseña';
   static const enter = 'Entrar';
+  static const controlPanel = 'PANEL DE CONTROL';
+  static const clients = 'CLIENTES';
+  static const programs = 'PROGRAMAS';
+  static const biompedancia = 'BIOIMPEDANCIA';
+  static const tutorials = 'TUTORIALES';
+  static const adjusts = 'AJUSTES';
   static const s = '';
 
   /// Routes
   static const String initialScreen = '/';
+  static const String menuScreen = '/MenuScreen';
 
   ///Images (Icons)
   static const String bgImage = 'assets/icons/bg_image.jpg';

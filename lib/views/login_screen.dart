@@ -23,6 +23,8 @@ class LoginScreen extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
             fit: BoxFit.cover,
@@ -117,6 +119,9 @@ class LoginScreen extends StatelessWidget {
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Button(
+                        onTap: (){
+                          Navigator.pushNamed(context, Strings.menuScreen);
+                        },
                         text: Strings.enter,
                         textColor: AppColors.lightBlack,
                         width: screenWidth * 0.15,
