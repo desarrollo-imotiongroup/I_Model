@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/login_screen_controller.dart';
+import 'package:i_model/view_models/login_controller.dart';
 import 'package:i_model/widgets/button.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textfield.dart';
@@ -12,7 +13,7 @@ import 'package:i_model/widgets/textview.dart';
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
-  final LoginScreenController loginScreenController = Get.put(LoginScreenController());
+  final LoginController loginScreenController = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +68,7 @@ class LoginScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextView.title(
-                                Strings.controlAccess,
+                                translation(context).controlAccess,
                                 color: AppColors.pinkColor,
                                 isUnderLine: true,
                                 fontSize: 20.sp
@@ -76,7 +77,7 @@ class LoginScreen extends StatelessWidget {
 
                             /// Username
                             TextView.title(
-                                Strings.username,
+                              translation(context).username,
                                 color: AppColors.darkGrey,
                                 fontSize: 16.sp,
 
@@ -91,7 +92,7 @@ class LoginScreen extends StatelessWidget {
 
                             /// Password
                             TextView.title(
-                                Strings.password,
+                                translation(context).password,
                                 color: AppColors.darkGrey,
                                 fontSize: 16.sp
                             ),
@@ -122,7 +123,7 @@ class LoginScreen extends StatelessWidget {
                         onTap: (){
                           Navigator.pushNamed(context, Strings.menuScreen);
                         },
-                        text: Strings.enter,
+                        text: translation(context).enter,
                         textColor: AppColors.lightBlack,
                         width: screenWidth * 0.15,
                         height: screenHeight * 0.08,

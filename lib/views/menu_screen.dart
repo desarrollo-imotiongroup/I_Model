@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/views/menu_widget.dart';
@@ -52,27 +53,29 @@ class MenuScreen extends StatelessWidget {
                   Column(
                     children: [
                       MenuWidget(
-                        title: Strings.controlPanel,
+                        title: translation(context).controlPanel,
+                        onTap: () {
+                          Navigator.pushNamed(context, Strings.dashboardScreen);
+                        },
+                      ),
+                      MenuWidget(
+                        title: translation(context).clients,
                         onTap: () {},
                       ),
                       MenuWidget(
-                        title: Strings.clients,
+                        title: translation(context).programs,
                         onTap: () {},
                       ),
                       MenuWidget(
-                        title: Strings.programs,
+                        title: translation(context).biompedancia,
                         onTap: () {},
                       ),
                       MenuWidget(
-                        title: Strings.biompedancia,
+                        title: translation(context).tutorials,
                         onTap: () {},
                       ),
                       MenuWidget(
-                        title: Strings.tutorials,
-                        onTap: () {},
-                      ),
-                      MenuWidget(
-                        title: Strings.settings,
+                        title: translation(context).settings,
                         onTap: () {
                           Navigator.pushNamed(context, Strings.settingScreen);
                         },

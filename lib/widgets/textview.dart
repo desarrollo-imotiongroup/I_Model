@@ -4,7 +4,7 @@ import 'package:i_model/core/colors.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TextView {
-  static Text title(final text, {final color, final TextAlign textAlign = TextAlign.start, final fontFamily, final lines, final fontSize, final isUnderLine = false}) {
+  static Text title(final String text, {final color, final TextAlign textAlign = TextAlign.start, final fontFamily, final lines, final fontSize, final isUnderLine = false, isBold = false}) {
     return Text(
       text ?? "",
       textAlign: textAlign,
@@ -15,7 +15,8 @@ class TextView {
         fontSize: fontSize ?? 18.sp,
         color: color ?? AppColors.blackColor,
         decoration: isUnderLine ? TextDecoration.underline : TextDecoration.none,
-        decorationColor: AppColors.pinkColor
+        decorationColor: AppColors.pinkColor,
+        fontWeight: isBold ? FontWeight.bold : FontWeight.normal
       ),
     );
   }

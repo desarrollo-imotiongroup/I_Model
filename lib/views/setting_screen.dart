@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/setting_screen_controller.dart';
+import 'package:i_model/view_models/setting_controller.dart';
 import 'package:i_model/views/menu_widget.dart';
 import 'package:i_model/widgets/backup_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
@@ -13,8 +14,8 @@ import 'package:i_model/widgets/textview.dart';
 class SettingScreen extends StatelessWidget {
   SettingScreen({super.key});
 
-  final SettingScreenController settingScreenController =
-      Get.put(SettingScreenController());
+  final SettingController settingScreenController =
+      Get.put(SettingController());
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class SettingScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextView.title(Strings.settings,
+                  TextView.title(translation(context).settings,
                       isUnderLine: true, color: AppColors.pinkColor),
                   GestureDetector(
                     onTap: () {
@@ -69,27 +70,28 @@ class SettingScreen extends StatelessWidget {
                   Column(
                     children: [
                       MenuWidget(
-                        title: Strings.license,
+                        title: translation(context).license,
+                        // title: Strings.license,
                         onTap: () {},
                       ),
                       MenuWidget(
-                        title: Strings.centerManagement,
+                        title: translation(context).centerManagement,
                         onTap: () {},
                       ),
                       MenuWidget(
-                        title: Strings.backup,
+                        title: translation(context).backup,
                         onTap: () {
                           settingScreenController.displayBackUpService();
                         },
                       ),
                       MenuWidget(
-                        title: Strings.selectLanguage,
+                        title: translation(context).selectLanguage,
                         onTap: () {
                           settingScreenController.displaySelectLanguage();
                         },
                       ),
                       MenuWidget(
-                        title: Strings.technicalService,
+                        title: translation(context).technicalService,
                         onTap: () {
                           settingScreenController.displayTechnicalService();
                         },
@@ -148,7 +150,10 @@ class SettingScreen extends StatelessWidget {
 
                                   )
                         : settingScreenController.isSelectLanguage.value
-                                ? SelectLanguage()
+                                ? SelectLanguage(
+                                    onCancel: () {
+                                      settingScreenController.displayLogo();
+                                  },)
                         : Container(),
                   )
 

@@ -7,7 +7,9 @@ class RoundedContainer extends StatelessWidget {
   final double? width;
   final double? height;
   final Color? color;
+  final EdgeInsets? padding;
   final Function()? onTap;
+  final Color? borderColor;
 
   const RoundedContainer({
     required this.widget,
@@ -16,6 +18,8 @@ class RoundedContainer extends StatelessWidget {
     this.height,
     this.color,
     this.onTap,
+    this.padding,
+    this.borderColor,
     super.key});
 
   @override
@@ -32,16 +36,47 @@ class RoundedContainer extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(borderRadius ?? screenHeight * 0.01),
           border: Border.all(
-            color: AppColors.darkGrey2
+            color: borderColor ?? AppColors.darkGrey2
           )
         ),
         child: Center(child: Padding(
-          padding: EdgeInsets.all(
-            screenHeight * 0.015
+          padding: padding ?? EdgeInsets.all(
+             screenHeight * 0.015
           ),
           child: widget,
         ))
       ),
     );
+  }
+}
+
+
+class BarContainer extends StatelessWidget {
+  final double? width;
+  final Color? color;
+  final Function()? onTap;
+
+  const BarContainer({
+    this.width,
+    this.color,
+    this.onTap,
+    super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    MediaQueryData mediaQuery = MediaQuery.of(context);
+    double screenWidth = mediaQuery.size.width;
+    double screenHeight = mediaQuery.size.height;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+          width: width ?? screenWidth * .17,
+          decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(screenHeight * 0.0),
+          ),
+          child: SizedBox())
+      );
   }
 }

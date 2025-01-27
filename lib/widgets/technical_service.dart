@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/image_widget.dart';
@@ -47,7 +48,7 @@ class TechnicalService extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(left: screenWidth * 0.01),
                       child: TextView.title(
-                        Strings.technicalService,
+                        translation(context).technicalService,
                         isUnderLine: true,
                         color: AppColors.pinkColor,
                         fontSize: 14.sp,
@@ -81,7 +82,7 @@ class TechnicalService extends StatelessWidget {
           ),
           SizedBox(height: screenHeight * 0.02,),
           TextView.title(
-              Strings.contact,
+              translation(context).contact,
               fontSize: 13.sp,
               color: AppColors.pinkColor
           ),
@@ -92,7 +93,7 @@ class TechnicalService extends StatelessWidget {
                 top: screenHeight * 0.02
             ),
             child: TextView.title(
-                Strings.contactInfo,
+                translation(context).contactInfo,
                 fontSize: 11.sp,
                 color: AppColors.blackColor.withValues(alpha: 0.7),
                 lines: 2,
@@ -116,13 +117,13 @@ class TechnicalService extends StatelessWidget {
               child: Column(
                 children: [
                   TextView.title(
-                    Strings.email,
+                    '${translation(context).email}: technical_service@i-motiongroup.com',
                     fontSize: 11.sp,
                     color: AppColors.blackColor.withValues(alpha: 0.7),
                   ),
                   SizedBox(height: screenHeight * 0.01,),
                   TextView.title(
-                    Strings.whatsapp,
+                    '${translation(context).whatsapp}:  (+34) 618 112 271',
                     fontSize: 11.sp,
                     color: AppColors.blackColor.withValues(alpha: 0.7),
                   ),

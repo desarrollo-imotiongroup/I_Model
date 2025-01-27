@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/strings.dart';
 
 class UnKnownScreen extends StatelessWidget {
@@ -8,7 +9,7 @@ class UnKnownScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text(Strings.unknownError),
+        child: Text(translation(context).unknownError),
       ),
     );
   }

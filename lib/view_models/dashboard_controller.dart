@@ -1,0 +1,537 @@
+import 'dart:async';
+import 'dart:ui';
+
+import 'package:get/get.dart';
+import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/strings.dart';
+
+class DashboardController extends GetxController {
+  /// Programs value percentages
+  RxInt chestPercentage = 0.obs;
+  RxInt armsPercentage = 0.obs;
+  RxInt abdomenPercentage = 0.obs;
+  RxInt legsPercentage = 0.obs;
+  RxInt upperBackPercentage = 0.obs;
+  RxInt middleBackPercentage = 0.obs;
+  RxInt lumbarPercentage = 0.obs;
+  RxInt buttocksPercentage = 0.obs;
+  RxInt hamStringsPercentage = 0.obs;
+
+  RxBool isPantSelected = false.obs;
+  RxBool isActive = false.obs;
+
+  /// Intensity colors
+  Color chestIntensityColor = AppColors.lowIntensityColor;
+  Color armsIntensityColor = AppColors.lowIntensityColor;
+  Color abdomenIntensityColor = AppColors.lowIntensityColor;
+  Color legsIntensityColor = AppColors.lowIntensityColor;
+  Color upperBackIntensityColor = AppColors.lowIntensityColor;
+  Color middleBackIntensityColor = AppColors.lowIntensityColor;
+  Color lumbarsIntensityColor = AppColors.lowIntensityColor;
+  Color buttocksIntensityColor = AppColors.lowIntensityColor;
+  Color hamstringsIntensityColor = AppColors.lowIntensityColor;
+
+  /// Timer values
+  int initialMinutes = 25;
+  RxInt remainingSeconds = 0.obs;
+  RxInt minutes = 0.obs;
+  RxBool isTimerPaused = true.obs;
+  Timer? _timer;
+
+  /// Timer Image
+  RxString timerImage = Strings.min_25_icon.obs;
+
+  int maxPercentage = 100;
+  int minPercentage = 0;
+  int maxMinutes = 30;
+  double progressContractionValue = 1.0;
+  double progressPauseValue = 1.0;
+  RxBool isEKalWidgetVisible = true.obs;
+
+  @override
+  Future<void> onInit() async {
+    super.onInit();
+    remainingSeconds.value = initialMinutes * 60; // Total time in seconds
+  }
+
+  @override
+  void onClose() {
+    _timer?.cancel();
+    super.onClose();
+  }
+
+  String formatTime(int totalSeconds) {
+    minutes.value = totalSeconds ~/ 60;
+    final seconds = totalSeconds % 60;
+    timerImage.value = 'assets/counter/$minutes-MIN.png';
+    return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
+  }
+
+  void startTimer() {
+    isTimerPaused.value = false;
+    update();
+
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (!isTimerPaused.value) {
+        if (remainingSeconds.value > 0) {
+          remainingSeconds.value = remainingSeconds.value - 1;
+        }
+      } else {
+        timer.cancel();
+        print("Timer finished!");
+      }
+      update();
+    });
+  }
+
+  pauseTimer() {
+    isTimerPaused.value = true;
+    update();
+  }
+
+  void increaseMinute() {
+    if (minutes.value < maxMinutes) {
+      remainingSeconds.value += 60;
+    }
+    update();
+  }
+
+  void decreaseMinute() {
+    if (minutes.value > 0) {
+      remainingSeconds.value -= 60;
+    }
+    update();
+  }
+
+  changeEKalMenuVisibility() {
+    isEKalWidgetVisible.value = !isEKalWidgetVisible.value;
+    update();
+  }
+
+  changeSuitSelection() {
+    isPantSelected.value = !isPantSelected.value;
+    update();
+  }
+
+  changeActiveState() {
+    isActive.value = !isActive.value;
+    update();
+  }
+
+  calculateIntensityColor(int intensity,
+      {bool isChest = false,
+      isArms = false,
+      isAbdomen = false,
+      isLegs = false,
+      isUpperBack = false,
+      isMiddleBack = false,
+      isLumbars = false,
+      isButtocks = false,
+      isHamstrings = false}) {
+
+    /// Chest intensity color
+    if (isChest) {
+      if (intensity > 0 && intensity < 10) {
+        chestIntensityColor = AppColors.lowIntensityColor;
+      }
+      if (intensity >= 10 && intensity < 20) {
+        chestIntensityColor = AppColors.lowMediumIntensityColor;
+      }
+      if (intensity >= 20 && intensity < 35) {
+        chestIntensityColor = AppColors.mediumHighIntensityColor;
+      }
+      if (intensity >= 35) {
+        chestIntensityColor = AppColors.highIntensityColor;
+      }
+    }
+
+    /// Arms intensity color
+    if (isArms) {
+      if (intensity > 0 && intensity < 10) {
+        armsIntensityColor = AppColors.lowIntensityColor;
+      }
+      if (intensity >= 10 && intensity < 20) {
+        armsIntensityColor = AppColors.lowMediumIntensityColor;
+      }
+      if (intensity >= 20 && intensity < 35) {
+        armsIntensityColor = AppColors.mediumHighIntensityColor;
+      }
+      if (intensity >= 35) {
+        armsIntensityColor = AppColors.highIntensityColor;
+      }
+    }
+
+    /// Upper back intensity colors
+    if (isUpperBack) {
+      if (intensity > 0 && intensity < 10) {
+        upperBackIntensityColor = AppColors.lowIntensityColor;
+      }
+      if (intensity >= 10 && intensity < 20) {
+        upperBackIntensityColor = AppColors.lowMediumIntensityColor;
+      }
+      if (intensity >= 20 && intensity < 35) {
+        upperBackIntensityColor = AppColors.mediumHighIntensityColor;
+      }
+      if (intensity >= 35) {
+        upperBackIntensityColor = AppColors.highIntensityColor;
+      }
+    }
+
+    /// Middle back intensity colors
+    if (isMiddleBack) {
+      if (intensity > 0 && intensity < 10) {
+        middleBackIntensityColor = AppColors.lowIntensityColor;
+      }
+      if (intensity >= 10 && intensity < 20) {
+        middleBackIntensityColor = AppColors.lowMediumIntensityColor;
+      }
+      if (intensity >= 20 && intensity < 35) {
+        middleBackIntensityColor = AppColors.mediumHighIntensityColor;
+      }
+      if (intensity >= 35) {
+        middleBackIntensityColor = AppColors.highIntensityColor;
+      }
+    }
+
+    /// Abdomen intensity colors
+    if (isAbdomen) {
+      if (intensity > 0 && intensity < 25) {
+        abdomenIntensityColor = AppColors.lowIntensityColor;
+      }
+      if (intensity >= 25 && intensity < 45) {
+        abdomenIntensityColor = AppColors.lowMediumIntensityColor;
+      }
+      if (intensity >= 45 && intensity < 70) {
+        abdomenIntensityColor = AppColors.mediumHighIntensityColor;
+      }
+      if (intensity >= 70) {
+        abdomenIntensityColor = AppColors.highIntensityColor;
+      }
+    }
+
+    /// Legs intensity color
+    if (isLegs) {
+      if (intensity > 0 && intensity < 20) {
+        legsIntensityColor = AppColors.lowIntensityColor;
+      }
+      if (intensity >= 20 && intensity < 40) {
+        legsIntensityColor = AppColors.lowMediumIntensityColor;
+      }
+      if (intensity >= 40 && intensity < 60) {
+        legsIntensityColor = AppColors.mediumHighIntensityColor;
+      }
+      if (intensity >= 60) {
+        legsIntensityColor = AppColors.highIntensityColor;
+      }
+    }
+
+    /// Lumbar intensity color
+    if (isLumbars) {
+      if (intensity > 0 && intensity < 15) {
+        lumbarsIntensityColor = AppColors.lowIntensityColor;
+      }
+      if (intensity >= 15 && intensity < 30) {
+        lumbarsIntensityColor = AppColors.lowMediumIntensityColor;
+      }
+      if (intensity >= 30 && intensity < 50) {
+        lumbarsIntensityColor = AppColors.mediumHighIntensityColor;
+      }
+      if (intensity >= 50) {
+        lumbarsIntensityColor = AppColors.highIntensityColor;
+      }
+    }
+
+    /// Buttocks intensity color
+    if (isButtocks) {
+      if (intensity > 0 && intensity < 25) {
+        buttocksIntensityColor = AppColors.lowIntensityColor;
+      }
+      if (intensity >= 25 && intensity < 45) {
+        buttocksIntensityColor = AppColors.lowMediumIntensityColor;
+      }
+      if (intensity >= 45 && intensity < 70) {
+        buttocksIntensityColor = AppColors.mediumHighIntensityColor;
+      }
+      if (intensity >= 70) {
+        buttocksIntensityColor = AppColors.highIntensityColor;
+      }
+    }
+
+    /// Hamstrings intensity color
+    if (isHamstrings) {
+      if (intensity > 0 && intensity < 15) {
+        hamstringsIntensityColor = AppColors.lowIntensityColor;
+      }
+      if (intensity >= 15 && intensity < 30) {
+        hamstringsIntensityColor = AppColors.lowMediumIntensityColor;
+      }
+      if (intensity >= 30 && intensity < 50) {
+        hamstringsIntensityColor = AppColors.mediumHighIntensityColor;
+      }
+      if (intensity >= 50) {
+        hamstringsIntensityColor = AppColors.highIntensityColor;
+      }
+    }
+
+    // if(intensity > 0 && intensity <= 10){
+    //   if (isChest) {
+    //     chestIntensityColor = AppColors.lowIntensityColor;
+    //   }
+    //   if (isArms) {
+    //     armsIntensityColor = AppColors.lowIntensityColor;
+    //   }
+    //   if (isAbdomen) {
+    //     abdomenIntensityColor = AppColors.lowIntensityColor;
+    //   }
+    //   if (isLegs) {
+    //     legsIntensityColor = AppColors.lowIntensityColor;
+    //   }
+    //   if (isUpperBack) {
+    //     upperBackIntensityColor = AppColors.lowIntensityColor;
+    //   }
+    //   if (isMiddleBack) {
+    //     middleBackIntensityColor = AppColors.lowIntensityColor;
+    //   }
+    //   if (isLumbars) {
+    //     lumbarsIntensityColor = AppColors.lowIntensityColor;
+    //   }
+    //   if (isButtocks) {
+    //     buttocksIntensityColor = AppColors.lowIntensityColor;
+    //   }
+    //   if (isHamstrings) {
+    //     hamstringsIntensityColor = AppColors.lowIntensityColor;
+    //   }
+    //
+    //
+    // }
+    //
+    // if(intensity > 10 && intensity <= 30){
+    //   if(isChest){
+    //     chestIntensityColor = AppColors.lowMediumIntensityColor;
+    //   }
+    //   if(isArms){
+    //     armsIntensityColor = AppColors.lowMediumIntensityColor;
+    //   }
+    //   if(isAbdomen) {
+    //     middleBackIntensityColor = AppColors.lowMediumIntensityColor;
+    //   }
+    //   if(isUpperBack) {
+    //     upperBackIntensityColor = AppColors.lowMediumIntensityColor;
+    //   }
+    // }
+    //
+    // if(intensity > 15 && intensity <= 30){
+    //   if(isLumbars){
+    //
+    //   }
+    //   if(isHamstrings){
+    //
+    //   }
+    // }
+    //
+    // if(intensity > 15 && intensity <= 30){
+    //   if(isLumbars){
+    //
+    //   }
+    //   if(isHamstrings){
+    //
+    //   }
+    // }
+
+    // if(intensity > 30 && intensity <= 70){
+    //   intensityColor = AppColors.mediumHighIntensityColor;
+    // }
+
+    update();
+  }
+
+  int clampValue(int value, int min, int max) {
+    return value.clamp(min, max);
+  }
+
+  void changeChestPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      chestPercentage.value =
+          clampValue(chestPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      chestPercentage.value =
+          clampValue(chestPercentage.value - 1, minPercentage, maxPercentage);
+    }
+    calculateIntensityColor(chestPercentage.value, isChest: true);
+    update();
+  }
+
+  void changeArmsPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      armsPercentage.value =
+          clampValue(armsPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      armsPercentage.value =
+          clampValue(armsPercentage.value - 1, minPercentage, maxPercentage);
+    }
+    calculateIntensityColor(armsPercentage.value, isArms: true);
+    update();
+  }
+
+  void changeAbdomenPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      abdomenPercentage.value =
+          clampValue(abdomenPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      abdomenPercentage.value =
+          clampValue(abdomenPercentage.value - 1, minPercentage, maxPercentage);
+    }
+    calculateIntensityColor(abdomenPercentage.value, isAbdomen: true);
+    update();
+  }
+
+  void changeLegsPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      legsPercentage.value =
+          clampValue(legsPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      legsPercentage.value =
+          clampValue(legsPercentage.value - 1, minPercentage, maxPercentage);
+    }
+    calculateIntensityColor(legsPercentage.value, isLegs: true);
+    update();
+  }
+
+  void changeUpperBackPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      upperBackPercentage.value = clampValue(
+          upperBackPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      upperBackPercentage.value = clampValue(
+          upperBackPercentage.value - 1, minPercentage, maxPercentage);
+    }
+    calculateIntensityColor(upperBackPercentage.value);
+    update();
+  }
+
+  void changeMiddleBackPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      middleBackPercentage.value = clampValue(
+          middleBackPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      middleBackPercentage.value = clampValue(
+          middleBackPercentage.value - 1, minPercentage, maxPercentage);
+    }
+    calculateIntensityColor(middleBackPercentage.value);
+    update();
+  }
+
+  void changeLumbarPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      lumbarPercentage.value =
+          clampValue(lumbarPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      lumbarPercentage.value =
+          clampValue(lumbarPercentage.value - 1, minPercentage, maxPercentage);
+    }
+    calculateIntensityColor(lumbarPercentage.value);
+    update();
+  }
+
+  void changeButtocksPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      buttocksPercentage.value = clampValue(
+          buttocksPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      buttocksPercentage.value = clampValue(
+          buttocksPercentage.value - 1, minPercentage, maxPercentage);
+    }
+    calculateIntensityColor(buttocksPercentage.value);
+    update();
+  }
+
+  void changeHamStringsPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      hamStringsPercentage.value = clampValue(
+          hamStringsPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      hamStringsPercentage.value = clampValue(
+          hamStringsPercentage.value - 1, minPercentage, maxPercentage);
+    }
+    calculateIntensityColor(hamStringsPercentage.value);
+    update();
+  }
+
+  changeAllProgramsPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      chestPercentage.value =
+          clampValue(chestPercentage.value + 1, minPercentage, maxPercentage);
+      armsPercentage.value =
+          clampValue(armsPercentage.value + 1, minPercentage, maxPercentage);
+      abdomenPercentage.value =
+          clampValue(abdomenPercentage.value + 1, minPercentage, maxPercentage);
+      legsPercentage.value =
+          clampValue(legsPercentage.value + 1, minPercentage, maxPercentage);
+      upperBackPercentage.value = clampValue(
+          upperBackPercentage.value + 1, minPercentage, maxPercentage);
+      middleBackPercentage.value = clampValue(
+          middleBackPercentage.value + 1, minPercentage, maxPercentage);
+      lumbarPercentage.value =
+          clampValue(lumbarPercentage.value + 1, minPercentage, maxPercentage);
+      buttocksPercentage.value = clampValue(
+          buttocksPercentage.value + 1, minPercentage, maxPercentage);
+      hamStringsPercentage.value = clampValue(
+          hamStringsPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      chestPercentage.value =
+          clampValue(chestPercentage.value - 1, minPercentage, maxPercentage);
+      armsPercentage.value =
+          clampValue(armsPercentage.value - 1, minPercentage, maxPercentage);
+      abdomenPercentage.value =
+          clampValue(abdomenPercentage.value - 1, minPercentage, maxPercentage);
+      legsPercentage.value =
+          clampValue(legsPercentage.value - 1, minPercentage, maxPercentage);
+      upperBackPercentage.value = clampValue(
+          upperBackPercentage.value - 1, minPercentage, maxPercentage);
+      middleBackPercentage.value = clampValue(
+          middleBackPercentage.value - 1, minPercentage, maxPercentage);
+      lumbarPercentage.value =
+          clampValue(lumbarPercentage.value - 1, minPercentage, maxPercentage);
+      buttocksPercentage.value = clampValue(
+          buttocksPercentage.value - 1, minPercentage, maxPercentage);
+      hamStringsPercentage.value = clampValue(
+          hamStringsPercentage.value - 1, minPercentage, maxPercentage);
+    }
+
+    calculateIntensityColor(chestPercentage.value, isChest: true);
+    calculateIntensityColor(armsPercentage.value, isArms: true);
+    calculateIntensityColor(abdomenPercentage.value, isAbdomen: true);
+    calculateIntensityColor(legsPercentage.value, isLegs: true);
+    calculateIntensityColor(upperBackPercentage.value, isUpperBack: true);
+    calculateIntensityColor(middleBackPercentage.value, isMiddleBack: true);
+    calculateIntensityColor(lumbarPercentage.value, isLumbars: true);
+    calculateIntensityColor(buttocksPercentage.value, isButtocks: true);
+    calculateIntensityColor(hamStringsPercentage.value, isHamstrings: true);
+
+    update();
+  }
+}

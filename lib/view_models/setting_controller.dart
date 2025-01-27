@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-class SettingScreenController extends GetxController {
+class SettingController extends GetxController {
   RxBool isIdle = true.obs;
   RxBool isTechnicalService = false.obs;
   RxBool isBackUp = false.obs;

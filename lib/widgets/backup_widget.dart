@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/button.dart';
@@ -65,7 +66,7 @@ class BackupWidget extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(left: screenWidth * 0.01),
                       child: TextView.title(
-                        Strings.backup,
+                        translation(context).backup,
                         isUnderLine: true,
                         color: AppColors.pinkColor,
                         fontSize: 14.sp,
@@ -107,7 +108,7 @@ class BackupWidget extends StatelessWidget {
               RoundedContainer(
                 color: isMakeCopySelected  ? AppColors.darkGrey2 : AppColors.transparentColor,
                 widget: TextView.title(
-                  Strings.makeCopy,
+                  translation(context).makeCopy,
                   color: isMakeCopySelected  ? AppColors.pureWhiteColor : AppColors.darkGrey2,
                   fontSize: 12.sp,
                 ),
@@ -115,7 +116,7 @@ class BackupWidget extends StatelessWidget {
               ),
               RoundedContainer(
                 color: isReStoreCopySelected  ? AppColors.darkGrey2 : AppColors.transparentColor,
-                widget: TextView.title(Strings.reStoreCopy,
+                widget: TextView.title(translation(context).reStoreCopy,
                     color: isReStoreCopySelected  ? AppColors.pureWhiteColor : AppColors.darkGrey2,
                     fontSize: 12.sp),
                 onTap: onTapReStoreCopy,
@@ -127,10 +128,10 @@ class BackupWidget extends StatelessWidget {
           ),
           TextView.title(
             isMakeCopySelected
-                ? Strings.makeCopyConfirmationMsg
+                ? translation(context).makeCopyConfirmationMsg
                 : isReStoreCopySelected
-                    ? Strings.reStoreCopyConfirmationMsg
-                    : Strings.nothing,
+                    ? translation(context).reStoreCopyConfirmationMsg
+                    : '',
 
             color: AppColors.darkGrey2,
             fontSize: 12.sp,
@@ -146,7 +147,7 @@ class BackupWidget extends StatelessWidget {
                       color: isYesSelected  ? AppColors.darkGrey2 : AppColors.transparentColor,
                       width: screenWidth * 0.05,
                       widget: TextView.title(
-                        Strings.yes,
+                        translation(context).yes,
                         color: isYesSelected  ? AppColors.pureWhiteColor : AppColors.darkGrey2,
                         fontSize: 12.sp,
                       ),
@@ -156,7 +157,7 @@ class BackupWidget extends StatelessWidget {
                       color: isNoSelected  ? AppColors.darkGrey2 : AppColors.transparentColor,
                       width: screenWidth * 0.05,
                       widget: TextView.title(
-                          Strings.no,
+                          translation(context).no,
                           color: isNoSelected  ? AppColors.pureWhiteColor : AppColors.darkGrey2,
                           fontSize: 12.sp),
                       onTap: onTapNo,

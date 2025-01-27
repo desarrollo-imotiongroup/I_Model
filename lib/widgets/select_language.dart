@@ -1,32 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
+import 'package:i_model/main.dart';
+import 'package:i_model/view_models/select_language_controller.dart';
 import 'package:i_model/widgets/textview.dart';
 
 class SelectLanguage extends StatelessWidget {
   final Function()? onCancel;
 
-  const SelectLanguage({
-    this.onCancel,
-    super.key});
+  SelectLanguage({this.onCancel, super.key});
+
+  final SelectLanguageController selectLanguageController =
+      Get.put(SelectLanguageController());
 
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
-
-    final List<String> languages = [
-      'ESPAÑOL',
-      'ENGLISH',
-      'FRANÇAIS',
-      'ITALIANO',
-      'PORTUGUÊS',
-      'DEUTSCH',
-    ];
-
-    String selectedLanguage = 'ESPAÑOL';
 
     return Container(
       margin: EdgeInsets.only(right: screenWidth * 0.05),
@@ -46,7 +40,9 @@ class SelectLanguage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          SizedBox(height: screenWidth * 0.01,),
+          SizedBox(
+            height: screenWidth * 0.01,
+          ),
           Row(
             children: [
               Expanded(
@@ -56,7 +52,7 @@ class SelectLanguage extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(left: screenWidth * 0.01),
                       child: TextView.title(
-                        Strings.languageSelection,
+                        translation(context).languageSelection,
                         isUnderLine: true,
                         color: AppColors.pinkColor,
                         fontSize: 14.sp,
@@ -73,8 +69,7 @@ class SelectLanguage extends StatelessWidget {
                       Icons.close_sharp,
                       size: screenHeight * 0.04,
                       color: AppColors.blackColor.withValues(alpha: 0.8),
-                    )
-                ),
+                    )),
               ),
             ],
           ),
@@ -88,42 +83,71 @@ class SelectLanguage extends StatelessWidget {
               color: AppColors.pinkColor,
             ),
           ),
-          SizedBox(height: screenHeight * 0.02,),
-
-          Container(
-            height: screenHeight * 0.3,
-            width: screenWidth * 0.3,
-            child: ListView.builder(
-              itemCount: languages.length,
+          SizedBox(
+            height: screenHeight * 0.02,
+          ),
+          SizedBox(
+            height: screenHeight * 0.35,
+            width: screenWidth * 0.47,
+            child: GridView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: selectLanguageController.languages.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2, // Number of columns
+                crossAxisSpacing: 5.0, // Space between columns
+                mainAxisSpacing: 5.0, // Space between rows
+                childAspectRatio: 3.5, // Adjust this for better proportions
+              ),
               itemBuilder: (context, index) {
                 return Padding(
-                  padding: const EdgeInsets.all(8.0),
+                  padding: EdgeInsets.all(screenHeight * 0.01),
                   child: Container(
-                    width: screenWidth * 0.2,
                     decoration: BoxDecoration(
                       color: AppColors.pureWhiteColor,
                       borderRadius: BorderRadius.circular(screenHeight * 0.02),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withValues(alpha: 0.3), // Shadow color
-                          spreadRadius: 3, // How wide the shadow spreads
-                          blurRadius: 1, // The blur effect
-                          offset: Offset(0, 3), // Changes position of shadow (x, y)
+                          color: Colors.grey.withValues(alpha: 0.3),
+                          // Adjusted shadow color opacity
+                          spreadRadius: 3,
+                          // Shadow spread radius
+                          blurRadius: 3,
+                          // Shadow blur effect
+                          offset: const Offset(0, 2), // Shadow position
                         ),
                       ],
                     ),
-                    child: ListTile(
-                      title: Text(
-                        languages[index],
-                        style: const TextStyle(fontSize: 16),
-                      ),
-                      leading: Radio<String>(
-                        value: languages[index],
-                        groupValue: selectedLanguage,
-                        activeColor: Colors.pink,
-                        onChanged: (value) {
-
-                        },
+                    child: Center(
+                      child: ListTile(
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.015,
+                            vertical: screenHeight * 0.01),
+                        // Adjust padding inside ListTile
+                        minVerticalPadding: 0,
+                        // Reduces the vertical padding inside ListTile
+                        horizontalTitleGap: 0,
+                        // Reduces the gap between the leading widget and title
+                        title: Center(
+                          child: Text(
+                            selectLanguageController.languages[index],
+                            style: TextStyle(fontSize: 11.sp),
+                          ),
+                        ),
+                        leading: SizedBox(
+                            width: screenWidth * 0.015,
+                            child: Obx(
+                              () => Radio<String>(
+                                value:
+                                    selectLanguageController.languages[index],
+                                groupValue:
+                                    selectLanguageController.selectedLanguage.value,
+                                activeColor: AppColors.pinkColor,
+                                onChanged: (value) async {
+                                  selectLanguageController.selectedLanguage.value = value!;
+                                  selectLanguageController.chooseLanguage(context: context);
+                                },
+                              ),
+                            )),
                       ),
                     ),
                   ),
@@ -131,7 +155,6 @@ class SelectLanguage extends StatelessWidget {
               },
             ),
           )
-
         ],
       ),
     );
