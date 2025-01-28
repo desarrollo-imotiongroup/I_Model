@@ -10,6 +10,12 @@ class Strings{
   static const nothing = '';
   static const selectedLanguageCode = 'selectedLanguageCode';
   static const selectedLanguage = 'selectedLanguage';
+  static const selectProgramType = 'seleccionar tipo de programa';
+  static const individual = 'Individual';
+  static const automatics = 'Automaticos';
+  static const select = 'Selectionar';
+  static const selectProgram = 'Seleccionar programa';
+
 
   /// Language codes
   static const String englishLanguageCode = 'en';
@@ -64,6 +70,49 @@ class Strings{
   static const String resetIcon = 'assets/icons/RESET-control-panel.png';
   static const String activeIcon = 'assets/icons/green-lighting-ACTIVE.png';
   static const String inActiveIcon = 'assets/icons/grey-lighting-INACTIVE.png';
+
+  ///Automatic program
+  static const String buttocks = 'Buttocks';
+  static const String cellulite = 'Cellulite';
+  static const String hypertrophy = 'Hypertrophy';
+  static const String pelvicFloor = 'Pelvic Floor';
+  static const String slim = 'Slim';
+  static const String toning = 'Toning';
+
+  static const String buttocksAutoIcon = 'assets/automatic_program/BUTTOCKS_AUTO.png';
+  static const String celluliteAutoIcon = 'assets/automatic_program/CELLULITE_AUTO.png';
+  static const String hypertrophyAutoIcon = 'assets/automatic_program/HYPERTROPHY_AUTO.png';
+  static const String pelvicFloorAutoIcon = 'assets/automatic_program/PELVIC_FLOOR_AUTO.png';
+  static const String slimAutoIcon = 'assets/automatic_program/SLIM_AUTO.png';
+  static const String toningAutoIcon = 'assets/automatic_program/TONING_AUTO.png';
+
+  /// Individual programs
+  static const String buttocksIndProgram = 'BUTTOCKS';
+  static const String calibration = 'CALIBRATION';
+  static const String celluliteIndProgram = 'CELLULITE';
+  static const String contractures = 'CONTRACTURES';
+  static const String drainage = 'DRAINAGE';
+  static const String hypertrophyIndProgram = 'HYPERTROPHY';
+  static const String massage = 'MASSAGE';
+  static const String metabolic = 'METABOLIC';
+  static const String pelvicFloorIndProgram = 'PELVIC FLOOR';
+  static const String slimIndProgram = 'SLIM';
+  static const String strength = 'STRENGTH';
+  static const String toningIndProgram = 'TONING';
+
+  static const String buttocksIndividualIcon = 'assets/individual_program/BUTTOCKS.png';
+  static const String calibrationIcon = 'assets/individual_program/CALIBRATION.png';
+  static const String celluliteIcon = 'assets/individual_program/CELLULITE.png';
+  static const String contracturesIcon = 'assets/individual_program/CONTRACTURES.png';
+  static const String drainageIcon = 'assets/individual_program/DRAINAGE.png';
+  static const String hypertrophyIcon = 'assets/individual_program/HYPERTROPHY.png';
+  static const String massageIcon = 'assets/individual_program/MASSAGE.png';
+  static const String metabolicIcon = 'assets/individual_program/METABOLIC.png';
+  static const String pelvicFloorIcon = 'assets/individual_program/PELVIC_FLOOR.png';
+  static const String slimIcon = 'assets/individual_program/SLIM.png';
+  static const String strengthIcon = 'assets/individual_program/STRENGTH.png';
+  static const String toningIcon = 'assets/individual_program/TONING.png';
+
 
   ///Counter / Timer
   static const String min_0_icon = 'assets/counter/0-MIN.png';

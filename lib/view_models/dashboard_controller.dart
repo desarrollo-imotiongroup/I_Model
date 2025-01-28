@@ -16,9 +16,13 @@ class DashboardController extends GetxController {
   RxInt lumbarPercentage = 0.obs;
   RxInt buttocksPercentage = 0.obs;
   RxInt hamStringsPercentage = 0.obs;
+  RxString selectedProgramType = Strings.individual.obs;
+  RxString selectedProgramName = Strings.cellulite.obs;
+  RxString selectedProgramImage = Strings.celluliteIcon.obs;
 
   RxBool isPantSelected = false.obs;
   RxBool isActive = false.obs;
+
 
   /// Intensity colors
   Color chestIntensityColor = AppColors.lowIntensityColor;
@@ -119,6 +123,22 @@ class DashboardController extends GetxController {
 
   changeActiveState() {
     isActive.value = !isActive.value;
+    update();
+  }
+
+  changeProgramType({bool isIndividual = true}){
+    if(isIndividual){
+      selectedProgramType.value = Strings.automatics;
+    }
+    else{
+      selectedProgramType.value = Strings.individual;
+    }
+    update();
+  }
+
+  setProgramDetails({required String name, required String image}){
+    selectedProgramName.value = name;
+    selectedProgramImage.value = image;
     update();
   }
 
@@ -276,76 +296,6 @@ class DashboardController extends GetxController {
         hamstringsIntensityColor = AppColors.highIntensityColor;
       }
     }
-
-    // if(intensity > 0 && intensity <= 10){
-    //   if (isChest) {
-    //     chestIntensityColor = AppColors.lowIntensityColor;
-    //   }
-    //   if (isArms) {
-    //     armsIntensityColor = AppColors.lowIntensityColor;
-    //   }
-    //   if (isAbdomen) {
-    //     abdomenIntensityColor = AppColors.lowIntensityColor;
-    //   }
-    //   if (isLegs) {
-    //     legsIntensityColor = AppColors.lowIntensityColor;
-    //   }
-    //   if (isUpperBack) {
-    //     upperBackIntensityColor = AppColors.lowIntensityColor;
-    //   }
-    //   if (isMiddleBack) {
-    //     middleBackIntensityColor = AppColors.lowIntensityColor;
-    //   }
-    //   if (isLumbars) {
-    //     lumbarsIntensityColor = AppColors.lowIntensityColor;
-    //   }
-    //   if (isButtocks) {
-    //     buttocksIntensityColor = AppColors.lowIntensityColor;
-    //   }
-    //   if (isHamstrings) {
-    //     hamstringsIntensityColor = AppColors.lowIntensityColor;
-    //   }
-    //
-    //
-    // }
-    //
-    // if(intensity > 10 && intensity <= 30){
-    //   if(isChest){
-    //     chestIntensityColor = AppColors.lowMediumIntensityColor;
-    //   }
-    //   if(isArms){
-    //     armsIntensityColor = AppColors.lowMediumIntensityColor;
-    //   }
-    //   if(isAbdomen) {
-    //     middleBackIntensityColor = AppColors.lowMediumIntensityColor;
-    //   }
-    //   if(isUpperBack) {
-    //     upperBackIntensityColor = AppColors.lowMediumIntensityColor;
-    //   }
-    // }
-    //
-    // if(intensity > 15 && intensity <= 30){
-    //   if(isLumbars){
-    //
-    //   }
-    //   if(isHamstrings){
-    //
-    //   }
-    // }
-    //
-    // if(intensity > 15 && intensity <= 30){
-    //   if(isLumbars){
-    //
-    //   }
-    //   if(isHamstrings){
-    //
-    //   }
-    // }
-
-    // if(intensity > 30 && intensity <= 70){
-    //   intensityColor = AppColors.mediumHighIntensityColor;
-    // }
-
     update();
   }
 

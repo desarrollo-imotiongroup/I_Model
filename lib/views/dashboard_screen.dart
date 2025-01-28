@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/widgets/button.dart';
@@ -16,6 +17,8 @@ import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/line_painter.dart';
 import 'package:i_model/widgets/line_painter_widget.dart';
 import 'package:i_model/widgets/mci_widget.dart';
+import 'package:i_model/widgets/overlay/program_list_overlay.dart';
+import 'package:i_model/widgets/overlay/select_program_overlay.dart';
 import 'package:i_model/widgets/rounded_container.dart';
 import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/time_control_widget.dart';
@@ -189,32 +192,49 @@ class DashboardScreen extends StatelessWidget
                         children: [
                           SizedBox(height: screenHeight * 0.03,),
                           TextView.title(
-                              translation(context).cellulite,
+                              controller.selectedProgramName.value.toUpperCase(),
                               fontSize: 12.sp,
                               color: AppColors.pinkColor
                           ),
                           SizedBox(height: screenHeight * 0.01,),
                           RoundedContainer(
+                              onTap: (){
+                                selectProgramOverlay(
+                                  context,
+                                  title: Strings.selectProgramType
+                                );
+                              },
                               width: screenWidth * 0.1,
                               borderRadius: screenHeight * 0.02,
                               borderColor: AppColors.transparentColor,
                               color: AppColors.pinkColor,
                               widget: TextView.title(
-                                  translation(context).automatic,
+                                  controller.selectedProgramType.value.toUpperCase(),
                                   color: AppColors.pureWhiteColor,
                                   fontSize: 10.sp
                               )
                           ),
                           SizedBox(height: screenHeight * 0.025,),
                           TextView.title(
-                              translation(context).cellulite,
+                              controller.selectedProgramName.value.toUpperCase(),
                               fontSize: 14.sp,
                               color: AppColors.blackColor.withValues(alpha: 0.8)
                           ),
                           SizedBox(height: screenHeight * 0.01,),
-                          imageWidget(
-                            image: Strings.celluliteAuto,
-                            height: screenHeight * 0.13,
+                          GestureDetector(
+                            onTap: (){
+                              programListOverlay(
+                                context,
+                                programList:
+                                controller.selectedProgramType.value == Strings.individual
+                                    ? Consts.individualProgramsList
+                                    : Consts.automaticProgramsList,
+                              );
+                            },
+                            child: imageWidget(
+                              image: controller.selectedProgramImage.value,
+                              height: screenHeight * 0.13,
+                            ),
                           ),
                           SizedBox(height: screenHeight * 0.015,),
 

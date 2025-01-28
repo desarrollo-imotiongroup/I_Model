@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/widgets/textview.dart';
 
 class Button extends StatelessWidget {
   final double ? width;
   final double ? height;
+  final double ? fontSize;
   final String ? text;
   final Function ? onPress;
   final Color ? btnColor;
@@ -22,6 +24,7 @@ class Button extends StatelessWidget {
         this.textColor,
         this.borderRadius,
         this.onTap,
+        this.fontSize,
         this.borderColor}) : super(key: key);
 
   @override
@@ -47,6 +50,7 @@ class Button extends StatelessWidget {
               child: TextView.title(
                   text?? 'Submit',
                   color: textColor?? AppColors.pureWhiteColor,
+                  fontSize: fontSize ?? 18.sp
               ),
             )
         ),
