@@ -4,7 +4,7 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/setting_controller.dart';
-import 'package:i_model/views/menu_widget.dart';
+import 'package:i_model/widgets/menu_widget.dart';
 import 'package:i_model/widgets/backup_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/select_language.dart';
@@ -14,8 +14,7 @@ import 'package:i_model/widgets/textview.dart';
 class SettingScreen extends StatelessWidget {
   SettingScreen({super.key});
 
-  final SettingController settingScreenController =
-      Get.put(SettingController());
+  final SettingController settingScreenController = Get.put(SettingController());
 
   @override
   Widget build(BuildContext context) {

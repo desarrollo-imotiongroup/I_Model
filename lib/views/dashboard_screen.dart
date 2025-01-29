@@ -1,7 +1,5 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
@@ -199,10 +197,16 @@ class DashboardScreen extends StatelessWidget
                           SizedBox(height: screenHeight * 0.01,),
                           RoundedContainer(
                               onTap: (){
-                                selectProgramOverlay(
-                                  context,
-                                  title: Strings.selectProgramType
-                                );
+                                if(controller.selectedProgramType.value == Strings.individual){
+                                  controller.changeProgramType();
+                                }
+                                else{
+                                  controller.changeProgramType(isIndividual: false);
+                                }
+                                // selectProgramOverlay(
+                                //   context,
+                                //   title: Strings.selectProgramType
+                                // );
                               },
                               width: screenWidth * 0.1,
                               borderRadius: screenHeight * 0.02,

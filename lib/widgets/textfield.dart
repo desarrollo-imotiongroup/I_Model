@@ -9,6 +9,7 @@ class TextFieldWidget extends StatelessWidget {
   final TextInputType? textInputType;
   final double ? width;
   final double ? height;
+  final double ? fontSize;
   final String ? icon;
   final Color? borderColor;
   final Color? bgColor;
@@ -16,6 +17,7 @@ class TextFieldWidget extends StatelessWidget {
   final Color? hintTextColor;
   final Color? cursorColor;
   final TextInputAction? textInputAction;
+  final bool? isReadyOnly;
 
 
   const TextFieldWidget(
@@ -25,6 +27,7 @@ class TextFieldWidget extends StatelessWidget {
         this.hint,
         this.textInputType,
         this.width,
+        this.fontSize,
         this.height,
         this.icon,
         this.borderColor,
@@ -32,7 +35,8 @@ class TextFieldWidget extends StatelessWidget {
         this.textColor,
         this.hintTextColor,
         this.cursorColor,
-        this.textInputAction
+        this.textInputAction,
+        this.isReadyOnly
       });
 
   @override
@@ -53,9 +57,10 @@ class TextFieldWidget extends StatelessWidget {
           cursorHeight: 16.sp,
           keyboardType: textInputType??TextInputType.text,
           cursorColor: cursorColor?? AppColors.lightBlack,
+          readOnly: isReadyOnly ?? false ? true : false,
           style: TextStyle(
             color: textColor ?? AppColors.lightBlack,
-            fontSize: 15.sp,
+            fontSize: fontSize ?? 15.sp,
           ),
           textInputAction: textInputAction ?? TextInputAction.next,
           decoration: InputDecoration(

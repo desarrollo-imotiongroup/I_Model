@@ -15,7 +15,16 @@ class Strings{
   static const automatics = 'Automaticos';
   static const select = 'Selectionar';
   static const selectProgram = 'Seleccionar programa';
-
+  static const onlyForClients = 'Solo para clientes con';
+  static const contactWithUsForDevice = 'Contacte con nosotros para obtener nuestro dispositivo de análisis de la composición corporal.';
+  static const String selectClient = 'Seleccionar Cliente';
+  static const String name = 'Nombre';
+  static const String gender = 'Género';
+  static const String height = 'Altura (cm)';
+  static const String weight = 'Peso (kg)';
+  static const String email = 'E-mail';
+  static const String takeNewMeasurement = 'Tomar Nueva Medida';
+  static const String howToTakeMeasurement = 'Cómo Obtener Una Medida';
 
   /// Language codes
   static const String englishLanguageCode = 'en';
@@ -70,6 +79,10 @@ class Strings{
   static const String resetIcon = 'assets/icons/RESET-control-panel.png';
   static const String activeIcon = 'assets/icons/green-lighting-ACTIVE.png';
   static const String inActiveIcon = 'assets/icons/grey-lighting-INACTIVE.png';
+  static const String iBodyProIcon = 'assets/icons/LOGO IBODYPRO.png';
+  static const String newMeasurementIcon = 'assets/icons/new_measurement.png';
+  static const String checkIcon = 'assets/icons/check.png';
+
 
   ///Automatic program
   static const String buttocks = 'Buttocks';

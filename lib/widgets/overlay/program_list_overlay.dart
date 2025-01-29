@@ -41,9 +41,9 @@ void programListOverlay(
           ),
           child: Column(
             children: [
-              SizedBox(height: screenWidth * 0.01),
+              SizedBox(height: screenWidth * 0.015),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
                 child: Row(
                   children: [
                     Expanded(
@@ -52,7 +52,7 @@ void programListOverlay(
                           Strings.selectProgram.toUpperCase(),
                           isUnderLine: true,
                           color: AppColors.pinkColor,
-                          fontSize: 14.sp,
+                          fontSize: 15.sp,
                         ),
                       ),
                     ),
