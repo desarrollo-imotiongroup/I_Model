@@ -25,6 +25,23 @@ class Strings{
   static const String email = 'E-mail';
   static const String takeNewMeasurement = 'Tomar Nueva Medida';
   static const String howToTakeMeasurement = 'Cómo Obtener Una Medida';
+  static const String clients = 'Clientes';
+  static const String clientList = 'Lista de clientes';
+  static const String createNewClient = 'Crear nuevo cliente';
+  static const String tutorials = 'Tutoriales';
+  static const String firstSteps = 'Primeros pasos';
+  static const String software = 'Software';
+  static const String commonIncidents = 'Incidencias comunes';
+  static const String license = 'Licencia';
+  static const String howToPrepareEquipment = 'Como preparar el equipo para el tratamiento';
+  static const String programs = 'Programas';
+  static const String individuals = 'Individuales';
+  static const String createProgram = 'Crear programa';
+  static const String centerManagement = 'Gestión de centros';
+  static const String administrators = 'Administradores';
+  static const String beauticiansList = 'Lista de esteticístas';
+  static const String createNew = 'Crear nuevo';
+
 
   /// Language codes
   static const String englishLanguageCode = 'en';
@@ -40,6 +57,10 @@ class Strings{
   static const String menuScreen = '/MenuScreen';
   static const String settingScreen = '/SettingScreen';
   static const String dashboardScreen = '/DashboardScreen';
+  static const String clientScreen = '/ClientScreen';
+  static const String tutorialScreen = '/tutorialScreen';
+  static const String programsScreen = '/programsScreen';
+  static const String centerManagementScreen = '/CenterManagementScreen';
 
   ///Images (Icons)
   static const String bgImage = 'assets/icons/bg_image.jpg';

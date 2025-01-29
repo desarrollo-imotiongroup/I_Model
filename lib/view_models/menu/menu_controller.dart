@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 
 class MenuScreenController extends GetxController{
   RxBool isBiomPedancia = false.obs;
-  RxBool isBiomPedanciaDevice = true.obs;
+  RxBool isBiomPedanciaDevice = false.obs;
   final TextEditingController nameEditingController = TextEditingController();
   final TextEditingController genderEditingController = TextEditingController();
   final TextEditingController heightEditingController = TextEditingController();

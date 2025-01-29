@@ -14,7 +14,8 @@ import 'package:i_model/widgets/textview.dart';
 class SettingScreen extends StatelessWidget {
   SettingScreen({super.key});
 
-  final SettingController settingScreenController = Get.put(SettingController());
+  final SettingController settingScreenController =
+      Get.put(SettingController());
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +76,10 @@ class SettingScreen extends StatelessWidget {
                       ),
                       MenuWidget(
                         title: translation(context).centerManagement,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(
+                              context, Strings.centerManagementScreen);
+                        },
                       ),
                       MenuWidget(
                         title: translation(context).backup,
@@ -107,15 +111,17 @@ class SettingScreen extends StatelessWidget {
                               height: screenHeight * 0.2,
                             ),
                           )
-                          /// Servicio Tecnico
+
+                        /// Servicio Tecnico
                         : settingScreenController.isTechnicalService.value
                             ? TechnicalService(
                                 onCancel: () {
                                   settingScreenController.displayLogo();
                                 },
                               )
-                          /// Copia de seguridad
-                        : settingScreenController.isBackUp.value
+
+                            /// Copia de seguridad
+                            : settingScreenController.isBackUp.value
                                 ? BackupWidget(
                                     onTapMakeCopy: () {
                                       settingScreenController.selectMakeCopy();
@@ -132,28 +138,32 @@ class SettingScreen extends StatelessWidget {
                                     isReStoreCopySelected:
                                         settingScreenController
                                             .isReStoreCopySelected.value,
-                                    isYesSelected: settingScreenController.isYesSelected.value,
-                                    isNoSelected: settingScreenController.isNoSelected.value,
-                                    onTapYes: (){
+                                    isYesSelected: settingScreenController
+                                        .isYesSelected.value,
+                                    isNoSelected: settingScreenController
+                                        .isNoSelected.value,
+                                    onTapYes: () {
                                       settingScreenController.selectYes();
-                                      if(settingScreenController.isMakeCopySelected.value){
+                                      if (settingScreenController
+                                          .isMakeCopySelected.value) {
                                         /// Hacer Copia Codigo aqui
                                       }
-                                      if(settingScreenController.isReStoreCopySelected.value){
+                                      if (settingScreenController
+                                          .isReStoreCopySelected.value) {
                                         /// Restaurar copia codigo aqui
                                       }
                                     },
-                                    onTapNo:(){
+                                    onTapNo: () {
                                       settingScreenController.selectNo();
                                     },
-
                                   )
-                        : settingScreenController.isSelectLanguage.value
-                                ? SelectLanguage(
-                                    onCancel: () {
-                                      settingScreenController.displayLogo();
-                                  },)
-                        : Container(),
+                                : settingScreenController.isSelectLanguage.value
+                                    ? SelectLanguage(
+                                        onCancel: () {
+                                          settingScreenController.displayLogo();
+                                        },
+                                      )
+                                    : Container(),
                   )
 
                   /// Displaying data based on click

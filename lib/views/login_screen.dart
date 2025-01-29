@@ -117,6 +117,7 @@ class LoginScreen extends StatelessWidget {
                       ],
                     ),
                     Spacer(),
+                    /// Enter button
                     Align(
                       alignment: Alignment.bottomRight,
                       child: Button(
@@ -124,12 +125,13 @@ class LoginScreen extends StatelessWidget {
                           Navigator.pushNamed(context, Strings.menuScreen);
                         },
                         text: translation(context).enter,
-                        textColor: AppColors.lightBlack,
+                        textColor: AppColors.lightBlack.withValues(alpha: 0.8),
                         width: screenWidth * 0.15,
                         height: screenHeight * 0.08,
                         borderRadius: screenHeight * 0.01,
                         btnColor: AppColors.transparentColor,
                         borderColor: AppColors.pinkColor,
+                        fontSize: 17.sp,
                       ),
                     )
                   ],

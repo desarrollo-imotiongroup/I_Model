@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/menu_controller.dart';
+import 'package:i_model/view_models/menu/menu_controller.dart';
 import 'package:i_model/widgets/with_device_biompedancia.dart';
 import 'package:i_model/widgets/without_device_biompedancia.dart';
 import 'package:i_model/widgets/menu_widget.dart';
@@ -68,12 +68,16 @@ class MenuScreen extends StatelessWidget {
                             MenuWidget(
                               title: translation(context).clients,
                               onTap: () {
+                                Navigator.pushNamed(
+                                    context, Strings.clientScreen);
                                 menuController.dismissBiomPedanciaState();
                               },
                             ),
                             MenuWidget(
                               title: translation(context).programs,
                               onTap: () {
+                                Navigator.pushNamed(
+                                    context, Strings.programsScreen);
                                 menuController.dismissBiomPedanciaState();
                               },
                             ),
@@ -81,16 +85,16 @@ class MenuScreen extends StatelessWidget {
                               title: translation(context).biompedancia,
                               onTap: () {
                                 menuController.isBiomPedancia.value = true;
-                                if(menuController.isBiomPedanciaDevice.value){
-                                  withDeviceBiompedancia(
-                                    context
-                                  );
+                                if (menuController.isBiomPedanciaDevice.value) {
+                                  withDeviceBiompedancia(context);
                                 }
                               },
                             ),
                             MenuWidget(
                               title: translation(context).tutorials,
                               onTap: () {
+                                Navigator.pushNamed(
+                                    context, Strings.tutorialScreen);
                                 menuController.dismissBiomPedanciaState();
                               },
                             ),
