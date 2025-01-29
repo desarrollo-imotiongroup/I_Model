@@ -41,6 +41,25 @@ class Strings{
   static const String administrators = 'Administradores';
   static const String beauticiansList = 'Lista de esteticístas';
   static const String createNew = 'Crear nuevo';
+  static const String licenseData = 'Datos licencia';
+  static const String licenseNumber = 'N° licencia';
+  static const String address = 'Dirección';
+  static const String city = 'Ciudad';
+  static const String province = 'Provincia';
+  static const String country = 'País';
+  static const String phone = 'Teléfono';
+  static const String validateLicense = 'Validar licencia';
+  static const String licenseNo = 'N° de licencia';
+  static const String mci = 'MCI';
+  static const String type = 'Tipo';
+  static const String status = 'Estado';
+  static const String active = 'Activo';
+  static const String inactive = 'Inactivo';
+  static const String typeBT = 'BT';
+  static const String typeBLE = 'BLE';
+  static const String recharge = 'RECARGAR';
+  static const String info = 'INFORMACIÓN';
+  static const String mciId = 'MAC. F4:12:FA:EC:C5:65';
 
 
   /// Language codes
@@ -58,8 +77,9 @@ class Strings{
   static const String settingScreen = '/SettingScreen';
   static const String dashboardScreen = '/DashboardScreen';
   static const String clientScreen = '/ClientScreen';
-  static const String tutorialScreen = '/tutorialScreen';
-  static const String programsScreen = '/programsScreen';
+  static const String tutorialScreen = '/TutorialScreen';
+  static const String programsScreen = '/ProgramsScreen';
+  static const String licenseScreen = '/LicenseScreen';
   static const String centerManagementScreen = '/CenterManagementScreen';
 
   ///Images (Icons)

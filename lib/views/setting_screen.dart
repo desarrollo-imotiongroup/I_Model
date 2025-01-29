@@ -71,8 +71,9 @@ class SettingScreen extends StatelessWidget {
                     children: [
                       MenuWidget(
                         title: translation(context).license,
-                        // title: Strings.license,
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushNamed(context, Strings.licenseScreen);
+                        },
                       ),
                       MenuWidget(
                         title: translation(context).centerManagement,
