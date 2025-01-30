@@ -48,6 +48,7 @@ class Strings{
   static const String province = 'Provincia';
   static const String country = 'País';
   static const String phone = 'Teléfono';
+  static const String number = 'Numero';
   static const String validateLicense = 'Validar licencia';
   static const String licenseNo = 'N° de licencia';
   static const String mci = 'MCI';
@@ -55,11 +56,20 @@ class Strings{
   static const String status = 'Estado';
   static const String active = 'Activo';
   static const String inactive = 'Inactivo';
+  static const String all = 'todos';
   static const String typeBT = 'BT';
   static const String typeBLE = 'BLE';
   static const String recharge = 'RECARGAR';
   static const String info = 'INFORMACIÓN';
   static const String mciId = 'MAC. F4:12:FA:EC:C5:65';
+  static const String clientFile = 'Ficha Cliente';
+  static const String personalData = 'Datos Personales';
+  static const String birthDate = 'Fecha Nacimiento';
+  static const String activities = 'Actividad';
+  static const String cards = 'Bonos';
+  static const String bioimpedancia = 'Bioimpedancia';
+  static const String groupActivities = 'Grupos Activos';
+
 
 
   /// Language codes

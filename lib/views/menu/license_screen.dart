@@ -7,6 +7,7 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/menu/license_controller.dart';
 import 'package:i_model/widgets/overlay/license_detail_overlay.dart';
 import 'package:i_model/widgets/rounded_container.dart';
+import 'package:i_model/widgets/table_text_info.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 
@@ -20,20 +21,6 @@ class LicenseScreen extends StatelessWidget {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
-
-    Widget tableTextInfo({required String title, double? fontSize, Color? color}){
-      return Expanded(
-        child: Container(
-          alignment: Alignment.center,
-          child: TextView.title(
-            title.toUpperCase(),
-            fontSize: fontSize ?? 12.sp,
-            color: color ?? AppColors.pinkColor,
-          ),
-        ),
-      );
-    }
-
 
     return Scaffold(
       body: Container(
@@ -172,7 +159,7 @@ class LicenseScreen extends StatelessWidget {
                                 ],
                               ),
 
-                              SizedBox(height: screenHeight * 0.05,),
+                              SizedBox(height: screenHeight * 0.06,),
 
                               RoundedContainer(
                                   onTap: (){

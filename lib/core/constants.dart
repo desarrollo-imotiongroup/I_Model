@@ -1,5 +1,5 @@
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/models/program_model.dart';
+import 'package:i_model/models/program.dart';
 
 class Consts{
  static const List<Program> individualProgramsList = [

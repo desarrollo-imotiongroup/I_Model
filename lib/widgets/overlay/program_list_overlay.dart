@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/constants.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/models/program_model.dart';
+import 'package:i_model/models/program.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textview.dart';
