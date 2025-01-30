@@ -88,7 +88,7 @@ void licenseDetailOverlay(BuildContext context) {
                   horizontal: screenWidth * 0.035,
                 ),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     /// Info column

@@ -32,7 +32,8 @@ class SettingScreen extends StatelessWidget {
               image: AssetImage(
                 Strings.bgImage,
               ),
-              fit: BoxFit.cover),
+              fit: BoxFit.cover,
+          ),
         ),
         child: Padding(
           padding: EdgeInsets.only(
