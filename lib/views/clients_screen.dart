@@ -7,6 +7,7 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client_controller.dart';
 import 'package:i_model/view_models/login_controller.dart';
 import 'package:i_model/widgets/button.dart';
+import 'package:i_model/widgets/dialog/client_file_dialog.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/menu_widget.dart';
 import 'package:i_model/widgets/overlay/client_list_overlay.dart';
@@ -87,7 +88,8 @@ class ClientScreen extends StatelessWidget {
                               MenuWidget(
                                   title: Strings.clientList.toUpperCase(),
                                   onTap: (){
-                                    clientListOverlay(context);
+                                    clientFileDialog(context);
+                                    // clientListOverlay(context);
                                   },
                               ),
                               SizedBox(height: screenHeight * 0.01,),

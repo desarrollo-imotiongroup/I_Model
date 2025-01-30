@@ -9,51 +9,99 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Data Table Example'),
-        ),
-        body: MyDataTable(),
-      ),
+      home: HomeScreen(),
     );
   }
 }
 
-class MyDataTable extends StatelessWidget {
-  // Example data (replace with your dynamic data)
-  final List<Map<String, String>> data = [
-    {'mci': '354532F223A', 'type': 'BT', 'status': 'ACTIVO'},
-    {'mci': '354532F223A', 'type': 'BLE', 'status': 'ACTIVO'},
-    {'mci': '', 'type': '', 'status': ''},
-    {'mci': '', 'type': '', 'status': ''},
-    {'mci': '', 'type': '', 'status': ''},
-  ];
-
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Table header
-          DataTable(
-            columns: const <DataColumn>[
-              DataColumn(label: Center(child: Text('MCI', textAlign: TextAlign.center,))),
-              DataColumn(label: Text('TIPO')),
-              DataColumn(label: Text('ESTADO')),
-            ],
-            rows: List.generate(
-              data.length,
-                  (index) => DataRow(
-                cells: [
-                  DataCell(Center(child: Text(data[index]['mci'] ?? ''))),
-                  DataCell(Text(data[index]['type'] ?? '')),
-                  DataCell(Text(data[index]['status'] ?? '')),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Custom Dialog with Dropdown'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            showCustomDialog(context);
+          },
+          child: Text('Show Custom Dialog'),
+        ),
+      ),
+    );
+  }
+
+  void showCustomDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.9,  // 90% of screen width
+            height: MediaQuery.of(context).size.height * 0.9,  // 90% of screen height
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Custom Dialog with Dropdown",
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Select an option from the dropdown below:",
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: DropdownWidget(),
+                  ),
+                  // Add more widgets here as needed
                 ],
               ),
             ),
           ),
-        ],
-      ),
+        );
+      },
+    );
+  }
+}
+
+class DropdownWidget extends StatefulWidget {
+  @override
+  _DropdownWidgetState createState() => _DropdownWidgetState();
+}
+
+class _DropdownWidgetState extends State<DropdownWidget> {
+  String? _selectedOption;
+  final List<String> _options = ['Option 1', 'Option 2', 'Option 3', 'Option 4'];
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: _selectedOption,
+      hint: Text("Select Option"),
+      isExpanded: true,
+      items: _options.map((String option) {
+        return DropdownMenuItem<String>(
+          value: option,
+          child: Text(option),
+        );
+      }).toList(),
+      onChanged: (String? newValue) {
+        setState(() {
+          _selectedOption = newValue;
+        });
+      },
     );
   }
 }

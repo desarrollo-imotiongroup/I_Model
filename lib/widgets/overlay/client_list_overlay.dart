@@ -7,6 +7,7 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/program.dart';
 import 'package:i_model/view_models/client_controller.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
+import 'package:i_model/widgets/dialog/client_file_dialog.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/rounded_container.dart';
 import 'package:i_model/widgets/table_text_info.dart';
@@ -20,7 +21,6 @@ void clientListOverlay(BuildContext context) {
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
   final ClientController controller = Get.put(ClientController());
-  List<String> clientStatus = [Strings.active, Strings.inactive, Strings.all];
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(
@@ -132,6 +132,10 @@ void clientListOverlay(BuildContext context) {
                                       itemBuilder: (BuildContext context, int index) {
                                         return  GestureDetector(
                                           onTap: (){
+                                            if (overlayEntry.mounted) {
+                                              overlayEntry.remove();
+                                            }
+                                            clientFileDialog(context);
                                           },
                                           child: Column(
                                             children: [
@@ -215,7 +219,7 @@ void clientListOverlay(BuildContext context) {
                                         padding: EdgeInsets.only(
                                             left: screenWidth * 0.005),
                                         child: TextView.title(
-                                          controller.selectedValue.toUpperCase(),
+                                          controller.selectedStatus.toUpperCase(),
                                           fontSize: 11.sp,
                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                         ),
@@ -238,17 +242,15 @@ void clientListOverlay(BuildContext context) {
                                   width: screenWidth * 0.2,
                                   color: AppColors.greyColor,
                                   child: Column(
-                                    children: clientStatus.map((String value) {
+                                    children: controller.clientStatusList.map((String value) {
                                       return ListTile(
                                         title: TextView.title(
                                             value.toUpperCase(),
                                             fontSize: 11.sp,
                                             color: AppColors.blackColor.withValues(alpha: 0.8)),
                                         onTap: () {
-                                          controller.selectedValue.value =
-                                              value;
-                                          controller.isDropdownOpen.value =
-                                          false;
+                                          controller.selectedStatus.value = value;
+                                          controller.isDropdownOpen.value = false;
                                         },
                                       );
                                     }).toList(),

@@ -69,6 +69,13 @@ class Strings{
   static const String cards = 'Bonos';
   static const String bioimpedancia = 'Bioimpedancia';
   static const String groupActivities = 'Grupos Activos';
+  static const String man = 'Hombre';
+  static const String women = 'Mujer';
+  static const String pleaseSelect = 'por favor seleccione';
+  static const String date = 'FECHA';
+  static const String hour = 'HORA';
+  static const String points = 'PUNTOS';
+  static const String eKcal = 'E-KCAL';
 
 
 
@@ -133,6 +140,7 @@ class Strings{
   static const String iBodyProIcon = 'assets/icons/LOGO IBODYPRO.png';
   static const String newMeasurementIcon = 'assets/icons/new_measurement.png';
   static const String checkIcon = 'assets/icons/check.png';
+  static const String removeIcon = 'assets/icons/papelera.png';
 
 
   ///Automatic program
