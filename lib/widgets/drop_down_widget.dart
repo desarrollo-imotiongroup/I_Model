@@ -9,11 +9,15 @@ class DropDownWidget extends StatelessWidget {
   final String selectedValue;
   final List<dynamic> dropDownList;
   final Function(String value) onChanged;
+  final double? width;
+  final bool? isEnable;
 
   const DropDownWidget(
       {required this.selectedValue,
       required this.dropDownList,
       required this.onChanged,
+      this.width,
+      this.isEnable,
       super.key});
 
   @override
@@ -23,7 +27,7 @@ class DropDownWidget extends StatelessWidget {
     double screenHeight = mediaQuery.size.height;
 
     return RoundedContainer(
-      width: screenWidth * 0.25,
+      width: width ?? screenWidth * 0.25,
       color: AppColors.greyColor,
       borderColor: AppColors.transparentColor,
       widget: DropdownButton<String>(
@@ -50,9 +54,11 @@ class DropDownWidget extends StatelessWidget {
                 color: AppColors.blackColor.withValues(alpha: 0.8)),
           );
         }).toList(),
-        onChanged: (String? value) {
-          onChanged(value!);
-        },
+        onChanged: isEnable ?? true
+            ? (String? value) {
+                onChanged(value!);
+              }
+            : null,
       ),
     );
   }
@@ -62,13 +68,17 @@ class DropDownLabelWidget extends StatelessWidget {
   final String selectedValue;
   final List<dynamic> dropDownList;
   final Function(String value) onChanged;
+  final double? width;
   final String label;
+  final bool? isEnable;
 
   const DropDownLabelWidget(
       {required this.selectedValue,
       required this.dropDownList,
       required this.onChanged,
+      this.width,
       required this.label,
+      this.isEnable = true,
       super.key});
 
   @override
@@ -84,7 +94,7 @@ class DropDownLabelWidget extends StatelessWidget {
             fontSize: 11.sp,
             color: AppColors.blackColor.withValues(alpha: 0.8)),
         RoundedContainer(
-          width: screenWidth * 0.25,
+          width: width ?? screenWidth * 0.25,
           color: AppColors.greyColor,
           borderColor: AppColors.transparentColor,
           widget: DropdownButton<String>(
@@ -111,9 +121,11 @@ class DropDownLabelWidget extends StatelessWidget {
                     color: AppColors.blackColor.withValues(alpha: 0.8)),
               );
             }).toList(),
-            onChanged: (String? value) {
-              onChanged(value!);
-            },
+            onChanged: isEnable ?? true
+                ? (String? value) {
+                    onChanged(value!);
+                  }
+                : null,
           ),
         ),
       ],

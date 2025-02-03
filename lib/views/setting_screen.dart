@@ -29,10 +29,10 @@ class SettingScreen extends StatelessWidget {
         height: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage(
-                Strings.bgImage,
-              ),
-              fit: BoxFit.cover,
+            image: AssetImage(
+              Strings.bgImage,
+            ),
+            fit: BoxFit.cover,
           ),
         ),
         child: Padding(
@@ -104,6 +104,7 @@ class SettingScreen extends StatelessWidget {
                     ],
                   ),
 
+                  /// Displaying data based on click
                   Obx(
                     () => settingScreenController.isIdle.value
                         ? Padding(
@@ -159,6 +160,7 @@ class SettingScreen extends StatelessWidget {
                                       settingScreenController.selectNo();
                                     },
                                   )
+                                    /// Language selection
                                 : settingScreenController.isSelectLanguage.value
                                     ? SelectLanguage(
                                         onCancel: () {
@@ -167,8 +169,6 @@ class SettingScreen extends StatelessWidget {
                                       )
                                     : Container(),
                   )
-
-                  /// Displaying data based on click
                 ],
               )
             ],

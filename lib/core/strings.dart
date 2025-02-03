@@ -76,6 +76,38 @@ class Strings{
   static const String hour = 'HORA';
   static const String points = 'PUNTOS';
   static const String eKcal = 'E-KCAL';
+  static const String addPoints = 'Añadir bonos';
+  static const String consumedPoints = 'Bonos consumidos';
+  static const String availablePoints = 'Bonos disponible';
+  static const String quantity = 'Cantidad';
+  static const String total = 'Total';
+  static const String evolution = 'Evolución';
+  static const String fatFreeHydration = 'Hidratación sin grasa';
+  static const String waterBalance = 'Equilibrio hidrico';
+  static const String imc = 'Imc';
+  static const String bodyFat = 'Masa grasa';
+  static const String muscle = 'Músculo';
+  static const String skeleton = 'Esqueleto';
+  static const String calculatedValue = 'Valor calculado';
+  static const String reference = 'Referencia';
+  static const String result = 'Resultado';
+  static const String toTreat = 'A tratar';
+  static const String toMonitor = 'A vigilar';
+  static const String nearNormal = 'Cerca de la norma';
+  static const String normal = 'NORMAL';
+  static const String veryGood = 'Muy bien';
+  static const String excellent = 'Excelente';
+  static const String upperBack = 'Espalda alta';
+  static const String middleBack = 'Espalda media';
+  static const String lowerBack = 'Lumbares';
+  static const String glutes = 'Glúteos';
+  static const String hamstrings = 'Isquios';
+  static const String chest = 'Pecho';
+  static const String abdominals = 'Abdominales';
+  static const String legs = 'Piernas';
+  static const String arms = 'Brazos';
+  static const String extra = 'Extra';
+
 
 
 
@@ -141,6 +173,20 @@ class Strings{
   static const String newMeasurementIcon = 'assets/icons/new_measurement.png';
   static const String checkIcon = 'assets/icons/check.png';
   static const String removeIcon = 'assets/icons/papelera.png';
+
+  /// Body icons - Grupos Activos - Active groups
+  static const String abdomenBodyIcon = 'assets/body/abdomen.png';
+  static const String avatarBackViewIcon = 'assets/body/Avatar-back-view.png';
+  static const String avatarFrontViewIcon = 'assets/body/Avatar-front-view.png';
+  static const String brazosIcon = 'assets/body/brazos.png';
+  static const String piernasIcon = 'assets/body/cuadriceps.png';
+  static const String espaldaMedia = 'assets/body/dorsales.png';
+  static const String gluteosIcon = 'assets/body/gluteos.png';
+  static const String isquiosIcon = 'assets/body/isquiotibiales.png';
+  static const String lumbaresIcon = 'assets/body/lumbares.png';
+  static const String pechoIcon = 'assets/body/pecho.png';
+  static const String espaldaAlta = 'assets/body/trapecios.png';
+
 
 
   ///Automatic program

@@ -43,6 +43,8 @@ dependencies:
   google_fonts: ^6.2.1
   flutter_screenutil: ^5.9.3
   shared_preferences: ^2.4.0
+  fl_chart: ^0.70.2
+  spider_chart_extended: ^0.0.2
 
 dev_dependencies:
   flutter_localization: ^0.3.1
