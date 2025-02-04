@@ -5,22 +5,23 @@ import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/program.dart';
+import 'package:i_model/view_models/administrator_controller.dart';
 import 'package:i_model/view_models/client_controller.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
-import 'package:i_model/widgets/dialog/client_file_dialog.dart';
+import 'package:i_model/views/dialog/administrator_file_dialog.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/rounded_container.dart';
 import 'package:i_model/widgets/table_text_info.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 
-void clientListOverlay(BuildContext context) {
+void administratorListOverlay(BuildContext context) {
   final overlayState = Overlay.of(context);
   late OverlayEntry overlayEntry;
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
-  final ClientController controller = Get.put(ClientController());
+  final AdministratorController controller = Get.put(AdministratorController());
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(
@@ -43,7 +44,7 @@ void clientListOverlay(BuildContext context) {
           ),
           child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.05
+                horizontal: screenWidth * 0.05
             ),
             child: Column(
               children: [
@@ -55,7 +56,7 @@ void clientListOverlay(BuildContext context) {
                       Expanded(
                         child: Center(
                           child: TextView.title(
-                            Strings.clientList.toUpperCase(),
+                            Strings.administratorList.toUpperCase(),
                             isUnderLine: true,
                             color: AppColors.pinkColor,
                             fontSize: 15.sp,
@@ -88,7 +89,7 @@ void clientListOverlay(BuildContext context) {
                             alignment: Alignment.centerLeft,
                             child: TextFieldLabel(
                               label: Strings.name,
-                              textEditingController: controller.nameController,
+                              textEditingController: controller.administratorNameController,
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.04,),
@@ -135,7 +136,8 @@ void clientListOverlay(BuildContext context) {
                                             if (overlayEntry.mounted) {
                                               overlayEntry.remove();
                                             }
-                                            clientFileDialog(context);
+                                            controller.selectedAdministrator.value = controller.administratorsDetail[index].name;
+                                            administratorFileDialog(context);
                                           },
                                           child: Column(
                                             children: [
@@ -157,17 +159,17 @@ void clientListOverlay(BuildContext context) {
                                                           fontSize: 10.sp,
                                                         ),
                                                         tableTextInfo(
-                                                          title: controller.clientsDetail[index].name,
+                                                          title: controller.administratorsDetail[index].name,
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),
                                                         tableTextInfo(
-                                                          title: controller.clientsDetail[index].phone.toUpperCase(),
+                                                          title: controller.administratorsDetail[index].phone.toUpperCase(),
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),
                                                         tableTextInfo(
-                                                          title: controller.clientsDetail[index].status.toUpperCase(),
+                                                          title: controller.administratorsDetail[index].status.toUpperCase(),
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),
@@ -242,7 +244,7 @@ void clientListOverlay(BuildContext context) {
                                   width: screenWidth * 0.2,
                                   color: AppColors.greyColor,
                                   child: Column(
-                                    children: controller.clientStatusList.map((String value) {
+                                    children: controller.administratorStatusList.map((String value) {
                                       return ListTile(
                                         title: TextView.title(
                                             value.toUpperCase(),

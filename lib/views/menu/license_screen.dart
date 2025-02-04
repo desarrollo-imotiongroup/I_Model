@@ -5,7 +5,7 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/menu/license_controller.dart';
-import 'package:i_model/widgets/overlay/license_detail_overlay.dart';
+import 'package:i_model/views/overlay/license_detail_overlay.dart';
 import 'package:i_model/widgets/rounded_container.dart';
 import 'package:i_model/widgets/table_text_info.dart';
 import 'package:i_model/widgets/textfield_label.dart';

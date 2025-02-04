@@ -11,6 +11,7 @@ class TextFieldLabel extends StatelessWidget {
   final bool? isAllowNumberOnly;
   final TextInputAction? textInputAction;
   final double? fontSize;
+  final double? width;
 
   const TextFieldLabel(
       {super.key,
@@ -20,6 +21,7 @@ class TextFieldLabel extends StatelessWidget {
       this.isAllowNumberOnly,
       this.textInputAction,
       this.fontSize,
+      this.width,
       });
 
   @override
@@ -43,7 +45,7 @@ class TextFieldLabel extends StatelessWidget {
         TextFieldWidget(
           textEditingController: textEditingController,
           bgColor: AppColors.greyColor,
-          width: screenWidth * 0.25,
+          width: width ?? screenWidth * 0.25,
           height: screenHeight * 0.07,
           textInputAction: textInputAction ?? TextInputAction.next,
           textColor: AppColors.blackColor.withValues(alpha: 0.8),

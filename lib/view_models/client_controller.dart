@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:i_model/core/helper_methods.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/client/bioimedancia.dart';
 import 'package:i_model/models/client/client_points.dart';
@@ -10,11 +11,17 @@ import 'package:i_model/models/client/clients.dart';
 class ClientController extends GetxController {
   List<String> clientStatusList = [Strings.active, Strings.inactive, Strings.all];
   List<String> genderList = [Strings.man, Strings.women];
+  RxString selectedClient = ''.obs;
 
   /// Client screen values
   final TextEditingController nameController = TextEditingController();
   RxString selectedStatus = Strings.active.obs;
   var isDropdownOpen = false.obs;
+
+  setClientName(){
+    clientNameController.text = selectedClient.value.toUpperCase();
+    update();
+  }
 
   /// Client Personal data values
   final TextEditingController clientNameController = TextEditingController();
@@ -24,6 +31,27 @@ class ClientController extends GetxController {
   final TextEditingController clientWeightController = TextEditingController();
   final TextEditingController clientEmailController = TextEditingController();
   RxString clientSelectedGender = Strings.nothing.obs;
+
+  @override
+  void onClose() {
+    nameController.dispose();
+    clientNameController.dispose();
+    clientDobController.dispose();
+    clientPhoneController.dispose();
+    clientHeightController.dispose();
+    clientWeightController.dispose();
+    clientEmailController.dispose();
+    super.onClose();
+  }
+
+
+  pickBirthDate(BuildContext context) async {
+    String? birthDate = await HelperMethods.selectDate(context);
+    if(birthDate != null){
+      clientDobController.text = birthDate;
+    }
+    update();
+  }
 
 
   /// Client activity values
@@ -211,9 +239,9 @@ class ClientController extends GetxController {
   /// Group activities
   RxBool isUpperBackChecked = false.obs;
   RxBool isMiddleBackChecked = false.obs;
-  RxBool isLowerBackChecked = false.obs;
+  RxBool isLowerBackChecked = false.obs; /// Lumbares
   RxBool isGlutesChecked = false.obs;
-  RxBool isHamstringsChecked = false.obs;
+  RxBool isHamstringsChecked = false.obs; /// isquios
   RxBool isChestChecked = false.obs;
   RxBool isAbdominalChecked = false.obs;
   RxBool isLegsChecked = false.obs;
@@ -269,5 +297,6 @@ class ClientController extends GetxController {
     isExtraChecked.value = !isExtraChecked.value;
     update();
   }
+
 
 }

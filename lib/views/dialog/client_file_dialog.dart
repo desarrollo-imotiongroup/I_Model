@@ -5,10 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client_controller.dart';
+import 'package:i_model/views/graph/circle_painter.dart';
+import 'package:i_model/views/graph/spider_graph.dart';
+import 'package:i_model/widgets/active_group_icon.dart';
 import 'package:i_model/widgets/check_box.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
-import 'package:i_model/widgets/graph/circle_painter.dart';
-import 'package:i_model/widgets/graph/spider_graph.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/line_graph.dart';
 import 'package:i_model/widgets/rounded_container.dart';
@@ -34,9 +35,6 @@ void clientFileDialog(BuildContext context,) {
         Center(child: LineGraph(flSpotList: controller.skeletonFlSpotList)),
       ];
 
-      bool _isChecked = false;
-
-
       Text subTabBarText(String title, {required int index}){
         return TextView.title(
             title,
@@ -51,6 +49,8 @@ void clientFileDialog(BuildContext context,) {
                 : AppColors.blackColor.withValues(alpha: 0.8)
         );
       }
+
+      controller.setClientName();
 
       return Dialog(
         shape: RoundedRectangleBorder(
@@ -154,6 +154,7 @@ void clientFileDialog(BuildContext context,) {
                                             child: TextFieldLabel(
                                               label: Strings.name,
                                               textEditingController: controller.clientNameController,
+                                              fontSize: 11.sp,
                                             ),
                                           ),
 
@@ -193,9 +194,17 @@ void clientFileDialog(BuildContext context,) {
                                             SizedBox(height: screenHeight * 0.02,),
 
                                             /// Birth date text field
-                                            TextFieldLabel(
-                                                label: Strings.birthDate,
-                                                textEditingController: controller.clientDobController,
+                                            GestureDetector(
+                                              onTap: (){
+                                                controller.pickBirthDate(context);
+                                              },
+                                              child: AbsorbPointer(
+                                                child: TextFieldLabel(
+                                                    label: Strings.birthDate,
+                                                    textEditingController: controller.clientDobController,
+                                                    fontSize: 11.sp,
+                                                ),
+                                              ),
                                             ),
 
                                             SizedBox(height: screenHeight * 0.01,),
@@ -205,6 +214,7 @@ void clientFileDialog(BuildContext context,) {
                                               label: Strings.phone,
                                               textEditingController: controller.clientPhoneController,
                                               isAllowNumberOnly: true,
+                                              fontSize: 11.sp,
                                             )
                                           ],
                                         ),
@@ -217,6 +227,7 @@ void clientFileDialog(BuildContext context,) {
                                               label: Strings.height,
                                               textEditingController: controller.clientHeightController,
                                                isAllowNumberOnly: true,
+                                               fontSize: 11.sp,
                                             ),
 
                                             SizedBox(height: screenHeight * 0.01,),
@@ -226,6 +237,7 @@ void clientFileDialog(BuildContext context,) {
                                               label: Strings.weight,
                                               textEditingController: controller.clientWeightController,
                                               isAllowNumberOnly: true,
+                                              fontSize: 11.sp,
                                             ),
 
                                             SizedBox(height: screenHeight * 0.01,),
@@ -235,6 +247,7 @@ void clientFileDialog(BuildContext context,) {
                                               label: Strings.email,
                                               textEditingController: controller.clientEmailController,
                                               textInputAction: TextInputAction.done,
+                                              fontSize: 11.sp,
                                             )
                                           ],
                                         )
@@ -275,6 +288,7 @@ void clientFileDialog(BuildContext context,) {
                                               label: Strings.name,
                                               textEditingController: controller.clientNameController,
                                               isReadOnly: true,
+                                              fontSize: 11.sp,
                                             ),
                                           ),
 
@@ -430,6 +444,7 @@ void clientFileDialog(BuildContext context,) {
                                               label: Strings.name,
                                               textEditingController: controller.clientNameController,
                                               isReadOnly: true,
+                                              fontSize: 11.sp,
                                             ),
                                           ),
 
@@ -991,6 +1006,7 @@ void clientFileDialog(BuildContext context,) {
                                               label: Strings.name,
                                               textEditingController: controller.clientNameController,
                                               isReadOnly: true,
+                                              fontSize: 11.sp,
                                             ),
                                           ),
 
@@ -1134,6 +1150,7 @@ void clientFileDialog(BuildContext context,) {
                                               label: Strings.name,
                                               textEditingController: controller.clientNameController,
                                               isReadOnly: true,
+                                              fontSize: 11.sp,
                                             ),
                                           ),
 
@@ -1206,11 +1223,34 @@ void clientFileDialog(BuildContext context,) {
                                                 SizedBox(width: screenWidth * 0.05,),
                                                 Stack(
                                                   children: [
+                                                    // First image widget
                                                     imageWidget(
-                                                        image: Strings.avatarBackViewIcon
+                                                      image: Strings.avatarBackViewIcon,
+                                                    ),
+                                                    ActiveGroupIcon(
+                                                        icon: Strings.espaldaAlta,
+                                                        isChecked: controller.isUpperBackChecked.value,
+                                                    ),
+                                                    ActiveGroupIcon(
+                                                      icon: Strings.espaldaMedia,
+                                                      isChecked: controller.isMiddleBackChecked.value,
+                                                    ),
+                                                    ActiveGroupIcon(
+                                                      icon: Strings.lumbaresIcon,
+                                                      isChecked: controller.isLowerBackChecked.value,
+                                                    ),
+                                                    ActiveGroupIcon(
+                                                      icon: Strings.gluteosIcon,
+                                                      isChecked: controller.isGlutesChecked.value,
+                                                    ),
+                                                    ActiveGroupIcon(
+                                                      icon: Strings.isquiosIcon,
+                                                      isChecked: controller.isHamstringsChecked.value,
                                                     ),
                                                   ],
                                                 )
+
+
                                               ],
                                             ),
                                             Row(
@@ -1219,6 +1259,26 @@ void clientFileDialog(BuildContext context,) {
                                                   children: [
                                                     imageWidget(
                                                         image: Strings.avatarFrontViewIcon
+                                                    ),
+                                                    ActiveGroupIcon(
+                                                      icon: Strings.pechoIcon,
+                                                      isChecked: controller.isChestChecked.value,
+                                                    ),
+                                                    ActiveGroupIcon(
+                                                      icon: Strings.abdomenBodyIcon,
+                                                      isChecked: controller.isAbdominalChecked.value,
+                                                    ),
+                                                    ActiveGroupIcon(
+                                                      icon: Strings.piernasIcon,
+                                                      isChecked: controller.isLegsChecked.value,
+                                                    ),
+                                                    ActiveGroupIcon(
+                                                      icon: Strings.brazosIcon,
+                                                      isChecked: controller.isArmsChecked.value,
+                                                    ),
+                                                    ActiveGroupIcon(
+                                                      icon: Strings.extraIcon,
+                                                      isChecked: controller.isExtraChecked.value,
                                                     ),
                                                   ],
                                                 ),
@@ -1241,6 +1301,14 @@ void clientFileDialog(BuildContext context,) {
                                                         controller.toggleAbdominal();
                                                       },),
 
+                                                    /// Arms / Brazos
+                                                    CheckBox(
+                                                      title: Strings.arms,
+                                                      isChecked: controller.isArmsChecked.value,
+                                                      onTap: (){
+                                                        controller.toggleArms();
+                                                      },),
+
                                                     /// Legs / piernas
                                                     CheckBox(
                                                       title: Strings.legs,
@@ -1249,13 +1317,6 @@ void clientFileDialog(BuildContext context,) {
                                                         controller.toggleLegs();
                                                       },),
 
-                                                    /// Arms / Brazos
-                                                    CheckBox(
-                                                      title: Strings.arms,
-                                                      isChecked: controller.isArmsChecked.value,
-                                                      onTap: (){
-                                                        controller.toggleArms();
-                                                      },),
 
                                                     /// Extra
                                                     CheckBox(

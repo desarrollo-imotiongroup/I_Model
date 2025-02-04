@@ -8,6 +8,8 @@ import 'package:i_model/view_models/login_controller.dart';
 import 'package:i_model/view_models/menu/center_management_controller.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/view_models/tutorial_controller.dart';
+import 'package:i_model/views/dialog/create_profile_dialog.dart';
+import 'package:i_model/views/overlay/administrator_list_overlay.dart';
 import 'package:i_model/widgets/button.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/menu_widget.dart';
@@ -87,7 +89,9 @@ class CenterManagementScreen extends StatelessWidget {
                               /// Administrators
                               MenuWidget(
                                 title: Strings.administrators.toUpperCase(),
-                                onTap: () {},
+                                onTap: () {
+                                  administratorListOverlay(context);
+                                },
                               ),
                               SizedBox(
                                 height: screenHeight * 0.01,
@@ -106,7 +110,9 @@ class CenterManagementScreen extends StatelessWidget {
                               /// Create new
                               MenuWidget(
                                 title: Strings.createNew.toUpperCase(),
-                                onTap: () {},
+                                onTap: () {
+                                  createProfileDialog(context);
+                                },
                               )
                             ],
                           ),

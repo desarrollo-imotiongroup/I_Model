@@ -19,6 +19,7 @@ class Strings{
   static const contactWithUsForDevice = 'Contacte con nosotros para obtener nuestro dispositivo de análisis de la composición corporal.';
   static const String selectClient = 'Seleccionar Cliente';
   static const String name = 'Nombre';
+  static const String nick = 'Nick';
   static const String gender = 'Género';
   static const String height = 'Altura (cm)';
   static const String weight = 'Peso (kg)';
@@ -27,7 +28,9 @@ class Strings{
   static const String howToTakeMeasurement = 'Cómo Obtener Una Medida';
   static const String clients = 'Clientes';
   static const String clientList = 'Lista de clientes';
+  static const String administratorList = 'Lista de Administradores';
   static const String createNewClient = 'Crear nuevo cliente';
+  static const String createProfile = 'Crear ficha';
   static const String tutorials = 'Tutoriales';
   static const String firstSteps = 'Primeros pasos';
   static const String software = 'Software';
@@ -63,6 +66,7 @@ class Strings{
   static const String info = 'INFORMACIÓN';
   static const String mciId = 'MAC. F4:12:FA:EC:C5:65';
   static const String clientFile = 'Ficha Cliente';
+  static const String administratorFile = 'Ficha administrador';
   static const String personalData = 'Datos Personales';
   static const String birthDate = 'Fecha Nacimiento';
   static const String activities = 'Actividad';
@@ -107,8 +111,19 @@ class Strings{
   static const String legs = 'Piernas';
   static const String arms = 'Brazos';
   static const String extra = 'Extra';
-
-
+  static const String profile = 'Perfil';
+  static const String registrationDate = 'Fecha alta';
+  static const String sessionControl = 'Control de sesiones';
+  static const String timeControl = 'Control de tiempo';
+  static const String resetPassword = 'Reset password';
+  static const String administrator = 'Administrador';
+  static const String beautician = 'Esteticista';
+  static const String yes = 'Si';
+  static const String no = 'No';
+  static const String start = 'Inicio';
+  static const String end = 'Fin';
+  static const String bonuses = 'Bonos';
+  static const String client = 'Cliente';
 
 
   /// Language codes
@@ -186,8 +201,7 @@ class Strings{
   static const String lumbaresIcon = 'assets/body/lumbares.png';
   static const String pechoIcon = 'assets/body/pecho.png';
   static const String espaldaAlta = 'assets/body/trapecios.png';
-
-
+  static const String extraIcon = 'assets/body/calves.png';
 
   ///Automatic program
   static const String buttocks = 'Buttocks';
