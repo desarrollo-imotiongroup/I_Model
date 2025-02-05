@@ -15,7 +15,6 @@ void licenseDetailOverlay(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
-  final LicenseController controller = Get.put(LicenseController());
 
   mciInfoWidget(String text){
     return TextView.title(
