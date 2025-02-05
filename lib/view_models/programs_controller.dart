@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/program.dart';
+import 'package:i_model/models/sequence.dart';
 
 class ProgramsController extends GetxController{
-  final TextEditingController programNameController = TextEditingController();
+  final TextEditingController individualProgramNameController = TextEditingController();
+  final TextEditingController automaticProgramNameController = TextEditingController();
 
   /// Configuration
   final TextEditingController frequencyController = TextEditingController();
@@ -34,7 +36,7 @@ class ProgramsController extends GetxController{
 
   List<Program> automaticProgramsList = [
     Program(name: Strings.buttocks, image: Strings.buttocksAutoIcon),
-    Program(name: Strings.cellulite, image: Strings.celluliteAutoIcon),
+    Program(name: Strings.cellulite, image: Strings.celluliteAutoIcon,),
     Program(name: Strings.hypertrophy, image: Strings.hypertrophyAutoIcon),
     Program(name: Strings.pelvicFloor, image: Strings.pelvicFloorAutoIcon),
     Program(name: Strings.slim, image: Strings.slimAutoIcon),
@@ -129,10 +131,86 @@ class ProgramsController extends GetxController{
     update();
   }
 
+  /// Automatic program tab
+  RxList<dynamic> individualProgramSequenceList = [].obs;
+
+  removeProgram(int index){
+    individualProgramSequenceList.removeAt(index);
+    update();
+  }
+
+  /// Create sequence
+  final TextEditingController orderController = TextEditingController();
+  final TextEditingController durationController = TextEditingController();
+  final TextEditingController adjustmentController = TextEditingController();
+  RxString selectedProgram = Strings.nothing.obs;
+
+  List<String> individualProgramOptionList = [
+    Strings.celluliteIndProgram,
+    Strings.buttocksIndProgram,
+    Strings.contractures,
+    Strings.drainage,
+    Strings.hypertrophyIndProgram,
+    Strings.pelvicFloorIndProgram,
+    Strings.slimIndProgram,
+    Strings.toningIndProgram,
+    Strings.massage,
+    Strings.metabolic,
+    Strings.calibration,
+    Strings.strength,
+  ];
+
+  createSequence(BuildContext context) {
+    if (orderController.text.isNotEmpty &&
+        durationController.text.isNotEmpty &&
+        adjustmentController.text.isNotEmpty &&
+        selectedProgram.value != Strings.nothing) {
+
+      individualProgramSequenceList.add(
+        Sequence(
+          program: selectedProgram.value,
+          order: int.parse(orderController.text),
+          duration: int.parse(durationController.text),
+          adjustment: int.parse(adjustmentController.text),
+        ),
+      );
+      clearSequenceFields();
+      Navigator.pop(context);
+    }
+  }
+
+  void clearAllFields() {
+    individualProgramNameController.clear();
+    frequencyController.clear();
+    pulseController.clear();
+    rampController.clear();
+    contractionController.clear();
+    pauseController.clear();
+    upperBackController.clear();
+    middleBackController.clear();
+    lowerBackController.clear();
+    glutesController.clear();
+    hamstringsController.clear();
+    chestController.clear();
+    abdomenController.clear();
+    legsController.clear();
+    armsController.clear();
+    extraController.clear();
+    orderController.clear();
+    durationController.clear();
+    adjustmentController.clear();
+  }
+
+  clearSequenceFields(){
+    orderController.clear();
+    durationController.clear();
+    adjustmentController.clear();
+    selectedProgram.value = Strings.nothing;
+  }
 
   @override
   void onClose() {
-    programNameController.dispose();
+    individualProgramNameController.dispose();
     frequencyController.dispose();
     pulseController.dispose();
     rampController.dispose();
@@ -148,6 +226,9 @@ class ProgramsController extends GetxController{
     legsController.dispose();
     armsController.dispose();
     extraController.dispose();
+    orderController.dispose();
+    durationController.dispose();
+    adjustmentController.dispose();
     super.onClose();
   }
 

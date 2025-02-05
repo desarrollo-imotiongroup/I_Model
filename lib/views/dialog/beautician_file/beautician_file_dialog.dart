@@ -18,6 +18,7 @@ void beauticianFileDialog(BuildContext context,) {
   final BeauticianController controller = Get.put(BeauticianController());
 
   showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       controller.setInitialNickName();

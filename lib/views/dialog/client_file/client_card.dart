@@ -200,79 +200,77 @@ class ClientCard extends StatelessWidget {
                       SizedBox(height: screenHeight * 0.02,),
                       /// Table
                       Expanded(
-                        child: SizedBox(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                /// Table headers
-                                Row(
-                                  children: [
-                                    tableTextInfo(
-                                      title: Strings.date,
-                                      fontSize: 10.sp,
-                                    ),
-                                    tableTextInfo(
-                                      title: Strings.hour,
-                                      fontSize: 10.sp,
-                                    ),
-                                    tableTextInfo(
-                                      title: Strings.quantity,
-                                      fontSize: 10.sp,
-                                    ),
-                                    SizedBox(width: screenWidth * 0.02,),
-                                  ],
-                                ),
-                                SizedBox(height: screenHeight * 0.005,),
-                                CustomContainer(
-                                  height: screenHeight * 0.25,
-                                  width: double.infinity,
-                                  color: AppColors.greyColor,
-                                  widget: ListView.builder(
-                                    padding: EdgeInsets.zero,
-                                    itemCount: controller.consumedPoints.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return  GestureDetector(
-                                        onTap: (){},
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01,
-                                              ),
-                                              child: RoundedContainer(
-                                                  width: double.infinity,
-                                                  borderColor: AppColors.transparentColor,
-                                                  borderRadius: screenWidth * 0.006,
-                                                  color: AppColors.pureWhiteColor,
-                                                  widget: Row(
-                                                    children: [
-                                                      /// Table cells info
-                                                      tableTextInfo(
-                                                        title: controller.consumedPoints[index].date!,
-                                                        color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                        fontSize: 10.sp,
-                                                      ),
-                                                      tableTextInfo(
-                                                        title: controller.consumedPoints[index].hour.toString(),
-                                                        color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                        fontSize: 10.sp,
-                                                      ),
-                                                      tableTextInfo(
-                                                        title: controller.consumedPoints[index].quantity.toString(),
-                                                        color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                        fontSize: 10.sp,
-                                                      ),
-                                                    ],
-                                                  )
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              /// Table headers
+                              Row(
+                                children: [
+                                  tableTextInfo(
+                                    title: Strings.date,
+                                    fontSize: 10.sp,
                                   ),
+                                  tableTextInfo(
+                                    title: Strings.hour,
+                                    fontSize: 10.sp,
+                                  ),
+                                  tableTextInfo(
+                                    title: Strings.quantity,
+                                    fontSize: 10.sp,
+                                  ),
+                                  SizedBox(width: screenWidth * 0.02,),
+                                ],
+                              ),
+                              SizedBox(height: screenHeight * 0.005,),
+                              CustomContainer(
+                                height: screenHeight * 0.25,
+                                width: double.infinity,
+                                color: AppColors.greyColor,
+                                widget: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  itemCount: controller.consumedPoints.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return  GestureDetector(
+                                      onTap: (){},
+                                      child: Column(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01,
+                                            ),
+                                            child: RoundedContainer(
+                                                width: double.infinity,
+                                                borderColor: AppColors.transparentColor,
+                                                borderRadius: screenWidth * 0.006,
+                                                color: AppColors.pureWhiteColor,
+                                                widget: Row(
+                                                  children: [
+                                                    /// Table cells info
+                                                    tableTextInfo(
+                                                      title: controller.consumedPoints[index].date!,
+                                                      color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                      fontSize: 10.sp,
+                                                    ),
+                                                    tableTextInfo(
+                                                      title: controller.consumedPoints[index].hour.toString(),
+                                                      color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                      fontSize: 10.sp,
+                                                    ),
+                                                    tableTextInfo(
+                                                      title: controller.consumedPoints[index].quantity.toString(),
+                                                      color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                      fontSize: 10.sp,
+                                                    ),
+                                                  ],
+                                                )
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

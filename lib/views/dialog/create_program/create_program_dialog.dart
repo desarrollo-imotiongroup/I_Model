@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
+import 'package:i_model/views/dialog/create_program/automatic/automatic_program.dart';
 import 'package:i_model/widgets/overlay/box_decoration.dart';
-import 'package:i_model/views/dialog/create_program/active_groups.dart';
-import 'package:i_model/views/dialog/create_program/configuration.dart';
-import 'package:i_model/views/dialog/create_program/cronaxia.dart';
+import 'package:i_model/views/dialog/create_program/individual/active_groups.dart';
+import 'package:i_model/views/dialog/create_program/individual/configuration.dart';
+import 'package:i_model/views/dialog/create_program/individual/cronaxia.dart';
 import 'package:i_model/widgets/overlay/tab_header.dart';
 import 'package:i_model/widgets/overlay/top_title_button.dart';
 
@@ -15,6 +16,7 @@ void createProgramDialog(BuildContext context,) {
 
 
   showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       return Dialog(
@@ -87,7 +89,10 @@ void createProgramDialog(BuildContext context,) {
                                 ),
                               ),
                               /// Automatics
-                              Container(),
+                              SizedBox(
+                                height: screenHeight * 0.6,
+                                child: AutomaticProgram(),
+                              ),
                             ],
                           ),
                         ),

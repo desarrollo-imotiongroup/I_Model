@@ -19,6 +19,7 @@ void clientFileDialog(BuildContext context) {
   final ClientController controller = Get.put(ClientController());
 
   showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       controller.setClientName();

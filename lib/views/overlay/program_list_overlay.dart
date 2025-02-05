@@ -61,7 +61,7 @@ void programListOverlay(
                       onTap: (){
                         controller.setProgramDetails(
                             name: programList[index].name,
-                            image: programList[index].image
+                            image: programList[index].image!
                         );
                         if (overlayEntry.mounted) {
                           overlayEntry.remove();

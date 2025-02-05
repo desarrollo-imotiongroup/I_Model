@@ -5,7 +5,6 @@ class RoundedContainer extends StatelessWidget {
   final Widget widget;
   final double? borderRadius;
   final double? width;
-  final double? height;
   final Color? color;
   final EdgeInsets? padding;
   final Function()? onTap;
@@ -15,7 +14,6 @@ class RoundedContainer extends StatelessWidget {
     required this.widget,
     this.borderRadius,
     this.width,
-    this.height,
     this.color,
     this.onTap,
     this.padding,
@@ -88,6 +86,7 @@ class CustomContainer extends StatelessWidget {
   final Color? color;
   final EdgeInsets? padding;
   final Function()? onTap;
+  final Color? borderColor;
 
   const CustomContainer({
     required this.widget,
@@ -96,6 +95,7 @@ class CustomContainer extends StatelessWidget {
     this.color,
     this.onTap,
     this.padding,
+    this.borderColor,
     super.key});
 
   @override
@@ -113,7 +113,7 @@ class CustomContainer extends StatelessWidget {
               color: color,
               borderRadius: BorderRadius.circular(screenHeight * 0.01),
               border: Border.all(
-                  color: AppColors.transparentColor
+                  color: borderColor ?? AppColors.transparentColor
               )
           ),
           child: Center(child: Padding(

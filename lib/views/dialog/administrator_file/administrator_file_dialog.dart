@@ -18,6 +18,7 @@ void administratorFileDialog(BuildContext context,) {
   final AdministratorController controller = Get.put(AdministratorController());
 
   showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
       controller.setInitialNickName();

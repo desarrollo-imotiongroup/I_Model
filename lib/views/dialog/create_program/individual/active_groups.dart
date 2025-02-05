@@ -29,7 +29,7 @@ class ActiveGroups extends StatelessWidget {
               Expanded(
                 child: TextFieldLabel(
                   label: Strings.programName2,
-                  textEditingController: controller.programNameController,
+                  textEditingController: controller.individualProgramNameController,
                   fontSize: 11.sp,
                   isReadOnly: true,
                 ),

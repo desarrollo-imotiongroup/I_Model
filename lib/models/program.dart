@@ -1,6 +1,6 @@
 class Program {
   final String name;
-  final String image;
+  final String? image;
   final int? frequency;
   final int? pulse;
   final int? ramp;
@@ -9,7 +9,7 @@ class Program {
 
   Program({
     required this.name,
-    required this.image,
+    this.image,
     this.frequency,
     this.pulse,
     this.ramp,

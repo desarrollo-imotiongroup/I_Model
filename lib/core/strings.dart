@@ -38,6 +38,7 @@ class Strings{
   static const String license = 'Licencia';
   static const String howToPrepareEquipment = 'Como preparar el equipo para el tratamiento';
   static const String programs = 'Programas';
+  static const String program = 'Programa';
   static const String individuals = 'Individuales';
   static const String createProgram = 'Crear programa';
   static const String centerManagement = 'Gestión de centros';
@@ -139,6 +140,12 @@ class Strings{
   static const String pant = 'Pantalón';
   static const String configurationTab = 'Configuración';
   static const String cronaxiaTab = 'Cronaxia';
+  static const String createSequence = 'Crear secuencia';
+  static const String programSelection = 'Selección programa';
+  static const String order = 'Orden';
+  static const String duration = 'Duración';
+  static const String adjustment = 'Ajuste';
+  static const String action = 'Acción';
 
   /// Language codes
   static const String englishLanguageCode = 'en';

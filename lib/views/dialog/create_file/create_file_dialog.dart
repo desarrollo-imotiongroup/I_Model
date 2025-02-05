@@ -13,6 +13,7 @@ void createFileDialog(BuildContext context,) {
   double screenHeight = mediaQuery.size.height;
 
   showDialog(
+    barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
 
