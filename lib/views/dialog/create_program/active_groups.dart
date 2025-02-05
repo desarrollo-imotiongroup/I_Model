@@ -7,7 +7,6 @@ import 'package:i_model/widgets/active_group_icon.dart';
 import 'package:i_model/widgets/check_box.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
-import 'package:i_model/widgets/text_field_image.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 
 class ActiveGroups extends StatelessWidget {

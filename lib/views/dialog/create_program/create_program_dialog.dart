@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/widgets/overlay/box_decoration.dart';
 import 'package:i_model/views/dialog/create_program/active_groups.dart';
 import 'package:i_model/views/dialog/create_program/configuration.dart';
@@ -14,7 +12,6 @@ void createProgramDialog(BuildContext context,) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
-  final ProgramsController controller = Get.put(ProgramsController());
 
 
   showDialog(

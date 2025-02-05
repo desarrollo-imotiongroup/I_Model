@@ -13,7 +13,6 @@ void createFileDialog(BuildContext context,) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
-  final CreateProfileController controller = Get.put(CreateProfileController());
 
   showDialog(
     context: context,

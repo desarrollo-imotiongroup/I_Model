@@ -5,7 +5,6 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
-import 'package:i_model/widgets/text_field_image.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 
 class Cronaxia extends StatelessWidget {

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/beautician_controller.dart';
-import 'package:i_model/views/dialog/administrator_file/administrator_file_dialog.dart';
 import 'package:i_model/views/dialog/beautician_file/beautician_file_dialog.dart';
 import 'package:i_model/widgets/overlay/box_decoration.dart';
 import 'package:i_model/widgets/overlay/top_title_button.dart';
