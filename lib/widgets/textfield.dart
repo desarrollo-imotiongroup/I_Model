@@ -18,6 +18,7 @@ class TextFieldWidget extends StatelessWidget {
   final Color? cursorColor;
   final TextInputAction? textInputAction;
   final bool? isReadyOnly;
+  final Function(String)? onChanged;
 
 
   const TextFieldWidget(
@@ -36,7 +37,8 @@ class TextFieldWidget extends StatelessWidget {
         this.hintTextColor,
         this.cursorColor,
         this.textInputAction,
-        this.isReadyOnly
+        this.isReadyOnly,
+        this.onChanged,
       });
 
   @override
@@ -54,10 +56,11 @@ class TextFieldWidget extends StatelessWidget {
         child: TextField(
           controller: textEditingController,
           obscureText:obscureText?? false,
-          cursorHeight: 16.sp,
+          cursorHeight: 12.sp,
           keyboardType: textInputType??TextInputType.text,
           cursorColor: cursorColor?? AppColors.lightBlack,
           readOnly: isReadyOnly ?? false ? true : false,
+          onChanged: onChanged,
           style: TextStyle(
             color: textColor ?? AppColors.lightBlack,
             fontSize: fontSize ?? 15.sp,

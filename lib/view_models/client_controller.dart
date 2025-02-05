@@ -236,7 +236,7 @@ class ClientController extends GetxController {
   ].obs;
 
 
-  /// Group activities
+  /// Active Groups
   RxBool isUpperBackChecked = false.obs;
   RxBool isMiddleBackChecked = false.obs;
   RxBool isLowerBackChecked = false.obs; /// Lumbares

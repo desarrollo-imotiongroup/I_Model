@@ -2,7 +2,7 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/program.dart';
 
 class Consts{
- static const List<Program> individualProgramsList = [
+ static List<Program> individualProgramsList = [
     Program(name: Strings.celluliteIndProgram, image: Strings.celluliteIcon),
     Program(name: Strings.buttocksIndProgram, image: Strings.buttocksIndividualIcon),
     Program(name: Strings.contractures, image: Strings.contracturesIcon),
@@ -17,7 +17,7 @@ class Consts{
     Program(name: Strings.strength, image: Strings.strengthIcon),
  ];
 
- static const List<Program> automaticProgramsList = [
+ static List<Program> automaticProgramsList = [
     Program(name: Strings.buttocks, image: Strings.buttocksAutoIcon),
     Program(name: Strings.cellulite, image: Strings.celluliteAutoIcon),
     Program(name: Strings.hypertrophy, image: Strings.hypertrophyAutoIcon),

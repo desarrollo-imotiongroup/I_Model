@@ -1,6 +1,19 @@
 class Program {
   final String name;
   final String image;
+  final int? frequency;
+  final int? pulse;
+  final int? ramp;
+  final int? contraction;
+  final int? pause;
 
-  const Program({required this.image, required this.name});
+  Program({
+    required this.name,
+    required this.image,
+    this.frequency,
+    this.pulse,
+    this.ramp,
+    this.contraction,
+    this.pause,
+  });
 }

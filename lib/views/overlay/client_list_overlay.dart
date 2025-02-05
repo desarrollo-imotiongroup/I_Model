@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/constants.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/models/program.dart';
 import 'package:i_model/view_models/client_controller.dart';
-import 'package:i_model/view_models/dashboard_controller.dart';
-import 'package:i_model/views/dialog/client_file_dialog.dart';
-import 'package:i_model/widgets/image_widget.dart';
+import 'package:i_model/views/dialog/client_file/client_file_dialog.dart';
+import 'package:i_model/widgets/overlay/box_decoration.dart';
+import 'package:i_model/widgets/overlay/top_title_button.dart';
 import 'package:i_model/widgets/rounded_container.dart';
 import 'package:i_model/widgets/table_text_info.dart';
 import 'package:i_model/widgets/textfield_label.dart';
@@ -29,18 +27,7 @@ void clientListOverlay(BuildContext context) {
         child: Container(
           width: screenWidth * 0.8,
           height: screenHeight * 0.85,
-          decoration: BoxDecoration(
-            color: AppColors.pureWhiteColor,
-            borderRadius: BorderRadius.circular(screenHeight * 0.02),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3),
-                spreadRadius: 3,
-                blurRadius: 2,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
+          decoration: boxDecoration(context),
           child: Padding(
             padding: EdgeInsets.symmetric(
               horizontal: screenWidth * 0.05
@@ -50,32 +37,14 @@ void clientListOverlay(BuildContext context) {
                 SizedBox(height: screenWidth * 0.015),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Center(
-                          child: TextView.title(
-                            Strings.clientList.toUpperCase(),
-                            isUnderLine: true,
-                            color: AppColors.pinkColor,
-                            fontSize: 15.sp,
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          controller.isDropdownOpen.value = false;
-                          if (overlayEntry.mounted) {
-                            overlayEntry.remove();
-                          }
-                        },
-                        child: Icon(
-                          Icons.close_sharp,
-                          size: screenHeight * 0.04,
-                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                        ),
-                      ),
-                    ],
+                  child: TopTitleButton(
+                      title: Strings.clientList,
+                      onCancel: (){
+                        controller.isDropdownOpen.value = false;
+                        if (overlayEntry.mounted) {
+                          overlayEntry.remove();
+                        }
+                      },
                   ),
                 ),
                 Divider(color: AppColors.pinkColor),

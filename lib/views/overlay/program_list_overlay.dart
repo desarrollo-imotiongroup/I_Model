@@ -7,6 +7,8 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/program.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/widgets/image_widget.dart';
+import 'package:i_model/widgets/overlay/box_decoration.dart';
+import 'package:i_model/widgets/overlay/top_title_button.dart';
 import 'package:i_model/widgets/textview.dart';
 
 void programListOverlay(
@@ -27,51 +29,19 @@ void programListOverlay(
         child: Container(
           width: screenWidth * 0.8,
           height: screenHeight * 0.85, // Ensure overlay height remains fixed
-          decoration: BoxDecoration(
-            color: AppColors.pureWhiteColor,
-            borderRadius: BorderRadius.circular(screenHeight * 0.02),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.3), // Fixed shadow issue
-                spreadRadius: 3,
-                blurRadius: 2,
-                offset: Offset(0, 3),
-              ),
-            ],
-          ),
+          decoration: boxDecoration(context),
           child: Column(
             children: [
               SizedBox(height: screenWidth * 0.015),
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Center(
-                        child: TextView.title(
-                          Strings.selectProgram.toUpperCase(),
-                          isUnderLine: true,
-                          color: AppColors.pinkColor,
-                          fontSize: 15.sp,
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        if (overlayEntry.mounted) {
-                          overlayEntry.remove();
-                        }
-                      },
-                      child: Padding(
-                        padding: EdgeInsets.only(right: screenWidth * 0.015),
-                        child: Icon(
-                          Icons.close_sharp,
-                          size: screenHeight * 0.04,
-                          color: AppColors.blackColor.withOpacity(0.8),
-                        ),
-                      ),
-                    ),
-                  ],
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                child: TopTitleButton(
+                  title: Strings.selectProgram,
+                  onCancel: (){
+                    if (overlayEntry.mounted) {
+                      overlayEntry.remove();
+                    }
+                  },
                 ),
               ),
 
@@ -103,8 +73,8 @@ void programListOverlay(
                         children: [
                           TextView.title(
                             programList[index].name,
-                            fontSize: 14.sp,
-                            color: AppColors.blackColor.withOpacity(0.8),
+                            fontSize: 13.sp,
+                            color: AppColors.blackColor.withValues(alpha: 0.8),
                           ),
                           SizedBox(height: screenHeight * 0.01),
                           imageWidget(

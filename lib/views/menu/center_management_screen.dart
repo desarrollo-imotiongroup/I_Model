@@ -8,8 +8,9 @@ import 'package:i_model/view_models/login_controller.dart';
 import 'package:i_model/view_models/menu/center_management_controller.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/view_models/tutorial_controller.dart';
-import 'package:i_model/views/dialog/create_profile_dialog.dart';
+import 'package:i_model/views/dialog/create_file/create_file_dialog.dart';
 import 'package:i_model/views/overlay/administrator_list_overlay.dart';
+import 'package:i_model/views/overlay/beautician_list_overlay.dart';
 import 'package:i_model/widgets/button.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/menu_widget.dart';
@@ -100,7 +101,9 @@ class CenterManagementScreen extends StatelessWidget {
                               /// Beauticians list
                               MenuWidget(
                                 title: Strings.beauticiansList.toUpperCase(),
-                                onTap: () {},
+                                onTap: () {
+                                  beauticianListOverlay(context);
+                                },
                               ),
 
                               SizedBox(
@@ -111,7 +114,7 @@ class CenterManagementScreen extends StatelessWidget {
                               MenuWidget(
                                 title: Strings.createNew.toUpperCase(),
                                 onTap: () {
-                                  createProfileDialog(context);
+                                  createFileDialog(context);
                                 },
                               )
                             ],

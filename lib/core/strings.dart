@@ -67,12 +67,13 @@ class Strings{
   static const String mciId = 'MAC. F4:12:FA:EC:C5:65';
   static const String clientFile = 'Ficha Cliente';
   static const String administratorFile = 'Ficha administrador';
+  static const String beauticianFile = 'Ficha esteticístas';
   static const String personalData = 'Datos Personales';
   static const String birthDate = 'Fecha Nacimiento';
   static const String activities = 'Actividad';
   static const String cards = 'Bonos';
   static const String bioimpedancia = 'Bioimpedancia';
-  static const String groupActivities = 'Grupos Activos';
+  static const String activeGroups = 'Grupos Activos';
   static const String man = 'Hombre';
   static const String women = 'Mujer';
   static const String pleaseSelect = 'por favor seleccione';
@@ -108,6 +109,7 @@ class Strings{
   static const String hamstrings = 'Isquios';
   static const String chest = 'Pecho';
   static const String abdominals = 'Abdominales';
+  static const String abdomen = 'Abdomen';
   static const String legs = 'Piernas';
   static const String arms = 'Brazos';
   static const String extra = 'Extra';
@@ -124,7 +126,19 @@ class Strings{
   static const String end = 'Fin';
   static const String bonuses = 'Bonos';
   static const String client = 'Cliente';
-
+  static const String programName = 'Nombre programa';
+  static const String frequency = 'Frecuencia';
+  static const String pulse = 'Pulso';
+  static const String ramp = 'Rampa';
+  static const String contraction = 'Contracción';
+  static const String pause = 'Pausa';
+  static const String programNumber = 'Número del programa';
+  static const String programName2 = 'Nombre del programa';
+  static const String equipment = 'Equipamiento';
+  static const String bioJacket = 'Bio-Jacket';
+  static const String pant = 'Pantalón';
+  static const String configurationTab = 'Configuración';
+  static const String cronaxiaTab = 'Cronaxia';
 
   /// Language codes
   static const String englishLanguageCode = 'en';
@@ -133,18 +147,6 @@ class Strings{
   static const String portugueseLanguageCode = 'pt';
   static const String italianLanguageCode = 'it';
   static const String frenchLanguageCode = 'fr';
-
-
-  /// Routes
-  static const String initialScreen = '/';
-  static const String menuScreen = '/MenuScreen';
-  static const String settingScreen = '/SettingScreen';
-  static const String dashboardScreen = '/DashboardScreen';
-  static const String clientScreen = '/ClientScreen';
-  static const String tutorialScreen = '/TutorialScreen';
-  static const String programsScreen = '/ProgramsScreen';
-  static const String licenseScreen = '/LicenseScreen';
-  static const String centerManagementScreen = '/CenterManagementScreen';
 
   ///Images (Icons)
   static const String bgImage = 'assets/icons/bg_image.jpg';
@@ -188,6 +190,11 @@ class Strings{
   static const String newMeasurementIcon = 'assets/icons/new_measurement.png';
   static const String checkIcon = 'assets/icons/check.png';
   static const String removeIcon = 'assets/icons/papelera.png';
+  static const String pauseProgramIcon = 'assets/icons/pause_programa.png';
+  static const String contractionIcon = 'assets/icons/contraction.png';
+  static const String rampIcon = 'assets/icons/ramp.png';
+
+
 
   /// Body icons - Grupos Activos - Active groups
   static const String abdomenBodyIcon = 'assets/body/abdomen.png';
@@ -278,4 +285,17 @@ class Strings{
   static const String min_28_icon = 'assets/counter/28-MIN.png';
   static const String min_29_icon = 'assets/counter/29-MIN.png';
   static const String min_30_icon = 'assets/counter/30-MIN.png';
+
+
+
+  /// Routes
+  static const String initialScreen = '/';
+  static const String menuScreen = '/MenuScreen';
+  static const String settingScreen = '/SettingScreen';
+  static const String dashboardScreen = '/DashboardScreen';
+  static const String clientScreen = '/ClientScreen';
+  static const String tutorialScreen = '/TutorialScreen';
+  static const String programsScreen = '/ProgramsScreen';
+  static const String licenseScreen = '/LicenseScreen';
+  static const String centerManagementScreen = '/CenterManagementScreen';
 }

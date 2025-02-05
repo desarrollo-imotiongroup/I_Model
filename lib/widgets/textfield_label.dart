@@ -12,17 +12,21 @@ class TextFieldLabel extends StatelessWidget {
   final TextInputAction? textInputAction;
   final double? fontSize;
   final double? width;
+  final String? unit;
+  final Function(String)? onChanged;
 
-  const TextFieldLabel(
-      {super.key,
-      required this.label,
-      required this.textEditingController,
-      this.isReadOnly,
-      this.isAllowNumberOnly,
-      this.textInputAction,
-      this.fontSize,
-      this.width,
-      });
+  const TextFieldLabel({
+    super.key,
+    required this.label,
+    required this.textEditingController,
+    this.isReadOnly,
+    this.isAllowNumberOnly,
+    this.textInputAction,
+    this.fontSize,
+    this.width,
+    this.unit,
+    this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +40,21 @@ class TextFieldLabel extends StatelessWidget {
         SizedBox(
           height: screenHeight * 0.015,
         ),
-        TextView.title(label.toUpperCase(),
-            color: AppColors.blackColor.withValues(alpha: 0.8),
-            fontSize: 11.sp),
+        Row(
+          children: [
+            TextView.title(label.toUpperCase(),
+                color: AppColors.blackColor.withValues(alpha: 0.8),
+                fontSize: 11.sp),
+            TextView.title(unit ?? '',
+                fontSize: 11.sp,
+                color: AppColors.blackColor.withValues(alpha: 0.8)),
+          ],
+        ),
         SizedBox(
           height: screenHeight * 0.005,
         ),
         TextFieldWidget(
+          onChanged: onChanged,
           textEditingController: textEditingController,
           bgColor: AppColors.greyColor,
           width: width ?? screenWidth * 0.25,

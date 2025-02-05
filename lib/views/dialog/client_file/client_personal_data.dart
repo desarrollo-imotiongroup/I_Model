@@ -1,0 +1,151 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:i_model/core/strings.dart';
+import 'package:i_model/view_models/client_controller.dart';
+import 'package:i_model/widgets/drop_down_widget.dart';
+import 'package:i_model/widgets/image_widget.dart';
+import 'package:i_model/widgets/textfield_label.dart';
+
+class ClientPersonalData extends StatelessWidget {
+  const ClientPersonalData({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    MediaQueryData mediaQuery = MediaQuery.of(context);
+    double screenHeight = mediaQuery.size.height;
+    final ClientController controller = Get.put(ClientController());
+
+    return Obx(
+          () => Column(
+        children: [
+          /// Name text field and status drop down
+          Padding(
+            padding: EdgeInsets.only(top: screenHeight * 0.01),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: TextFieldLabel(
+                    label: Strings.name,
+                    textEditingController: controller.clientNameController,
+                    fontSize: 11.sp,
+                  ),
+                ),
+
+                /// Client status drop down
+                DropDownWidget(
+                  selectedValue: controller.selectedStatus.value,
+                  dropDownList: controller.clientStatusList,
+                  onChanged: (value){
+                    controller.selectedStatus.value = value;
+                  },
+                )
+              ],
+            ),
+          ),
+
+          SizedBox(height: screenHeight * 0.015,),
+          ///  TextFields
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              /// TextFields 1st column
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  /// Gender text field
+                  SizedBox(height: screenHeight * 0.025,),
+
+                  DropDownLabelWidget(
+                      selectedValue: controller.clientSelectedGender.value,
+                      dropDownList: controller.genderList,
+                      onChanged: (value){
+                        controller.clientSelectedGender.value = value;
+                      },
+                      label: Strings.gender
+                  ),
+                  SizedBox(height: screenHeight * 0.02,),
+
+                  /// Birth date text field
+                  GestureDetector(
+                    onTap: (){
+                      controller.pickBirthDate(context);
+                    },
+                    child: AbsorbPointer(
+                      child: TextFieldLabel(
+                        label: Strings.birthDate,
+                        textEditingController: controller.clientDobController,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: screenHeight * 0.01,),
+
+                  /// Phone text field
+                  TextFieldLabel(
+                    label: Strings.phone,
+                    textEditingController: controller.clientPhoneController,
+                    isAllowNumberOnly: true,
+                    fontSize: 11.sp,
+                  )
+                ],
+              ),
+
+              /// TextFields 2nd column
+              Column(
+                children: [
+                  /// Height text field
+                  TextFieldLabel(
+                    label: Strings.height,
+                    textEditingController: controller.clientHeightController,
+                    isAllowNumberOnly: true,
+                    fontSize: 11.sp,
+                  ),
+
+                  SizedBox(height: screenHeight * 0.01,),
+
+                  /// Weight text field
+                  TextFieldLabel(
+                    label: Strings.weight,
+                    textEditingController: controller.clientWeightController,
+                    isAllowNumberOnly: true,
+                    fontSize: 11.sp,
+                  ),
+
+                  SizedBox(height: screenHeight * 0.01,),
+
+                  /// Email text field
+                  TextFieldLabel(
+                    label: Strings.email,
+                    textEditingController: controller.clientEmailController,
+                    textInputAction: TextInputAction.done,
+                    fontSize: 11.sp,
+                  )
+                ],
+              )
+            ],
+          ),
+
+          SizedBox(height: screenHeight * 0.02,),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              imageWidget(
+                  image: Strings.removeIcon,
+                  height: screenHeight * 0.08
+              ),
+              imageWidget(
+                  image: Strings.checkIcon,
+                  height: screenHeight * 0.08
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+}

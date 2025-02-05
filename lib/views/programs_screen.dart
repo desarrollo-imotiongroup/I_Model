@@ -7,6 +7,8 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/login_controller.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/view_models/tutorial_controller.dart';
+import 'package:i_model/views/dialog/create_program/create_program_dialog.dart';
+import 'package:i_model/views/overlay/individual_programs_overlay.dart';
 import 'package:i_model/widgets/button.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/menu_widget.dart';
@@ -85,7 +87,9 @@ class ProgramsScreen extends StatelessWidget {
                               /// Individuals
                               MenuWidget(
                                 title: Strings.individuals.toUpperCase(),
-                                onTap: (){},
+                                onTap: (){
+                                  individualProgramsOverlay(context);
+                                },
                               ),
                               SizedBox(height: screenHeight * 0.01,),
 
@@ -100,7 +104,9 @@ class ProgramsScreen extends StatelessWidget {
                               /// Create program
                               MenuWidget(
                                 title: Strings.createProgram.toUpperCase(),
-                                onTap: (){},
+                                onTap: (){
+                                  createProgramDialog(context);
+                                },
                               )
                             ],
                           ),

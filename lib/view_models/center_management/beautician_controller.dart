@@ -6,13 +6,13 @@ import 'package:i_model/models/administrator_activity.dart';
 import 'package:i_model/models/client/client_points.dart';
 import 'package:i_model/models/client/clients.dart';
 
-class AdministratorController extends GetxController{
+class BeauticianController extends GetxController{
   /// Administrator list values
-  final TextEditingController administratorNameController = TextEditingController();
-  List<String> administratorStatusList = [Strings.active, Strings.inactive, Strings.all];
+  final TextEditingController beauticianNameController = TextEditingController();
+  List<String> statusOptions = [Strings.active, Strings.inactive, Strings.all];
   RxString selectedStatus = Strings.active.obs;
   var isDropdownOpen = false.obs;
-  RxString selectedAdministrator = ''.obs;
+  RxString selectedBeautician = ''.obs;
 
   /// Personal data
   final TextEditingController perDataNameController = TextEditingController();
@@ -30,7 +30,7 @@ class AdministratorController extends GetxController{
 
 
   setInitialNickName(){
-    nickNameController.text = selectedAdministrator.value.toUpperCase();
+    nickNameController.text = selectedBeautician.value.toUpperCase();
     update();
   }
 
@@ -51,7 +51,7 @@ class AdministratorController extends GetxController{
   }
 
   /// Administrators list
-  RxList<dynamic> administratorsDetail = [
+  RxList<dynamic> beauticiansList = [
     Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
     Client(id: '1', name: 'Monica', phone: '666 666 666', status: Strings.inactive),
     Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
@@ -99,7 +99,7 @@ class AdministratorController extends GetxController{
   ].obs;
 
   /// Administrator activities
-  RxList<AdministratorActivity> administratorActivity = [
+  RxList<AdministratorActivity> beauticiansActivity = [
     AdministratorActivity(date: '2025-02-01', start: '10:00', end: '12:00', bonuses: '200', client: 'Client 1'),
     AdministratorActivity(date: '2025-02-02', start: '11:15', end: '13:30', bonuses: '350', client: 'Client 2'),
     AdministratorActivity(date: '2025-02-03', start: '09:30', end: '11:45', bonuses: '150', client: 'Client 3'),
@@ -112,48 +112,13 @@ class AdministratorController extends GetxController{
     AdministratorActivity(date: '2025-02-10', start: '13:15', end: '15:00', bonuses: '200', client: 'Client 10'),
   ].obs;
 
-  /// Create profile - Crear nuevo
-  final TextEditingController createProfileNameController = TextEditingController();
-  final TextEditingController createProfileNickNameController = TextEditingController();
-  final TextEditingController createProfileBirthDateController = TextEditingController();
-  final TextEditingController createProfileRegistrationDateController = TextEditingController();
-  List<String> createProfileOptions = [Strings.administrator, Strings.beautician];
-  List<String> createProfileGenderOptions = [Strings.man, Strings.women];
-  List<String> createProfileSessionControlOptions = [Strings.yes, Strings.no];
-  List<String> createProfileTimeControlOptions = [Strings.yes, Strings.no];
-  RxString createProfileSelectedProfile = ''.obs;
-  RxString createProfileSelectedSessionControl = ''.obs;
-  RxString createProfileSelectedTimeControl = ''.obs;
-  RxString createProfileSelectedGender = ''.obs;
-  RxString createProfileSelectedStatus = Strings.active.obs;
-
-  createProfilePickBirthDate(BuildContext context) async {
-    String? birthDate = await HelperMethods.selectDate(context);
-    if(birthDate != null){
-      createProfileBirthDateController.text = birthDate;
-    }
-    update();
-  }
-
-  createProfilePickRegistrationDate(BuildContext context) async {
-    String? registrationDate = await HelperMethods.selectDate(context);
-    if(registrationDate != null) {
-      createProfileRegistrationDateController.text = registrationDate;
-    }
-    update();
-  }
-
   @override
   void onClose() {
-    administratorNameController.dispose();
+    beauticianNameController.dispose();
     perDataNameController.dispose();
     nickNameController.dispose();
     birthDateController.dispose();
     registrationDateController.dispose();
-    createProfileNameController.dispose();
-    createProfileNickNameController.dispose();
-    createProfileBirthDateController.dispose();
-    createProfileRegistrationDateController.dispose();
     super.onClose();
   }
 
