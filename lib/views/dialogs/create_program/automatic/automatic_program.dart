@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
-import 'package:i_model/views/dialog/create_program/automatic/create_sequence_dialog.dart';
+import 'package:i_model/views/dialogs/create_program/automatic/create_sequence_dialog.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/rounded_container.dart';

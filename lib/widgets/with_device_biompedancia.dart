@@ -24,7 +24,7 @@ void withDeviceBiompedancia(BuildContext context) {
       child: Center(
         child: Container(
           width: screenWidth * 0.7,
-          height: screenHeight * 0.95, // Ensure overlay height remains fixed
+          height: screenHeight * 0.95, // Ensure overlays height remains fixed
           decoration: BoxDecoration(
             color: AppColors.pureWhiteColor,
             borderRadius: BorderRadius.circular(screenHeight * 0.02),

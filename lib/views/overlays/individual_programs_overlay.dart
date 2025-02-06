@@ -25,7 +25,7 @@ void individualProgramsOverlay(BuildContext context) {
       child: Center(
         child: Container(
           width: screenWidth * 0.8,
-          height: screenHeight * 0.85, // Ensure overlay height remains fixed
+          height: screenHeight * 0.85, // Ensure overlays height remains fixed
           decoration: boxDecoration(context),
           child: Column(
             children: [

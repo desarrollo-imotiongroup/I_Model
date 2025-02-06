@@ -146,6 +146,7 @@ class Strings{
   static const String duration = 'Duración';
   static const String adjustment = 'Ajuste';
   static const String action = 'Acción';
+  static const String calves = 'Calves';
 
   /// Language codes
   static const String englishLanguageCode = 'en';
@@ -200,7 +201,7 @@ class Strings{
   static const String pauseProgramIcon = 'assets/icons/pause_programa.png';
   static const String contractionIcon = 'assets/icons/contraction.png';
   static const String rampIcon = 'assets/icons/ramp.png';
-
+  static const String calvesIcon = 'assets/icons/calves.png';
 
 
   /// Body icons - Grupos Activos - Active groups

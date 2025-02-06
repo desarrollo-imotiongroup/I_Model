@@ -19,7 +19,7 @@ class HelperMethods{
             buttonTheme: ButtonThemeData(
               textTheme: ButtonTextTheme.primary, // Color of buttons (cancel, ok)
             ),
-            dialogBackgroundColor: Colors.white, // Background color of the dialog
+            dialogBackgroundColor: Colors.white, // Background color of the dialogs
           ),
           child: child!,
         );

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/views/clients_screen.dart';
-import 'package:i_model/views/dashboard_screen.dart';
+import 'package:i_model/views/dashboard/dashboard_screen.dart';
 import 'package:i_model/views/login_screen.dart';
 import 'package:i_model/views/menu/center_management_screen.dart';
 import 'package:i_model/views/menu/license_screen.dart';

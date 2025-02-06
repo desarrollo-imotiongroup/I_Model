@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/center_management/beautician_controller.dart';
-import 'package:i_model/views/dialog/beautician_file/beautician_file_dialog.dart';
+import 'package:i_model/view_models/center_management/administrator_controller.dart';
+import 'package:i_model/views/dialogs/administrator_file/administrator_file_dialog.dart';
 import 'package:i_model/widgets/overlay/box_decoration.dart';
 import 'package:i_model/widgets/overlay/top_title_button.dart';
 import 'package:i_model/widgets/rounded_container.dart';
@@ -12,13 +12,13 @@ import 'package:i_model/widgets/table_text_info.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 
-void beauticianListOverlay(BuildContext context) {
+void administratorListOverlay(BuildContext context) {
   final overlayState = Overlay.of(context);
   late OverlayEntry overlayEntry;
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
-  final BeauticianController controller = Get.put(BeauticianController());
+  final AdministratorController controller = Get.put(AdministratorController());
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(
@@ -38,13 +38,13 @@ void beauticianListOverlay(BuildContext context) {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
                   child: TopTitleButton(
-                      title: Strings.beauticiansList,
-                      onCancel: () {
-                        controller.isDropdownOpen.value = false;
-                        if (overlayEntry.mounted) {
-                          overlayEntry.remove();
-                        }
-                      },
+                    title: Strings.administratorList,
+                    onCancel: (){
+                      controller.isDropdownOpen.value = false;
+                      if (overlayEntry.mounted) {
+                        overlayEntry.remove();
+                      }
+                    },
                   ),
                 ),
                 Divider(color: AppColors.pinkColor),
@@ -57,7 +57,7 @@ void beauticianListOverlay(BuildContext context) {
                             alignment: Alignment.centerLeft,
                             child: TextFieldLabel(
                               label: Strings.name,
-                              textEditingController: controller.beauticianNameController,
+                              textEditingController: controller.administratorNameController,
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.04,),
@@ -104,8 +104,8 @@ void beauticianListOverlay(BuildContext context) {
                                             if (overlayEntry.mounted) {
                                               overlayEntry.remove();
                                             }
-                                            controller.selectedBeautician.value = controller.beauticiansList[index].name;
-                                            beauticianFileDialog(context);
+                                            controller.selectedAdministrator.value = controller.administratorsList[index].name;
+                                            administratorFileDialog(context);
                                           },
                                           child: Column(
                                             children: [
@@ -127,17 +127,17 @@ void beauticianListOverlay(BuildContext context) {
                                                           fontSize: 10.sp,
                                                         ),
                                                         tableTextInfo(
-                                                          title: controller.beauticiansList[index].name,
+                                                          title: controller.administratorsList[index].name,
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),
                                                         tableTextInfo(
-                                                          title: controller.beauticiansList[index].phone.toUpperCase(),
+                                                          title: controller.administratorsList[index].phone.toUpperCase(),
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),
                                                         tableTextInfo(
-                                                          title: controller.beauticiansList[index].status.toUpperCase(),
+                                                          title: controller.administratorsList[index].status.toUpperCase(),
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),

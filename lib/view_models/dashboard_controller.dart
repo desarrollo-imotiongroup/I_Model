@@ -16,6 +16,7 @@ class DashboardController extends GetxController {
   RxInt lumbarPercentage = 0.obs;
   RxInt buttocksPercentage = 0.obs;
   RxInt hamStringsPercentage = 0.obs;
+  RxInt calvesPercentage = 0.obs;
   RxString selectedProgramType = Strings.individual.obs;
   RxString selectedProgramName = Strings.cellulite.obs;
   RxString selectedProgramImage = Strings.celluliteIcon.obs;
@@ -34,6 +35,7 @@ class DashboardController extends GetxController {
   Color lumbarsIntensityColor = AppColors.lowIntensityColor;
   Color buttocksIntensityColor = AppColors.lowIntensityColor;
   Color hamstringsIntensityColor = AppColors.lowIntensityColor;
+  Color calvesIntensityColor = AppColors.lowIntensityColor;
 
   /// Timer values
   int initialMinutes = 25;
@@ -151,7 +153,9 @@ class DashboardController extends GetxController {
       isMiddleBack = false,
       isLumbars = false,
       isButtocks = false,
-      isHamstrings = false}) {
+      isHamstrings = false,
+      isCalves = false
+      }) {
 
     /// Chest intensity color
     if (isChest) {
@@ -296,6 +300,22 @@ class DashboardController extends GetxController {
         hamstringsIntensityColor = AppColors.highIntensityColor;
       }
     }
+
+    /// Calves intensity color
+    if (isCalves) {
+      if (intensity > 0 && intensity < 15) {
+        calvesIntensityColor = AppColors.lowIntensityColor;
+      }
+      if (intensity >= 15 && intensity < 30) {
+        calvesIntensityColor = AppColors.lowMediumIntensityColor;
+      }
+      if (intensity >= 30 && intensity < 50) {
+        calvesIntensityColor = AppColors.mediumHighIntensityColor;
+      }
+      if (intensity >= 50) {
+        calvesIntensityColor = AppColors.highIntensityColor;
+      }
+    }
     update();
   }
 
@@ -429,58 +449,84 @@ class DashboardController extends GetxController {
     update();
   }
 
+  void changeCalvesPercentage(
+      {bool isDecrease = false, bool isIncrease = false}) {
+    if (isIncrease) {
+      calvesPercentage.value = clampValue(
+          calvesPercentage.value + 1, minPercentage, maxPercentage);
+    }
+    if (isDecrease) {
+      calvesPercentage.value = clampValue(
+          calvesPercentage.value - 1, minPercentage, maxPercentage);
+    }
+    calculateIntensityColor(calvesPercentage.value);
+    update();
+  }
+
   changeAllProgramsPercentage(
       {bool isDecrease = false, bool isIncrease = false}) {
     if (isIncrease) {
-      chestPercentage.value =
-          clampValue(chestPercentage.value + 1, minPercentage, maxPercentage);
-      armsPercentage.value =
-          clampValue(armsPercentage.value + 1, minPercentage, maxPercentage);
-      abdomenPercentage.value =
-          clampValue(abdomenPercentage.value + 1, minPercentage, maxPercentage);
-      legsPercentage.value =
-          clampValue(legsPercentage.value + 1, minPercentage, maxPercentage);
-      upperBackPercentage.value = clampValue(
-          upperBackPercentage.value + 1, minPercentage, maxPercentage);
-      middleBackPercentage.value = clampValue(
-          middleBackPercentage.value + 1, minPercentage, maxPercentage);
-      lumbarPercentage.value =
-          clampValue(lumbarPercentage.value + 1, minPercentage, maxPercentage);
-      buttocksPercentage.value = clampValue(
-          buttocksPercentage.value + 1, minPercentage, maxPercentage);
-      hamStringsPercentage.value = clampValue(
-          hamStringsPercentage.value + 1, minPercentage, maxPercentage);
+      if(isPantSelected.value){
+        armsPercentage.value = clampValue(armsPercentage.value + 1, minPercentage, maxPercentage);
+        abdomenPercentage.value = clampValue(abdomenPercentage.value + 1, minPercentage, maxPercentage);
+        legsPercentage.value = clampValue(legsPercentage.value + 1, minPercentage, maxPercentage);
+        buttocksPercentage.value = clampValue(buttocksPercentage.value + 1, minPercentage, maxPercentage);
+        hamStringsPercentage.value = clampValue(hamStringsPercentage.value + 1, minPercentage, maxPercentage);
+        calvesPercentage.value = clampValue(calvesPercentage.value + 1, minPercentage, maxPercentage);
+      }
+      else {
+        chestPercentage.value = clampValue(chestPercentage.value + 1, minPercentage, maxPercentage);
+        armsPercentage.value = clampValue(armsPercentage.value + 1, minPercentage, maxPercentage);
+        abdomenPercentage.value = clampValue(abdomenPercentage.value + 1, minPercentage, maxPercentage);
+        legsPercentage.value = clampValue(legsPercentage.value + 1, minPercentage, maxPercentage);
+        upperBackPercentage.value = clampValue(upperBackPercentage.value + 1, minPercentage, maxPercentage);
+        middleBackPercentage.value = clampValue(middleBackPercentage.value + 1, minPercentage, maxPercentage);
+        lumbarPercentage.value = clampValue(lumbarPercentage.value + 1, minPercentage, maxPercentage);
+        buttocksPercentage.value = clampValue(buttocksPercentage.value + 1, minPercentage, maxPercentage);
+        hamStringsPercentage.value = clampValue(hamStringsPercentage.value + 1, minPercentage, maxPercentage);
+      }
     }
     if (isDecrease) {
-      chestPercentage.value =
-          clampValue(chestPercentage.value - 1, minPercentage, maxPercentage);
-      armsPercentage.value =
-          clampValue(armsPercentage.value - 1, minPercentage, maxPercentage);
-      abdomenPercentage.value =
-          clampValue(abdomenPercentage.value - 1, minPercentage, maxPercentage);
-      legsPercentage.value =
-          clampValue(legsPercentage.value - 1, minPercentage, maxPercentage);
-      upperBackPercentage.value = clampValue(
-          upperBackPercentage.value - 1, minPercentage, maxPercentage);
-      middleBackPercentage.value = clampValue(
-          middleBackPercentage.value - 1, minPercentage, maxPercentage);
-      lumbarPercentage.value =
-          clampValue(lumbarPercentage.value - 1, minPercentage, maxPercentage);
-      buttocksPercentage.value = clampValue(
-          buttocksPercentage.value - 1, minPercentage, maxPercentage);
-      hamStringsPercentage.value = clampValue(
-          hamStringsPercentage.value - 1, minPercentage, maxPercentage);
+      if(isPantSelected.value){
+        armsPercentage.value = clampValue(armsPercentage.value - 1, minPercentage, maxPercentage);
+        abdomenPercentage.value = clampValue(abdomenPercentage.value - 1, minPercentage, maxPercentage);
+        legsPercentage.value = clampValue(legsPercentage.value - 1, minPercentage, maxPercentage);
+        buttocksPercentage.value = clampValue(buttocksPercentage.value - 1, minPercentage, maxPercentage);
+        hamStringsPercentage.value = clampValue(hamStringsPercentage.value - 1, minPercentage, maxPercentage);
+        calvesPercentage.value = clampValue(calvesPercentage.value - 1, minPercentage, maxPercentage);
+      }
+      else {
+        chestPercentage.value = clampValue(chestPercentage.value - 1, minPercentage, maxPercentage);
+        armsPercentage.value = clampValue(armsPercentage.value - 1, minPercentage, maxPercentage);
+        abdomenPercentage.value = clampValue(abdomenPercentage.value - 1, minPercentage, maxPercentage);
+        legsPercentage.value = clampValue(legsPercentage.value - 1, minPercentage, maxPercentage);
+        upperBackPercentage.value = clampValue(upperBackPercentage.value - 1, minPercentage, maxPercentage);
+        middleBackPercentage.value = clampValue(middleBackPercentage.value - 1, minPercentage, maxPercentage);
+        lumbarPercentage.value = clampValue(lumbarPercentage.value - 1, minPercentage, maxPercentage);
+        buttocksPercentage.value = clampValue(buttocksPercentage.value - 1, minPercentage, maxPercentage);
+        hamStringsPercentage.value = clampValue(hamStringsPercentage.value - 1, minPercentage, maxPercentage);
+      }
     }
 
-    calculateIntensityColor(chestPercentage.value, isChest: true);
-    calculateIntensityColor(armsPercentage.value, isArms: true);
-    calculateIntensityColor(abdomenPercentage.value, isAbdomen: true);
-    calculateIntensityColor(legsPercentage.value, isLegs: true);
-    calculateIntensityColor(upperBackPercentage.value, isUpperBack: true);
-    calculateIntensityColor(middleBackPercentage.value, isMiddleBack: true);
-    calculateIntensityColor(lumbarPercentage.value, isLumbars: true);
-    calculateIntensityColor(buttocksPercentage.value, isButtocks: true);
-    calculateIntensityColor(hamStringsPercentage.value, isHamstrings: true);
+    if(isPantSelected.value){
+      calculateIntensityColor(armsPercentage.value, isArms: true);
+      calculateIntensityColor(abdomenPercentage.value, isAbdomen: true);
+      calculateIntensityColor(legsPercentage.value, isLegs: true);
+      calculateIntensityColor(buttocksPercentage.value, isButtocks: true);
+      calculateIntensityColor(hamStringsPercentage.value, isHamstrings: true);
+      calculateIntensityColor(calvesPercentage.value, isCalves: true);
+    }
+    else{
+      calculateIntensityColor(chestPercentage.value, isChest: true);
+      calculateIntensityColor(armsPercentage.value, isArms: true);
+      calculateIntensityColor(abdomenPercentage.value, isAbdomen: true);
+      calculateIntensityColor(legsPercentage.value, isLegs: true);
+      calculateIntensityColor(upperBackPercentage.value, isUpperBack: true);
+      calculateIntensityColor(middleBackPercentage.value, isMiddleBack: true);
+      calculateIntensityColor(lumbarPercentage.value, isLumbars: true);
+      calculateIntensityColor(buttocksPercentage.value, isButtocks: true);
+      calculateIntensityColor(hamStringsPercentage.value, isHamstrings: true);
+    }
 
     update();
   }

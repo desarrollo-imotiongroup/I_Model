@@ -13,10 +13,10 @@ class DashboardBodyProgram extends StatelessWidget {
   final Function()? onIncrease;
   final Function()? onDecrease;
   final double? topPadding;
-  bool isImageLeading;
+  final bool isImageLeading;
   final Color? intensityColor;
 
-  DashboardBodyProgram(
+  const DashboardBodyProgram(
       {required this.title,
       required this.image,
       required this.percentage,
@@ -36,7 +36,7 @@ class DashboardBodyProgram extends StatelessWidget {
     return Column(
       children: [
         SizedBox(height: topPadding ?? screenHeight * 0.025),
-        TextView.title(title,
+        TextView.title(title.toUpperCase(),
             fontSize: 11.sp,
             color: AppColors.blackColor.withValues(alpha: 0.8)),
         SizedBox(
