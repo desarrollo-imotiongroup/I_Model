@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/widgets/rounded_container.dart';
+import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/textview.dart';
 
 class DropDownWidget extends StatelessWidget {

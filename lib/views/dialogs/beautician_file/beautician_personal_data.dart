@@ -6,7 +6,7 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/beautician_controller.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
-import 'package:i_model/widgets/rounded_container.dart';
+import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 
