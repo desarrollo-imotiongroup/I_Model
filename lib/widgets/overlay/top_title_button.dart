@@ -6,10 +6,18 @@ import 'package:i_model/widgets/textview.dart';
 class TopTitleButton extends StatelessWidget {
   final String title;
   final Function()? onCancel;
+  final Color? textColor;
+  final bool isCancelNeeded;
+  final bool isAlert;
+  final bool isUnderLine;
 
   const TopTitleButton({
     required this.title,
     this.onCancel,
+    this.textColor,
+    this.isCancelNeeded = true,
+    this.isAlert = false,
+    this.isUnderLine = true,
     super.key});
 
   @override
@@ -23,13 +31,14 @@ class TopTitleButton extends StatelessWidget {
           child: Center(
             child: TextView.title(
               title.toUpperCase(),
-              isUnderLine: true,
-              color: AppColors.pinkColor,
-              fontSize: 15.sp,
+              isUnderLine: isUnderLine ? true : false,
+              color: textColor ?? AppColors.pinkColor,
+              fontSize: isAlert ? 13.sp : 15.sp,
             ),
           ),
         ),
-        GestureDetector(
+        isCancelNeeded
+        ? GestureDetector(
           onTap: onCancel ?? () {
             Navigator.pop(context);
           },
@@ -38,7 +47,8 @@ class TopTitleButton extends StatelessWidget {
             size: screenHeight * 0.04,
             color: AppColors.blackColor.withValues(alpha: 0.8),
           ),
-        ),
+        )
+        : Container(),
       ],
     );
   }

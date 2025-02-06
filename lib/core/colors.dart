@@ -15,6 +15,7 @@ class AppColors{
   static const transparentColor = Colors.transparent;
   static const greenColor = Color(0xFF5EFF01);
   static const redColor = Color(0xFFFA7F81);
+  static const darkRedColor = Color(0xFFF44236);
 
   /// Intensity colors
   static const lowIntensityColor = Color(0xFFB8FFB6);

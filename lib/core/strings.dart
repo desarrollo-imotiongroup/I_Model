@@ -149,6 +149,20 @@ class Strings{
   static const String calves = 'Calves';
   static const String automaticProgrammes = 'Programas automáticos';
   static const String celluliteProgramDescription = 'Basado en el programa individual de celulitis. Perfecto para tratar la celulitis y la flacidez corporal.';
+  static const String newPassword = 'Nueva contraseña';
+  static const String repeatPassword = 'Repetir contraseña';
+  static const String logIn = 'Iniciar sesión';
+  static const String closeApplication = '¿Cerrar aplicación?';
+  static const String cancel = 'Cancelar';
+  static const String closeApplicationButton = 'Cerrar aplicación';
+  static const String alertCompleteForm = '¡Alerta!';
+  static const String mustCompleteForm = 'Debes completar el formulario para continuar';
+  static const String gotIt = '¡Entendido!';
+  static const String confirmDeletion = 'Confirmar eliminación';
+  static const String deleteClientDesc = '¿Estás seguro de que deseas eliminar este cliente?';
+  static const String yesDelete = '¡Sí, estoy seguro!';
+  static const String logout = '¿Cerrar sesión?';
+  static const String logOutButton = 'Cerrar sesión';
 
 
   /// Language codes
