@@ -101,7 +101,7 @@ class AutomaticProgram extends StatelessWidget {
                                               fontSize: 10.sp,
                                             ),
                                             tableTextInfo(
-                                              title: controller.individualProgramSequenceList[index].program.toString(),
+                                              title: controller.individualProgramSequenceList[index].name.toString(),
                                               color: AppColors.blackColor.withValues(alpha: 0.8),
                                               fontSize: 10.sp,
                                             ),

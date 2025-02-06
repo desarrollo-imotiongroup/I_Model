@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/program.dart';
-import 'package:i_model/models/sequence.dart';
+import 'package:i_model/models/program_details.dart';
 
 class ProgramsController extends GetxController{
   final TextEditingController individualProgramNameController = TextEditingController();
@@ -167,8 +167,8 @@ class ProgramsController extends GetxController{
         selectedProgram.value != Strings.nothing) {
 
       individualProgramSequenceList.add(
-        Sequence(
-          program: selectedProgram.value,
+        ProgramDetails(
+          name: selectedProgram.value,
           order: int.parse(orderController.text),
           duration: int.parse(durationController.text),
           adjustment: int.parse(adjustmentController.text),
@@ -178,6 +178,32 @@ class ProgramsController extends GetxController{
       Navigator.pop(context);
     }
   }
+
+  /// Automatic program from program screen
+  RxString selectedProgramName = Strings.nothing.obs;
+  RxString selectedProgramImage = Strings.nothing.obs;
+
+  setProgramDetails({required String name, required String image}){
+    selectedProgramName.value = name;
+    selectedProgramImage.value = image;
+    update();
+  }
+  
+  /// Selected Program 
+  RxList<ProgramDetails> selectedProgramDetails = [
+    ProgramDetails(order: 1, name: 'CALIBRACIÓN', duration: 1, adjustment: 0),
+    ProgramDetails(order: 2, name: 'METABOLIC', duration: 1, adjustment: 7),
+    ProgramDetails(order: 3, name: 'CELLULITE', duration: 1, adjustment: -5),
+    ProgramDetails(order: 4, name: 'CARDIO', duration: 1, adjustment: 2),
+    ProgramDetails(order: 5, name: 'STRENGTH', duration: 1, adjustment: 3),
+    ProgramDetails(order: 6, name: 'RELAXATION', duration: 1, adjustment: -2),
+    ProgramDetails(order: 7, name: 'PILATES', duration: 1, adjustment: 4),
+    ProgramDetails(order: 8, name: 'YOGA', duration: 1, adjustment: 0),
+    ProgramDetails(order: 9, name: 'MASSAGE', duration: 1, adjustment: 1),
+    ProgramDetails(order: 10, name: 'DETOX', duration: 1, adjustment: -3),
+  ].obs;
+
+
 
   void clearAllFields() {
     individualProgramNameController.clear();

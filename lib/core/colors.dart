@@ -9,8 +9,9 @@ class AppColors{
   static const darkGrey2 = Color(0xFF575956);
   static const lightBlack = Color.fromRGBO(25, 31, 39, 1);
   static const lightGrey = Color.fromRGBO(246, 246, 248, 1);
-  static const pinkColor = Color(0xFFD280B0);
   static const greyColor = Color(0xFFE0E0E0);
+  static const seperatorColor = Color(0x80E0E0E0);
+  static const pinkColor = Color(0xFFD280B0);
   static const transparentColor = Colors.transparent;
   static const greenColor = Color(0xFF5EFF01);
   static const redColor = Color(0xFFFA7F81);

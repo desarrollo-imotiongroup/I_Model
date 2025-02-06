@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/views/dialogs/create_program/create_program_dialog.dart';
+import 'package:i_model/views/overlays/automatic_program_overlay.dart';
 import 'package:i_model/views/overlays/individual_programs_overlay.dart';
+import 'package:i_model/views/overlays/program_list_overlay.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/menu_widget.dart';
 import 'package:i_model/widgets/textview.dart';
@@ -92,7 +95,12 @@ class ProgramsScreen extends StatelessWidget {
                               /// Automatics
                               MenuWidget(
                                 title: Strings.automatics.toUpperCase(),
-                                onTap: (){},
+                                onTap: (){
+                                  automaticProgramOverlay(
+                                      context,
+                                      programList: programsController.automaticProgramsList
+                                  );
+                                },
                               ),
 
                               SizedBox(height: screenHeight * 0.01,),

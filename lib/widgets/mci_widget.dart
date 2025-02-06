@@ -48,7 +48,7 @@ class MciWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   TextView.title(
-                      mciName,
+                      mciName.toUpperCase(),
                       fontSize: 9.sp,
                       color: AppColors.blackColor.withValues(alpha: 0.7)
                   ),

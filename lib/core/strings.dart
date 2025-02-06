@@ -147,6 +147,9 @@ class Strings{
   static const String adjustment = 'Ajuste';
   static const String action = 'Acción';
   static const String calves = 'Calves';
+  static const String automaticProgrammes = 'Programas automáticos';
+  static const String celluliteProgramDescription = 'Basado en el programa individual de celulitis. Perfecto para tratar la celulitis y la flacidez corporal.';
+
 
   /// Language codes
   static const String englishLanguageCode = 'en';
@@ -189,7 +192,7 @@ class Strings{
   static const String arrowUp = 'assets/counter/ARROW-UP.png';
   static const String pauseIcon = 'assets/icons/pause.png';
   static const String playIcon = 'assets/icons/play.png';
-  static const String selectCustomerIcon = 'assets/icons/select_customer.png';
+  static const String selectClientIcon = 'assets/icons/select_customer.png';
   static const String ekCalIcon = 'assets/icons/ekcal-icon.png';
   static const String resetIcon = 'assets/icons/RESET-control-panel.png';
   static const String activeIcon = 'assets/icons/green-lighting-ACTIVE.png';

@@ -3,8 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/client_controller.dart';
-import 'package:i_model/views/dialogs/client_file/client_file_dialog.dart';
+import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/widgets/overlay/box_decoration.dart';
 import 'package:i_model/widgets/overlay/top_title_button.dart';
 import 'package:i_model/widgets/rounded_container.dart';
@@ -12,13 +11,13 @@ import 'package:i_model/widgets/table_text_info.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 
-void clientListOverlay(BuildContext context) {
+void selectClientOverlay(BuildContext context) {
   final overlayState = Overlay.of(context);
   late OverlayEntry overlayEntry;
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
-  final ClientController controller = Get.put(ClientController());
+  final DashboardController controller = Get.put(DashboardController());
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(
@@ -30,7 +29,7 @@ void clientListOverlay(BuildContext context) {
           decoration: boxDecoration(context),
           child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: screenWidth * 0.05
+                horizontal: screenWidth * 0.05
             ),
             child: Column(
               children: [
@@ -38,13 +37,13 @@ void clientListOverlay(BuildContext context) {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
                   child: TopTitleButton(
-                      title: Strings.clientList,
-                      onCancel: (){
-                        controller.isDropdownOpen.value = false;
-                        if (overlayEntry.mounted) {
-                          overlayEntry.remove();
-                        }
-                      },
+                    title: Strings.selectClient,
+                    onCancel: (){
+                      controller.isDropdownOpen.value = false;
+                      if (overlayEntry.mounted) {
+                        overlayEntry.remove();
+                      }
+                    },
                   ),
                 ),
                 Divider(color: AppColors.pinkColor),
@@ -102,11 +101,11 @@ void clientListOverlay(BuildContext context) {
                                       itemBuilder: (BuildContext context, int index) {
                                         return  GestureDetector(
                                           onTap: (){
+                                            controller.selectedClient.value = controller.clientsListDetail[index].name;
                                             if (overlayEntry.mounted) {
                                               overlayEntry.remove();
                                             }
-                                            controller.selectedClient.value = controller.clientsListDetail[index].name;
-                                            clientFileDialog(context);
+
                                           },
                                           child: Column(
                                             children: [

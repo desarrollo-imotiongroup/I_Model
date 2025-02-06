@@ -218,7 +218,7 @@ class ClientController extends GetxController {
   ];
 
 
-  RxList<dynamic> clientsDetail = [
+  RxList<dynamic> clientsListDetail = [
     Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
     Client(id: '1', name: 'Monica', phone: '666 666 666', status: Strings.inactive),
     Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),

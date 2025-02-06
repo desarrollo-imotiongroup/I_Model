@@ -31,7 +31,7 @@ class LinePainterWidget extends StatelessWidget {
         SizedBox(height: screenHeight * 0.006,),
         CustomPaint(
           size: Size(
-            screenWidth * 0.15,
+            screenWidth * 0.2,
             screenHeight * 0.03,
           ),
           painter: LinePainter(

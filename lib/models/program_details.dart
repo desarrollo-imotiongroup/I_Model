@@ -1,13 +1,13 @@
-class Sequence {
+class ProgramDetails {
   final int adjustment;
   final int duration;
   final int order;
-  final String program;
+  final String name;
 
-  Sequence({
+  ProgramDetails({
     required this.adjustment,
     required this.duration,
     required this.order,
-    required this.program,
+    required this.name,
   });
 }

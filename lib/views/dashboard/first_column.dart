@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
+import 'package:i_model/views/overlays/select_client_overlay.dart';
 import 'package:i_model/widgets/dashboard_body_program.dart';
 import 'package:i_model/widgets/image_widget.dart';
 
@@ -27,9 +28,14 @@ class DashboardFirstColumn extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                imageWidget(
-                  image: Strings.selectCustomerIcon,
-                  height: screenHeight * 0.08,
+                GestureDetector(
+                  onTap: (){
+                    selectClientOverlay(context);
+                  },
+                  child: imageWidget(
+                    image: Strings.selectClientIcon,
+                    height: screenHeight * 0.08,
+                  ),
                 ),
                 imageWidget(
                   image: Strings.repeatSession,

@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
+import 'package:i_model/models/client/clients.dart';
 
 class DashboardController extends GetxController {
   /// Programs value percentages
@@ -60,11 +62,7 @@ class DashboardController extends GetxController {
     remainingSeconds.value = initialMinutes * 60; // Total time in seconds
   }
 
-  @override
-  void onClose() {
-    _timer?.cancel();
-    super.onClose();
-  }
+
 
   String formatTime(int totalSeconds) {
     minutes.value = totalSeconds ~/ 60;
@@ -530,4 +528,37 @@ class DashboardController extends GetxController {
 
     update();
   }
+
+  /// Select client
+  var isDropdownOpen = false.obs;
+  final TextEditingController nameController = TextEditingController();
+  RxString selectedClient = ''.obs;
+  RxString selectedStatus = Strings.active.obs;
+  List<String> clientStatusList = [Strings.active, Strings.inactive, Strings.all];
+
+  RxList<dynamic> clientsListDetail = [
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Monica', phone: '666 666 666', status: Strings.inactive),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Monica', phone: '666 666 666', status: Strings.inactive),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+    Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
+  ].obs;
+
+
+  @override
+  void onClose() {
+    _timer?.cancel();
+    nameController.dispose();
+    super.onClose();
+  }
+
 }
