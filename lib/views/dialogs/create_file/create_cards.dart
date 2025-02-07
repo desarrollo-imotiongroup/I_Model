@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/create_profile_controller.dart';
+import 'package:i_model/views/overlays/buy_points_overlay.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
@@ -55,6 +56,15 @@ class CreateCards extends StatelessWidget {
                     SizedBox(width: screenWidth * 0.01,),
                     /// Add bonos button
                     RoundedContainer(
+                        onTap: (){
+                          buyPointsOverlay(
+                              context,
+                              textEditingController: controller.pointsTextEditingController,
+                              onAdd: (){
+                                controller.buyPoints();
+                              }
+                          );
+                        },
                         borderRadius: screenHeight * 0.01,
                         width: screenWidth * 0.15,
                         padding: EdgeInsets.symmetric(
@@ -178,7 +188,7 @@ class CreateCards extends StatelessWidget {
                                   color: AppColors.blackColor.withValues(alpha: 0.8)
                               ),
                               TextView.title(
-                                  controller.availablePoints.length.toString(),
+                                  controller.totalAvailablePoints.toString(),
                                   fontSize: 10.sp,
                                   color: AppColors.pinkColor
                               ),

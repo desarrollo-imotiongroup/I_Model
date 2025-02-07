@@ -157,12 +157,16 @@ class Strings{
   static const String closeApplicationButton = 'Cerrar aplicación';
   static const String alertCompleteForm = '¡Alerta!';
   static const String mustCompleteForm = 'Debes completar el formulario para continuar';
+  static const String emptyPointsError = 'Por favor, ingresa la cantidad de bonos que deseas comprar.';
   static const String gotIt = '¡Entendido!';
   static const String confirmDeletion = 'Confirmar eliminación';
   static const String deleteClientDesc = '¿Estás seguro de que deseas eliminar este cliente?';
   static const String yesDelete = '¡Sí, estoy seguro!';
   static const String logout = '¿Cerrar sesión?';
   static const String logOutButton = 'Cerrar sesión';
+  static const String buyPoints = 'comprar bonos';
+  static const String add = 'Añadir';
+  static const String pointsQuantity = 'Cantidad de bonos';
 
 
   /// Language codes

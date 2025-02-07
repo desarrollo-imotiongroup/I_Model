@@ -6,7 +6,7 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/login_controller.dart';
-import 'package:i_model/views/dialogs/alert_dialog.dart';
+import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/widgets/button.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textfield.dart';
@@ -26,11 +26,11 @@ class LoginScreen extends StatelessWidget {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) {
-        alertDialog(context,
+        alertOverlay(context,
             heading: Strings.closeApplication,
-            buttonText: Strings.closeApplicationButton, onTap: () {
-          SystemNavigator.pop();
-        });
+            buttonText: Strings.closeApplicationButton,
+            onTap: () {
+          SystemNavigator.pop();});
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,

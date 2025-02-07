@@ -24,7 +24,7 @@ void beauticianListOverlay(BuildContext context) {
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(
-      color: Colors.black54, // Semi-transparent background
+      color: Colors.black54,
       child: Center(
         child: Container(
           width: screenWidth * 0.8,
