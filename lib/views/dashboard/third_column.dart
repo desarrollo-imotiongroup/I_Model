@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
+import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/enum/program_status.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/widgets/dashboard_body_program.dart';
@@ -46,6 +48,27 @@ class DashboardThirdColumn extends StatelessWidget {
                         },
                         percentage: controller.buttocksPercentage.value,
                         intensityColor: controller.buttocksIntensityColor,
+                        programStatus: controller.programsStatus[7].status!.value,
+                        onPress: (){
+                          if(controller.programsStatus[7].status!.value != ProgramStatus.inactive) {
+                            controller.updateProgramStatus(
+                              Strings.glutes,
+                              controller.programsStatus[7].status!.value == ProgramStatus.active
+                                  ? ProgramStatus.blocked
+                                  : ProgramStatus.active,
+                            );
+                          }
+                        },
+                        onLongPress: (){
+                          controller.buttocksPercentage.value = 0;
+                          controller.buttocksIntensityColor = AppColors.lowIntensityColor;
+                          controller.updateProgramStatus(
+                            Strings.glutes,
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[7].status!.value)
+                                ? ProgramStatus.inactive
+                                : ProgramStatus.active,
+                          );
+                        },
                       ),
 
                       /// Hamstrings - always visible
@@ -55,15 +78,32 @@ class DashboardThirdColumn extends StatelessWidget {
                         title: translation(context).hamstrings,
                         image: Strings.hamstringsIcon,
                         onIncrease: () {
-                          controller.changeHamStringsPercentage(
-                              isIncrease: true);
-                        },
+                          controller.changeHamStringsPercentage(isIncrease: true);},
                         onDecrease: () {
-                          controller.changeHamStringsPercentage(
-                              isDecrease: true);
-                        },
+                          controller.changeHamStringsPercentage(isDecrease: true);},
                         percentage: controller.hamStringsPercentage.value,
                         intensityColor: controller.hamstringsIntensityColor,
+                        programStatus: controller.programsStatus[8].status!.value,
+                        onPress: (){
+                          if(controller.programsStatus[8].status!.value != ProgramStatus.inactive) {
+                            controller.updateProgramStatus(
+                              Strings.hamstrings,
+                              controller.programsStatus[8].status!.value == ProgramStatus.active
+                                  ? ProgramStatus.blocked
+                                  : ProgramStatus.active,
+                            );
+                          }
+                        },
+                        onLongPress: (){
+                          controller.hamStringsPercentage.value = 0;
+                          controller.hamstringsIntensityColor = AppColors.lowIntensityColor;
+                          controller.updateProgramStatus(
+                            Strings.hamstrings,
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[8].status!.value)
+                                ? ProgramStatus.inactive
+                                : ProgramStatus.active,
+                          );
+                        },
                       ),
 
                       /// Calves - only visible when pant is selected
@@ -80,6 +120,27 @@ class DashboardThirdColumn extends StatelessWidget {
                         },
                         percentage: controller.calvesPercentage.value,
                         intensityColor: controller.calvesIntensityColor,
+                        programStatus: controller.programsStatus[9].status!.value,
+                        onPress: (){
+                          if(controller.programsStatus[9].status!.value != ProgramStatus.inactive) {
+                            controller.updateProgramStatus(
+                              Strings.calves,
+                              controller.programsStatus[9].status!.value == ProgramStatus.active
+                                  ? ProgramStatus.blocked
+                                  : ProgramStatus.active,
+                            );
+                          }
+                        },
+                        onLongPress: (){
+                          controller.calvesPercentage.value = 0;
+                          controller.calvesIntensityColor = AppColors.lowIntensityColor;
+                          controller.updateProgramStatus(
+                            Strings.calves,
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[9].status!.value)
+                                ? ProgramStatus.inactive
+                                : ProgramStatus.active,
+                          );
+                        },
                       ),
                     ],
                   )
@@ -102,6 +163,27 @@ class DashboardThirdColumn extends StatelessWidget {
                         },
                         percentage: controller.upperBackPercentage.value,
                         intensityColor: controller.upperBackIntensityColor,
+                        programStatus: controller.programsStatus[4].status!.value,
+                        onPress: (){
+                          if(controller.programsStatus[4].status!.value != ProgramStatus.inactive) {
+                            controller.updateProgramStatus(
+                              Strings.upperBack,
+                              controller.programsStatus[4].status!.value == ProgramStatus.active
+                                  ? ProgramStatus.blocked
+                                  : ProgramStatus.active,
+                            );
+                          }
+                        },
+                        onLongPress: (){
+                          controller.upperBackPercentage.value = 0;
+                          controller.upperBackIntensityColor = AppColors.lowIntensityColor;
+                          controller.updateProgramStatus(
+                            Strings.upperBack,
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[4].status!.value)
+                                ? ProgramStatus.inactive
+                                : ProgramStatus.active,
+                          );
+                        },
                       ),
 
                       /// Middle back
@@ -119,6 +201,27 @@ class DashboardThirdColumn extends StatelessWidget {
                         },
                         percentage: controller.middleBackPercentage.value,
                         intensityColor: controller.middleBackIntensityColor,
+                        programStatus: controller.programsStatus[5].status!.value,
+                        onPress: (){
+                          if(controller.programsStatus[5].status!.value != ProgramStatus.inactive) {
+                            controller.updateProgramStatus(
+                              Strings.middleBack,
+                              controller.programsStatus[5].status!.value == ProgramStatus.active
+                                  ? ProgramStatus.blocked
+                                  : ProgramStatus.active,
+                            );
+                          }
+                        },
+                        onLongPress: (){
+                          controller.middleBackPercentage.value = 0;
+                          controller.middleBackIntensityColor = AppColors.lowIntensityColor;
+                          controller.updateProgramStatus(
+                            Strings.middleBack,
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[5].status!.value)
+                                ? ProgramStatus.inactive
+                                : ProgramStatus.active,
+                          );
+                        },
                       ),
 
                       /// Lumbars
@@ -134,6 +237,27 @@ class DashboardThirdColumn extends StatelessWidget {
                         },
                         percentage: controller.lumbarPercentage.value,
                         intensityColor: controller.lumbarsIntensityColor,
+                        programStatus: controller.programsStatus[6].status!.value,
+                        onPress: (){
+                          if(controller.programsStatus[6].status!.value != ProgramStatus.inactive) {
+                            controller.updateProgramStatus(
+                              Strings.lowerBack,
+                              controller.programsStatus[6].status!.value == ProgramStatus.active
+                                  ? ProgramStatus.blocked
+                                  : ProgramStatus.active,
+                            );
+                          }
+                        },
+                        onLongPress: (){
+                          controller.lumbarPercentage.value = 0;
+                          controller.lumbarsIntensityColor = AppColors.lowIntensityColor;
+                          controller.updateProgramStatus(
+                            Strings.lowerBack,
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[6].status!.value)
+                                ? ProgramStatus.inactive
+                                : ProgramStatus.active,
+                          );
+                        },
                       ),
 
                       /// Buttocks - always visible
@@ -149,6 +273,27 @@ class DashboardThirdColumn extends StatelessWidget {
                         },
                         percentage: controller.buttocksPercentage.value,
                         intensityColor: controller.buttocksIntensityColor,
+                        programStatus: controller.programsStatus[7].status!.value,
+                        onPress: (){
+                          if(controller.programsStatus[7].status!.value != ProgramStatus.inactive) {
+                            controller.updateProgramStatus(
+                              Strings.glutes,
+                              controller.programsStatus[7].status!.value == ProgramStatus.active
+                                  ? ProgramStatus.blocked
+                                  : ProgramStatus.active,
+                            );
+                          }
+                        },
+                        onLongPress: (){
+                          controller.buttocksPercentage.value = 0;
+                          controller.buttocksIntensityColor = AppColors.lowIntensityColor;
+                          controller.updateProgramStatus(
+                            Strings.glutes,
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[7].status!.value)
+                                ? ProgramStatus.inactive
+                                : ProgramStatus.active,
+                          );
+                        },
                       ),
 
                       /// Hamstrings - always visible
@@ -166,6 +311,27 @@ class DashboardThirdColumn extends StatelessWidget {
                         },
                         percentage: controller.hamStringsPercentage.value,
                         intensityColor: controller.hamstringsIntensityColor,
+                        programStatus: controller.programsStatus[8].status!.value,
+                        onPress: (){
+                          if(controller.programsStatus[8].status!.value != ProgramStatus.inactive) {
+                            controller.updateProgramStatus(
+                              Strings.hamstrings,
+                              controller.programsStatus[8].status!.value == ProgramStatus.active
+                                  ? ProgramStatus.blocked
+                                  : ProgramStatus.active,
+                            );
+                          }
+                        },
+                        onLongPress: (){
+                          controller.hamStringsPercentage.value = 0;
+                          controller.hamstringsIntensityColor = AppColors.lowIntensityColor;
+                          controller.updateProgramStatus(
+                            Strings.hamstrings,
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[8].status!.value)
+                                ? ProgramStatus.inactive
+                                : ProgramStatus.active,
+                          );
+                        },
                       ),
                     ],
                   ),

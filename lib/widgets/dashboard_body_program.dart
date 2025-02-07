@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/enum/program_status.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textview.dart';
@@ -16,6 +17,9 @@ class DashboardBodyProgram extends StatelessWidget {
   final double? topPadding;
   final bool isImageLeading;
   final Color? intensityColor;
+  final Function()? onPress;
+  final Function()? onLongPress;
+  final ProgramStatus programStatus;
 
   const DashboardBodyProgram(
       {required this.title,
@@ -26,6 +30,9 @@ class DashboardBodyProgram extends StatelessWidget {
       this.topPadding,
       this.isImageLeading = true,
       this.intensityColor,
+      this.onPress,
+      this.onLongPress,
+      this.programStatus = ProgramStatus.active,
       super.key});
 
   @override
@@ -33,6 +40,30 @@ class DashboardBodyProgram extends StatelessWidget {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
+
+    Widget circleAvatar(Function()? onTap, {required ProgramStatus programStatus}){
+      return GestureDetector(
+        onTap: onTap,
+        onLongPress: onLongPress,
+        child: Stack(
+          children: [
+            CircleAvatar(
+                backgroundColor:
+                intensityColor ?? AppColors.lowIntensityColor,
+                backgroundImage: AssetImage(image),
+                radius: screenHeight * 0.05
+            ),
+            programStatus == ProgramStatus.blocked
+            ? Positioned.fill(
+                child: imageWidget(
+                    image: Strings.blockMuscleGroupIcon
+                )
+            )
+            : Container()
+          ],
+        ),
+      );
+    }
 
     return Column(
       children: [
@@ -54,7 +85,9 @@ class DashboardBodyProgram extends StatelessWidget {
                     borderRadius: screenHeight * 0.025,
                     borderColor: AppColors.transparentColor,
                     width: screenWidth * 0.185,
-                    color: AppColors.pureWhiteColor,
+                    color: programStatus == ProgramStatus.inactive
+                        ? AppColors.greyColor
+                        : AppColors.pureWhiteColor,
                     widget: Row(
                       mainAxisAlignment: isImageLeading ? MainAxisAlignment.end : MainAxisAlignment.start,
                       children: [
@@ -87,27 +120,18 @@ class DashboardBodyProgram extends StatelessWidget {
                 ),
               ],
             ),
-            isImageLeading
-                ? Positioned(
+            if (isImageLeading)
+              Positioned(
                     left: 0,
                     bottom: 0,
                     top: 0,
-                    child: CircleAvatar(
-
-                        backgroundColor:
-                            intensityColor ?? AppColors.lowIntensityColor,
-                        backgroundImage: AssetImage(image),
-                        radius: screenHeight * 0.05),
-                  )
-                : Positioned(
+                    child: circleAvatar(onPress, programStatus: programStatus),
+                  ) else
+                    Positioned(
                     right: 0,
                     bottom: 0,
                     top: 0,
-                    child: CircleAvatar(
-                        backgroundColor:
-                            intensityColor ?? AppColors.lowIntensityColor,
-                        backgroundImage: AssetImage(image),
-                        radius: screenHeight * 0.05),
+                    child: circleAvatar(onPress, programStatus: programStatus)
                   )
           ],
         )

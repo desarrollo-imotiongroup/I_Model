@@ -1,3 +1,6 @@
+import 'package:get/get.dart';
+import 'package:i_model/core/enum/program_status.dart';
+
 class Program {
   final String name;
   final String? image;
@@ -6,6 +9,7 @@ class Program {
   final int? ramp;
   final int? contraction;
   final int? pause;
+  final Rx<ProgramStatus>? status;
 
   Program({
     required this.name,
@@ -15,5 +19,6 @@ class Program {
     this.ramp,
     this.contraction,
     this.pause,
+    this.status,
   });
 }
