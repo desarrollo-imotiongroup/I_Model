@@ -83,7 +83,7 @@ class ClientController extends GetxController {
     update();
   }
 
-  /// Available points list
+  /// Consumed points list
   RxList<ClientPoints> consumedPoints = [
     ClientPoints(date: '01/01/2025', quantity: 50, hour: '08:30'),
     ClientPoints(date: '02/01/2025', quantity: 40, hour: '14:15'),

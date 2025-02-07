@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/client_controller.dart';
+import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';

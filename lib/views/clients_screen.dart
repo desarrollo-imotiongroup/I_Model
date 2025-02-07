@@ -3,7 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/client_controller.dart';
+import 'package:i_model/view_models/client/client_controller.dart';
+import 'package:i_model/views/dialogs/client/create_new_client/create_client_dialog.dart';
 import 'package:i_model/views/overlays/client_list_overlay.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/menu_widget.dart';
@@ -90,7 +91,9 @@ class ClientScreen extends StatelessWidget {
                               /// Create new client
                               MenuWidget(
                                 title: Strings.createNewClient.toUpperCase(),
-                                onTap: (){},
+                                onTap: (){
+                                  createNewClientDialog(context);
+                                },
                               )
                             ],
                           ),

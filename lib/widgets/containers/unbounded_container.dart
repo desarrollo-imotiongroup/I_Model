@@ -26,7 +26,7 @@ class UnboundedContainer extends StatelessWidget {
       child: Container(
           decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(screenHeight * 0.01),
+              borderRadius: BorderRadius.circular(screenHeight * 0.007),
               border: Border.all(
                   color: borderColor ?? AppColors.transparentColor
               )
