@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/client/create_new_client_controller.dart';
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_active_groups.dart';
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_card.dart';
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_personal_data.dart';
