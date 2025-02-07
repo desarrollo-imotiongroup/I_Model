@@ -14,7 +14,6 @@ void createNewClientDialog(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
-  final CreateNewClientController controller = Get.put(CreateNewClientController());
 
   showDialog(
     barrierDismissible: false,
