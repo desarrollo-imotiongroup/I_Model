@@ -19,7 +19,8 @@ class TextFieldWidget extends StatelessWidget {
   final TextInputAction? textInputAction;
   final bool? isReadyOnly;
   final Function(String)? onChanged;
-
+  final bool isSuffixIcon;
+  final Widget? suffixIcon;
 
   const TextFieldWidget(
       {super.key,
@@ -39,6 +40,8 @@ class TextFieldWidget extends StatelessWidget {
         this.textInputAction,
         this.isReadyOnly,
         this.onChanged,
+        this.isSuffixIcon = false,
+        this.suffixIcon
       });
 
   @override
@@ -55,18 +58,19 @@ class TextFieldWidget extends StatelessWidget {
       child: Center(
         child: TextField(
           controller: textEditingController,
-          obscureText:obscureText?? false,
+          obscureText:obscureText ?? false,
           cursorHeight: 12.sp,
           keyboardType: textInputType??TextInputType.text,
           cursorColor: cursorColor?? AppColors.lightBlack,
           readOnly: isReadyOnly ?? false ? true : false,
           onChanged: onChanged,
           style: TextStyle(
-            color: textColor ?? AppColors.lightBlack,
+            color: textColor ?? AppColors.blackColor.withValues(alpha: 0.8),
             fontSize: fontSize ?? 15.sp,
           ),
           textInputAction: textInputAction ?? TextInputAction.next,
           decoration: InputDecoration(
+              suffixIcon: isSuffixIcon ? suffixIcon : null,
               border: InputBorder.none,
               contentPadding: EdgeInsets.only(left: MediaQuery.of(context).size.width*.02),
               hintText: hint??"",

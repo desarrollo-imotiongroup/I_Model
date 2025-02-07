@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/beautician_controller.dart';
+import 'package:i_model/views/overlays/reset_password_overlay.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
@@ -160,14 +161,17 @@ class BeauticianPersonalData extends StatelessWidget {
                   SizedBox(height: screenHeight * 0.035,),
                   /// Registration date
                   RoundedContainer(
+                      onTap: (){
+                        resetPasswordOverlay(context);
+                      },
                       borderRadius: screenHeight * 0.01,
-                      width: screenWidth * 0.15,
+                      width: screenWidth * 0.2,
                       padding: EdgeInsets.symmetric(
                           vertical: screenHeight * 0.013
                       ),
                       widget: TextView.title(
                           Strings.resetPassword.toUpperCase(),
-                          fontSize: 12.sp,
+                          fontSize: 11.sp,
                           color: AppColors.blackColor.withValues(alpha: 0.8)
                       ))
                 ],

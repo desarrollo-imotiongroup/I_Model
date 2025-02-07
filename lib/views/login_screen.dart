@@ -15,7 +15,7 @@ import 'package:i_model/widgets/textview.dart';
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
 
-  final LoginController loginScreenController = Get.put(LoginController());
+  final LoginController controller = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -109,12 +109,26 @@ class LoginScreen extends StatelessWidget {
                                 SizedBox(
                                   height: screenHeight * 0.01,
                                 ),
-                                TextFieldWidget(
-                                  bgColor: AppColors.greyColor,
-                                  width: screenWidth * 0.3,
-                                  height: screenHeight * 0.07,
-                                  textInputAction: TextInputAction.done,
+                                Obx(() =>
+                                    TextFieldWidget(
+                                      bgColor: AppColors.greyColor,
+                                      width: screenWidth * 0.3,
+                                      height: screenHeight * 0.07,
+                                      textInputAction: TextInputAction.done,
+                                      obscureText: controller.isObscured.value ? true : false,
+                                      isSuffixIcon: true,
+                                      suffixIcon: IconButton(
+                                        icon: Icon(
+                                          controller.isObscured.value ? Icons.visibility_off : Icons.visibility,
+                                          color: Colors.grey,
+                                        ),
+                                        onPressed: () {
+                                          controller.changeVisibility();
+                                        },
+                                      ),
+                                    ),
                                 ),
+
                               ],
                             ),
 
@@ -139,8 +153,7 @@ class LoginScreen extends StatelessWidget {
                               Navigator.pushNamed(context, Strings.menuScreen);
                             },
                             text: translation(context).enter,
-                            textColor:
-                                AppColors.lightBlack.withValues(alpha: 0.8),
+                            textColor: AppColors.lightBlack.withValues(alpha: 0.8),
                             width: screenWidth * 0.15,
                             height: screenHeight * 0.08,
                             borderRadius: screenHeight * 0.01,

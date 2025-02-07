@@ -1,11 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController{
-  RxInt count = 0.obs;
+  RxBool isObscured = true.obs;
 
-  void increment() {
-    count++;
+  changeVisibility(){
+    isObscured.value = !isObscured.value;
     update();
   }
 }

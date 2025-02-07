@@ -118,7 +118,7 @@ class Strings{
   static const String registrationDate = 'Fecha alta';
   static const String sessionControl = 'Control de sesiones';
   static const String timeControl = 'Control de tiempo';
-  static const String resetPassword = 'Reset password';
+  static const String resetPassword = 'Restablecer contraseña';
   static const String administrator = 'Administrador';
   static const String beautician = 'Esteticista';
   static const String yes = 'Si';

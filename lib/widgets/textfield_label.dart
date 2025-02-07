@@ -14,6 +14,9 @@ class TextFieldLabel extends StatelessWidget {
   final double? width;
   final String? unit;
   final Function(String)? onChanged;
+  final bool isObscureText;
+  final bool isSuffixIcon;
+  final Widget? suffixIcon;
 
   const TextFieldLabel({
     super.key,
@@ -26,6 +29,9 @@ class TextFieldLabel extends StatelessWidget {
     this.width,
     this.unit,
     this.onChanged,
+    this.isObscureText = false,
+    this.isSuffixIcon = false,
+    this.suffixIcon
   });
 
   @override
@@ -62,6 +68,9 @@ class TextFieldLabel extends StatelessWidget {
           textInputAction: textInputAction ?? TextInputAction.next,
           textColor: AppColors.blackColor.withValues(alpha: 0.8),
           fontSize: fontSize ?? 14.sp,
+          obscureText: isObscureText,
+          isSuffixIcon: isSuffixIcon,
+          suffixIcon: suffixIcon,
           isReadyOnly: isReadOnly ?? false ? true : false,
           textInputType: isAllowNumberOnly ?? false
               ? TextInputType.number
