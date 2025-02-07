@@ -6,8 +6,8 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/program.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/widgets/image_widget.dart';
-import 'package:i_model/widgets/overlay/box_decoration.dart';
-import 'package:i_model/widgets/overlay/top_title_button.dart';
+import 'package:i_model/widgets/box_decoration.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 import 'package:i_model/widgets/textview.dart';
 
 void programListOverlay(

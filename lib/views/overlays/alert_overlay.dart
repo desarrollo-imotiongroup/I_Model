@@ -3,8 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/containers/unbounded_container.dart';
-import 'package:i_model/widgets/overlay/box_decoration.dart';
-import 'package:i_model/widgets/overlay/top_title_button.dart';
+import 'package:i_model/widgets/box_decoration.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 import 'package:i_model/widgets/textview.dart';
 
 void alertOverlay(

@@ -6,8 +6,8 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
-import 'package:i_model/widgets/overlay/box_decoration.dart';
-import 'package:i_model/widgets/overlay/top_title_button.dart';
+import 'package:i_model/widgets/box_decoration.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 
 void createSequenceDialog(BuildContext context,) {

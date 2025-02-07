@@ -3,9 +3,9 @@ import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/views/dialogs/create_file/create_cards.dart';
 import 'package:i_model/views/dialogs/create_file/create_personal_data.dart';
-import 'package:i_model/widgets/overlay/box_decoration.dart';
-import 'package:i_model/widgets/overlay/tab_header.dart';
-import 'package:i_model/widgets/overlay/top_title_button.dart';
+import 'package:i_model/widgets/box_decoration.dart';
+import 'package:i_model/widgets/tab_header.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 
 void createFileDialog(BuildContext context,) {
   MediaQueryData mediaQuery = MediaQuery.of(context);

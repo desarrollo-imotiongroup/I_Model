@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/views/dialogs/create_program/automatic/automatic_program.dart';
-import 'package:i_model/widgets/overlay/box_decoration.dart';
+import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/views/dialogs/create_program/individual/active_groups.dart';
 import 'package:i_model/views/dialogs/create_program/individual/configuration.dart';
 import 'package:i_model/views/dialogs/create_program/individual/cronaxia.dart';
-import 'package:i_model/widgets/overlay/tab_header.dart';
-import 'package:i_model/widgets/overlay/top_title_button.dart';
+import 'package:i_model/widgets/tab_header.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 
 void createProgramDialog(BuildContext context,) {
   MediaQueryData mediaQuery = MediaQuery.of(context);

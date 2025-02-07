@@ -6,9 +6,9 @@ import 'package:i_model/view_models/center_management/beautician_controller.dart
 import 'package:i_model/views/dialogs/beautician_file/beautician_activities.dart';
 import 'package:i_model/views/dialogs/beautician_file/beautician_card.dart';
 import 'package:i_model/views/dialogs/beautician_file/beautician_personal_data.dart';
-import 'package:i_model/widgets/overlay/box_decoration.dart';
-import 'package:i_model/widgets/overlay/tab_header.dart';
-import 'package:i_model/widgets/overlay/top_title_button.dart';
+import 'package:i_model/widgets/box_decoration.dart';
+import 'package:i_model/widgets/tab_header.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 
 
 void beauticianFileDialog(BuildContext context,) {

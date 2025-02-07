@@ -8,9 +8,9 @@ import 'package:i_model/views/dialogs/client/client_file/client_activities.dart'
 import 'package:i_model/views/dialogs/client/client_file/client_bioimpedancia.dart';
 import 'package:i_model/views/dialogs/client/client_file/client_card.dart';
 import 'package:i_model/views/dialogs/client/client_file/client_personal_data.dart';
-import 'package:i_model/widgets/overlay/box_decoration.dart';
-import 'package:i_model/widgets/overlay/tab_header.dart';
-import 'package:i_model/widgets/overlay/top_title_button.dart';
+import 'package:i_model/widgets/box_decoration.dart';
+import 'package:i_model/widgets/tab_header.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 
 void clientFileDialog(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
