@@ -3,14 +3,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/models/license.dart';
 import 'package:i_model/view_models/menu/license_controller.dart';
+import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
-import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
-import 'package:i_model/widgets/top_title_button.dart';
 import 'package:i_model/widgets/textview.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 
 void licenseDetailDialog(BuildContext context, {required int index}) {
   MediaQueryData mediaQuery = MediaQuery.of(context);

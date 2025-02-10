@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/helper_methods.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/max_time_controller.dart';
-import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/top_title_button.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 void maxTimeSelectionOverlay(BuildContext context) {
   final overlayState = Overlay.of(context);
