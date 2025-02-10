@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/enum/program_status.dart';
 import 'package:i_model/core/strings.dart';
@@ -40,6 +41,35 @@ class DashboardController extends GetxController {
     Program(name: Strings.hamstrings, status: ProgramStatus.active.obs,),
     Program(name: Strings.calves, status: ProgramStatus.active.obs,),
   ].obs;
+
+  /// Individual program list
+  List<Program> individualProgramsList(BuildContext context){
+    return [
+      Program(name: translation(context).cellulite, image: Strings.celluliteIcon),
+      Program(name: translation(context).buttocks, image: Strings.buttocksIndividualIcon),
+      Program(name: translation(context).contractures, image: Strings.contracturesIcon),
+      Program(name: translation(context).drainage, image: Strings.drainageIcon),
+      Program(name: translation(context).hypertrophy, image: Strings.hypertrophyIcon),
+      Program(name: translation(context).pelvicFloor, image: Strings.pelvicFloorIcon),
+      Program(name: translation(context).slim, image: Strings.slimIcon),
+      Program(name: translation(context).toning, image: Strings.toningIcon),
+      Program(name: translation(context).massage, image: Strings.massageIcon),
+      Program(name: translation(context).metabolic, image: Strings.metabolicIcon),
+      Program(name: translation(context).calibration, image: Strings.calibrationIcon),
+      Program(name: translation(context).strength, image: Strings.strengthIcon),
+    ];
+  }
+
+  List<Program> automaticProgramsList(BuildContext context){
+    return [
+      Program(name: translation(context).buttocks, image: Strings.buttocksAutoIcon),
+      Program(name: translation(context).cellulite, image: Strings.celluliteAutoIcon,),
+      Program(name: translation(context).hypertrophy, image: Strings.hypertrophyAutoIcon),
+      Program(name: translation(context).pelvicFloor, image: Strings.pelvicFloorAutoIcon),
+      Program(name: translation(context).slim, image: Strings.slimAutoIcon),
+      Program(name: translation(context).toning, image: Strings.toningAutoIcon),
+    ];
+  }
 
   /// Update the status of a program
   void updateProgramStatus(String programName, ProgramStatus newStatus) {

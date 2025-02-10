@@ -93,11 +93,11 @@ class ProgramsScreen extends StatelessWidget {
 
                               /// Automatics
                               MenuWidget(
-                                title: Strings.automatics.toUpperCase(),
+                                title: translation(context).automatics.toUpperCase(),
                                 onTap: (){
                                   automaticProgramOverlay(
                                       context,
-                                      programList: programsController.automaticProgramsList
+                                      programList: programsController.automaticProgramsList(context)
                                   );
                                 },
                               ),

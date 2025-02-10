@@ -42,12 +42,12 @@ class ClientBioimpedancia extends StatelessWidget {
     }
 
     List<Widget> subTabBarView = [
-      Center(child: LineGraph(flSpotList: controller.fatFreeHydrationFlSpotList)),
-      Center(child: LineGraph(flSpotList: controller.waterBalanceFlSpotList)),
-      Center(child: LineGraph(flSpotList: controller.imcFlSpotList)),
-      Center(child: LineGraph(flSpotList: controller.bodyFatFlSpotList)),
-      Center(child: LineGraph(flSpotList: controller.muscleFlSpotList)),
-      Center(child: LineGraph(flSpotList: controller.skeletonFlSpotList)),
+      Center(child: LineGraph(context, flSpotList: controller.fatFreeHydrationFlSpotList)),
+      Center(child: LineGraph(context, flSpotList: controller.waterBalanceFlSpotList)),
+      Center(child: LineGraph(context, flSpotList: controller.imcFlSpotList)),
+      Center(child: LineGraph(context, flSpotList: controller.bodyFatFlSpotList)),
+      Center(child: LineGraph(context, flSpotList: controller.muscleFlSpotList)),
+      Center(child: LineGraph(context, flSpotList: controller.skeletonFlSpotList)),
     ];
 
 
@@ -68,7 +68,7 @@ class ClientBioimpedancia extends StatelessWidget {
             children: [
               ListTile(
                 title: subTabBarText(
-                    Strings.fatFreeHydration.toUpperCase(),
+                    translation(context).fatFreeHydration.toUpperCase(),
                     index: 0
                 ),
                 onTap: () => controller.onSubTabSelected(0),
@@ -76,7 +76,7 @@ class ClientBioimpedancia extends StatelessWidget {
               ),
               ListTile(
                 title: subTabBarText(
-                    Strings.waterBalance.toUpperCase(),
+                    translation(context).waterBalance.toUpperCase(),
                     index: 1
                 ),
                 onTap: () => controller.onSubTabSelected(1),
@@ -84,7 +84,7 @@ class ClientBioimpedancia extends StatelessWidget {
               ),
               ListTile(
                 title: subTabBarText(
-                    Strings.imc.toUpperCase(),
+                    translation(context).imc.toUpperCase(),
                     index: 2
                 ),
                 onTap: () => controller.onSubTabSelected(2),
@@ -92,7 +92,7 @@ class ClientBioimpedancia extends StatelessWidget {
               ),
               ListTile(
                 title: subTabBarText(
-                    Strings.bodyFat.toUpperCase(),
+                    translation(context).bodyFat.toUpperCase(),
                     index: 3
                 ),
                 onTap: () => controller.onSubTabSelected(3),
@@ -100,7 +100,7 @@ class ClientBioimpedancia extends StatelessWidget {
               ),
               ListTile(
                 title: subTabBarText(
-                    Strings.muscle.toUpperCase(),
+                    translation(context).muscle.toUpperCase(),
                     index: 4
                 ),
                 onTap: () => controller.onSubTabSelected(4),
@@ -108,7 +108,7 @@ class ClientBioimpedancia extends StatelessWidget {
               ),
               ListTile(
                 title: subTabBarText(
-                    Strings.skeleton.toUpperCase(),
+                    translation(context).skeleton.toUpperCase(),
                     index: 5
                 ),
                 onTap: () => controller.onSubTabSelected(5),
@@ -220,7 +220,7 @@ class ClientBioimpedancia extends StatelessWidget {
                               color: AppColors.greyColor,
                               widget: ListView.builder(
                                 padding: EdgeInsets.zero,
-                                itemCount: controller.bioimpedanciaGraphData.length,
+                                itemCount: controller.getbioimpedanciaGraphData(context).length,
                                 itemBuilder: (BuildContext context, int index) {
                                   return  GestureDetector(
                                     onTap: (){},
@@ -238,24 +238,24 @@ class ClientBioimpedancia extends StatelessWidget {
                                                 children: [
                                                   /// Table cells info
                                                   tableTextInfo(
-                                                      title: controller.bioimpedanciaGraphData[index].name,
+                                                      title: controller.getbioimpedanciaGraphData(context)[index].name,
                                                       color: AppColors.blackColor.withValues(alpha: 0.8),
                                                       fontSize: 10.sp,
                                                       lines: 2,
                                                       isCenter: true
                                                   ),
                                                   tableTextInfo(
-                                                    title: controller.bioimpedanciaGraphData[index].calculatedValue,
+                                                    title: controller.getbioimpedanciaGraphData(context)[index].calculatedValue,
                                                     color: AppColors.blackColor.withValues(alpha: 0.8),
                                                     fontSize: 10.sp,
                                                   ),
                                                   tableTextInfo(
-                                                    title: controller.bioimpedanciaGraphData[index].reference,
+                                                    title: controller.getbioimpedanciaGraphData(context)[index].reference,
                                                     color: AppColors.blackColor.withValues(alpha: 0.8),
                                                     fontSize: 10.sp,
                                                   ),
                                                   tableTextInfo(
-                                                    title: controller.bioimpedanciaGraphData[index].result,
+                                                    title: controller.getbioimpedanciaGraphData(context)[index].result,
                                                     color: AppColors.blackColor.withValues(alpha: 0.8),
                                                     fontSize: 10.sp,
                                                   ),

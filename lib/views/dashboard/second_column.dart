@@ -66,8 +66,8 @@ class DashboardSecondColumn extends StatelessWidget {
               context,
               programList:
               controller.selectedProgramType.value == Strings.individual
-                  ? Consts.individualProgramsList
-                  : Consts.automaticProgramsList,
+                  ? controller.individualProgramsList(context)
+                  : controller.automaticProgramsList(context),
             );
           },
           child: imageWidget(

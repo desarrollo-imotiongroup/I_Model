@@ -125,7 +125,7 @@ void individualProgramsOverlay(BuildContext context) {
                             color: AppColors.greyColor,
                             widget: ListView.builder(
                               padding: EdgeInsets.zero,
-                              itemCount: controller.individualProgramsList.length,
+                              itemCount: controller.individualProgramsList(context).length,
                               itemBuilder: (BuildContext context, int index) {
                                 return  GestureDetector(
                                   onTap: (){},
@@ -143,36 +143,36 @@ void individualProgramsOverlay(BuildContext context) {
                                               children: [
                                                 /// Table cells info
                                                 imageWidget(
-                                                  image: controller.individualProgramsList[index].image,
+                                                  image: controller.individualProgramsList(context)[index].image,
                                                   height: screenHeight * 0.1,
                                                 ),
                                                 tableTextInfo(
-                                                  title: controller.individualProgramsList[index].name,
+                                                  title: controller.individualProgramsList(context)[index].name,
                                                   color: AppColors.blackColor.withValues(alpha: 0.8),
                                                   fontSize: 10.sp,
                                                 ),
                                                 tableTextInfo(
-                                                  title: controller.individualProgramsList[index].frequency.toString(),
+                                                  title: controller.individualProgramsList(context)[index].frequency.toString(),
                                                   color: AppColors.blackColor.withValues(alpha: 0.8),
                                                   fontSize: 10.sp,
                                                 ),
                                                 tableTextInfo(
-                                                  title: controller.individualProgramsList[index].pulse.toString(),
+                                                  title: controller.individualProgramsList(context)[index].pulse.toString(),
                                                   color: AppColors.blackColor.withValues(alpha: 0.8),
                                                   fontSize: 10.sp,
                                                 ),
                                                 tableTextInfo(
-                                                  title: controller.individualProgramsList[index].ramp.toString(),
+                                                  title: controller.individualProgramsList(context)[index].ramp.toString(),
                                                   color: AppColors.blackColor.withValues(alpha: 0.8),
                                                   fontSize: 10.sp,
                                                 ),
                                                 tableTextInfo(
-                                                  title: controller.individualProgramsList[index].contraction.toString(),
+                                                  title: controller.individualProgramsList(context)[index].contraction.toString(),
                                                   color: AppColors.blackColor.withValues(alpha: 0.8),
                                                   fontSize: 10.sp,
                                                 ),
                                                 tableTextInfo(
-                                                  title: controller.individualProgramsList[index].pause.toString(),
+                                                  title: controller.individualProgramsList(context)[index].pause.toString(),
                                                   color: AppColors.blackColor.withValues(alpha: 0.8),
                                                   fontSize: 10.sp,
                                                 ),

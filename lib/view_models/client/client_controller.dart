@@ -1,6 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/helper_methods.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/client/bioimedancia.dart';
@@ -115,14 +116,25 @@ class ClientController extends GetxController {
     ClientPoints(date: '10/01/2025', hour: '15:40'),
   ].obs;
 
-  RxList<Bioimedancia> bioimpedanciaGraphData = [
-    Bioimedancia(name: Strings.fatFreeHydration, calculatedValue: '324525', reference: '324525', result: '324525'),
-    Bioimedancia(name: Strings.waterBalance, calculatedValue: '324525', reference: '324525', result: '324525'),
-    Bioimedancia(name: Strings.imc, calculatedValue: '324525', reference: '324525', result: '324525'),
-    Bioimedancia(name: Strings.bodyFat, calculatedValue: '324525', reference: '324525', result: '324525'),
-    Bioimedancia(name: Strings.muscle, calculatedValue: '324525', reference: '324525', result: '324525'),
-    Bioimedancia(name: Strings.skeleton, calculatedValue: '324525', reference: '324525', result: '324525'),
-  ].obs;
+  // RxList<Bioimedancia> bioimpedanciaGraphData = [
+  //   Bioimedancia(name: Strings.fatFreeHydration, calculatedValue: '324525', reference: '324525', result: '324525'),
+  //   Bioimedancia(name: Strings.waterBalance, calculatedValue: '324525', reference: '324525', result: '324525'),
+  //   Bioimedancia(name: Strings.imc, calculatedValue: '324525', reference: '324525', result: '324525'),
+  //   Bioimedancia(name: Strings.bodyFat, calculatedValue: '324525', reference: '324525', result: '324525'),
+  //   Bioimedancia(name: Strings.muscle, calculatedValue: '324525', reference: '324525', result: '324525'),
+  //   Bioimedancia(name: Strings.skeleton, calculatedValue: '324525', reference: '324525', result: '324525'),
+  // ].obs;
+
+  RxList<Bioimedancia> getbioimpedanciaGraphData(BuildContext context){
+    return [
+      Bioimedancia(name: translation(context).fatFreeHydration, calculatedValue: '324525', reference: '324525', result: '324525'),
+      Bioimedancia(name: translation(context).waterBalance, calculatedValue: '324525', reference: '324525', result: '324525'),
+      Bioimedancia(name: translation(context).imc, calculatedValue: '324525', reference: '324525', result: '324525'),
+      Bioimedancia(name: translation(context).bodyFat, calculatedValue: '324525', reference: '324525', result: '324525'),
+      Bioimedancia(name: translation(context).muscle, calculatedValue: '324525', reference: '324525', result: '324525'),
+      Bioimedancia(name: translation(context).skeleton, calculatedValue: '324525', reference: '324525', result: '324525'),
+    ].obs;
+  }
 
   /// Sub tabs
   RxInt selectedSubTabsIndex = 0.obs;

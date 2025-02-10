@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/program.dart';
 import 'package:i_model/models/program_details.dart';
@@ -17,31 +18,35 @@ class ProgramsController extends GetxController{
   List<String> equipmentOptions = [Strings.bioJacket, Strings.pant];
   RxString selectedEquipment = Strings.nothing.obs;
 
-  List<Program> individualProgramsList = [
-    Program(name: Strings.celluliteIndProgram, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.celluliteIcon),
-    Program(name: Strings.buttocksIndProgram, frequency: 85, pulse: 350, ramp: 8, contraction: 4, pause: 2, image: Strings.buttocksIndividualIcon),
-    Program(name: Strings.contractures, frequency: 85, pulse: 0, ramp: 10, contraction: 6, pause: 4, image: Strings.contracturesIcon),
-    Program(name: Strings.drainage, frequency: 85, pulse: 350, ramp: 10, contraction: 4, pause: 2, image: Strings.drainageIcon),
-    Program(name: Strings.hypertrophyIndProgram, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.hypertrophyIcon),
-    Program(name: Strings.pelvicFloorIndProgram, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.pelvicFloorIcon),
-    Program(name: Strings.slimIndProgram, frequency: 43, pulse: 450, ramp: 8, contraction: 6, pause: 3, image: Strings.slimIcon),
-    Program(name: Strings.toningIndProgram, frequency: 85, pulse: 350, ramp: 8, contraction: 4, pause: 2, image: Strings.toningIcon),
-    Program(name: Strings.massage, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.massageIcon),
-    Program(name: Strings.metabolic, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.metabolicIcon),
-    Program(name: Strings.calibration, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.calibrationIcon),
-    Program(name: Strings.strength, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.strengthIcon),
-  ];
 
+  List<Program> individualProgramsList(BuildContext context){
+    return [
+      Program(name: translation(context).cellulite, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.celluliteIcon),
+      Program(name: translation(context).buttocks, frequency: 85, pulse: 350, ramp: 8, contraction: 4, pause: 2, image: Strings.buttocksIndividualIcon),
+      Program(name: translation(context).contractures, frequency: 85, pulse: 0, ramp: 10, contraction: 6, pause: 4, image: Strings.contracturesIcon),
+      Program(name: translation(context).drainage, frequency: 85, pulse: 350, ramp: 10, contraction: 4, pause: 2, image: Strings.drainageIcon),
+      Program(name: translation(context).hypertrophy, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.hypertrophyIcon),
+      Program(name: translation(context).pelvicFloor, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.pelvicFloorIcon),
+      Program(name: translation(context).slim, frequency: 43, pulse: 450, ramp: 8, contraction: 6, pause: 3, image: Strings.slimIcon),
+      Program(name: translation(context).toning, frequency: 85, pulse: 350, ramp: 8, contraction: 4, pause: 2, image: Strings.toningIcon),
+      Program(name: translation(context).massage, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.massageIcon),
+      Program(name: translation(context).metabolic, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.metabolicIcon),
+      Program(name: translation(context).calibration, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.calibrationIcon),
+      Program(name: translation(context).strength, frequency: 80, pulse: 350, ramp: 10, contraction: 4, pause: 1, image: Strings.strengthIcon),
+    ];
+  }
 
+  List<Program> automaticProgramsList(BuildContext context){
+    return [
+      Program(name: translation(context).buttocks, image: Strings.buttocksAutoIcon),
+      Program(name: translation(context).cellulite, image: Strings.celluliteAutoIcon,),
+      Program(name: translation(context).hypertrophy, image: Strings.hypertrophyAutoIcon),
+      Program(name: translation(context).pelvicFloor, image: Strings.pelvicFloorAutoIcon),
+      Program(name: translation(context).slim, image: Strings.slimAutoIcon),
+      Program(name: translation(context).toning, image: Strings.toningAutoIcon),
+    ];
+  }
 
-  List<Program> automaticProgramsList = [
-    Program(name: Strings.buttocks, image: Strings.buttocksAutoIcon),
-    Program(name: Strings.cellulite, image: Strings.celluliteAutoIcon,),
-    Program(name: Strings.hypertrophy, image: Strings.hypertrophyAutoIcon),
-    Program(name: Strings.pelvicFloor, image: Strings.pelvicFloorAutoIcon),
-    Program(name: Strings.slim, image: Strings.slimAutoIcon),
-    Program(name: Strings.toning, image: Strings.toningAutoIcon),
-  ];
 
   /// Cronaxia
   final TextEditingController upperBackController = TextEditingController();
@@ -145,20 +150,22 @@ class ProgramsController extends GetxController{
   final TextEditingController adjustmentController = TextEditingController();
   RxString selectedProgram = Strings.nothing.obs;
 
-  List<String> individualProgramOptionList = [
-    Strings.celluliteIndProgram,
-    Strings.buttocksIndProgram,
-    Strings.contractures,
-    Strings.drainage,
-    Strings.hypertrophyIndProgram,
-    Strings.pelvicFloorIndProgram,
-    Strings.slimIndProgram,
-    Strings.toningIndProgram,
-    Strings.massage,
-    Strings.metabolic,
-    Strings.calibration,
-    Strings.strength,
-  ];
+  List<String> individualProgramOptionList(BuildContext context){
+    return [
+      translation(context).cellulite,
+      translation(context).buttocks,
+      translation(context).contractures,
+      translation(context).drainage,
+      translation(context).hypertrophy,
+      translation(context).pelvicFloor,
+      translation(context).slim,
+      translation(context).toning,
+      translation(context).massage,
+      translation(context).metabolic,
+      translation(context).calibration,
+      translation(context).strength,
+    ];
+  }
 
   createSequence(BuildContext context) {
     if (orderController.text.isNotEmpty &&

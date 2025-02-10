@@ -87,7 +87,9 @@ void selectedAutomaticProgramDialog(BuildContext context,) {
                       GestureDetector(
                         onTap: (){
                           Navigator.pop(context);
-                          automaticProgramOverlay(context, programList: controller.automaticProgramsList);
+                          automaticProgramOverlay(context, programList:
+                          controller.automaticProgramsList(context),
+                          );
                         },
                         child: Image(
                           image: AssetImage(

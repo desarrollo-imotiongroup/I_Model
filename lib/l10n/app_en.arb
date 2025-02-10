@@ -187,5 +187,17 @@
     "normal": "Normal",
     "veryGood": "Very Good",
     "excellent": "Excellent",
-    "cards": "Bonos"
+    "cards": "Bonos",
+    "buttocks": "BUTTOCKS",
+    "calibration": "CALIBRATION",
+    "cellulite": "CELLULITE",
+    "contractures": "CONTRACTURES",
+    "drainage": "DRAINAGE",
+    "hypertrophy": "HYPERTROPHY",
+    "massage": "MASSAGE",
+    "metabolic": "METABOLIC",
+    "pelvicFloor": "PELVIC FLOOR",
+    "slim": "SLIM",
+    "strength": "STRENGTH",
+    "toning": "TONING"
 }

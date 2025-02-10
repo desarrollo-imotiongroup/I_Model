@@ -68,7 +68,7 @@ void createSequenceDialog(BuildContext context,) {
                               /// Select program drop down
                               DropDownWidget(
                                 selectedValue: controller.selectedProgram.value,
-                                dropDownList: controller.individualProgramOptionList,
+                                dropDownList: controller.individualProgramOptionList(context),
                                 onChanged: (value){
                                   controller.selectedProgram.value = value;
                                 },

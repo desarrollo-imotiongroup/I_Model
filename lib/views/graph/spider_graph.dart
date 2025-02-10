@@ -3,26 +3,28 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 
 class SpiderChart extends StatelessWidget {
   final List<int> data;
 
-  SpiderChart({required this.data});
+  const SpiderChart({required this.data});
 
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
       size: Size(300, 300),
-      painter: SpiderChartPainter(data),
+      painter: SpiderChartPainter(data, context),
     );
   }
 }
 
 class SpiderChartPainter extends CustomPainter {
   final List<int> data;
+  final BuildContext context;
 
-  SpiderChartPainter(this.data);
+  SpiderChartPainter(this.data, this.context);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -91,12 +93,12 @@ class SpiderChartPainter extends CustomPainter {
     }
 
     List<String> labelsText = [
-      "HIDRATACIÓN SIN GRASA",
-      "EQUILIBRIO HÍDRICO",
-      "IMC",
-      "MASA GRASA",
-      "MÚSCULO",
-      "ESQUELETO",
+      translation(context).fatFreeHydration.toUpperCase(),
+      translation(context).waterBalance.toUpperCase(),
+      translation(context).imc.toUpperCase(),
+      translation(context).bodyFat.toUpperCase(),
+      translation(context).muscle.toUpperCase(),
+      translation(context).skeleton.toUpperCase(),
     ];
 
     // Draw the labels

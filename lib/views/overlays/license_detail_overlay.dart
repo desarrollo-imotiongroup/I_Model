@@ -124,7 +124,7 @@ void licenseDetailOverlay(BuildContext context) {
                               fontSize: 12.sp,
                             ),
                             TextView.title(
-                              Strings.inactive.toUpperCase(),
+                              translation(context).inactive.toUpperCase(),
                               color: AppColors.pinkColor,
                               fontSize: 12.sp,
                             ),

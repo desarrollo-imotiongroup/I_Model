@@ -18,12 +18,6 @@ class Strings{
   static const String active = 'Activo';
   static const String inactive = 'Inactivo';
   static const String all = 'todos';
-  static const String fatFreeHydration = 'Hidratación sin grasa';
-  static const String waterBalance = 'Equilibrio hidrico';
-  static const String imc = 'Imc';
-  static const String bodyFat = 'Masa grasa';
-  static const String muscle = 'Músculo';
-  static const String skeleton = 'Esqueleto';
   static const individual = 'Individual';
   static const automatics = 'Automaticos';
   static const String typeBT = 'BT';
@@ -46,13 +40,19 @@ class Strings{
   static const String arms = 'Brazos';
   static const String calves = 'Pantorrillas';
   static const String extra = 'Extra';
-  static const String toTreat = 'A tratar';
-  static const String toMonitor = 'A vigilar';
-  static const String nearNormal = 'Cerca de la norma';
-  static const String normal = 'NORMAL';
-  static const String veryGood = 'Muy bien';
-  static const String excellent = 'Excelente';
 
+  // static const String fatFreeHydration = 'Hidratación sin grasa';
+  // static const String waterBalance = 'Equilibrio hidrico';
+  // static const String imc = 'Imc';
+  // static const String bodyFat = 'Masa grasa';
+  // static const String muscle = 'Músculo';
+  // static const String skeleton = 'Esqueleto';
+  // static const String toTreat = 'A tratar';
+  // static const String toMonitor = 'A vigilar';
+  // static const String nearNormal = 'Cerca de la norma';
+  // static const String normal = 'NORMAL';
+  // static const String veryGood = 'Muy bien';
+  // static const String excellent = 'Excelente';
   // static const selectProgramType = 'seleccionar tipo de programa';
   // static const select = 'Selectionar';
   // static const selectProgram = 'Seleccionar programa';
@@ -245,12 +245,12 @@ class Strings{
   static const String extraIcon = 'assets/body/calves.png';
 
   ///Automatic program
-  static const String buttocks = 'Buttocks';
+  // static const String buttocks = 'Buttocks';
   static const String cellulite = 'Cellulite';
-  static const String hypertrophy = 'Hypertrophy';
-  static const String pelvicFloor = 'Pelvic Floor';
-  static const String slim = 'Slim';
-  static const String toning = 'Toning';
+  // static const String hypertrophy = 'Hypertrophy';
+  // static const String pelvicFloor = 'Pelvic Floor';
+  // static const String slim = 'Slim';
+  // static const String toning = 'Toning';
 
   static const String buttocksAutoIcon = 'assets/automatic_program/BUTTOCKS_AUTO.png';
   static const String celluliteAutoIcon = 'assets/automatic_program/CELLULITE_AUTO.png';
@@ -260,18 +260,18 @@ class Strings{
   static const String toningAutoIcon = 'assets/automatic_program/TONING_AUTO.png';
 
   /// Individual programs
-  static const String buttocksIndProgram = 'BUTTOCKS';
-  static const String calibration = 'CALIBRATION';
-  static const String celluliteIndProgram = 'CELLULITE';
-  static const String contractures = 'CONTRACTURES';
-  static const String drainage = 'DRAINAGE';
-  static const String hypertrophyIndProgram = 'HYPERTROPHY';
-  static const String massage = 'MASSAGE';
-  static const String metabolic = 'METABOLIC';
-  static const String pelvicFloorIndProgram = 'PELVIC FLOOR';
-  static const String slimIndProgram = 'SLIM';
-  static const String strength = 'STRENGTH';
-  static const String toningIndProgram = 'TONING';
+  // static const String buttocksIndProgram = 'BUTTOCKS';
+  // static const String calibration = 'CALIBRATION';
+  // static const String celluliteIndProgram = 'CELLULITE';
+  // static const String contractures = 'CONTRACTURES';
+  // static const String drainage = 'DRAINAGE';
+  // static const String hypertrophyIndProgram = 'HYPERTROPHY';
+  // static const String massage = 'MASSAGE';
+  // static const String metabolic = 'METABOLIC';
+  // static const String pelvicFloorIndProgram = 'PELVIC FLOOR';
+  // static const String slimIndProgram = 'SLIM';
+  // static const String strength = 'STRENGTH';
+  // static const String toningIndProgram = 'TONING';
 
   static const String buttocksIndividualIcon = 'assets/individual_program/BUTTOCKS.png';
   static const String calibrationIcon = 'assets/individual_program/CALIBRATION.png';

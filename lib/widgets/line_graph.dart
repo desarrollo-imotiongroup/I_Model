@@ -1,12 +1,13 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:i_model/core/strings.dart';
+import 'package:i_model/config/language_constants.dart';
 
 class LineGraph extends StatelessWidget {
   final List<FlSpot> flSpotList;
+  final BuildContext context;
 
-  const LineGraph({
+  const LineGraph(this.context, {
     required this.flSpotList,
     super.key});
 
@@ -165,22 +166,22 @@ class LineGraph extends StatelessWidget {
     String text;
     switch (value.toInt()) {
       case 0:
-        text = Strings.excellent;
+        text = translation(context).excellent;
         break;
       case 1:
-        text = Strings.veryGood;
+        text = translation(context).veryGood;
         break;
       case 2:
-        text = Strings.normal;
+        text = translation(context).normal;
         break;
       case 3:
-        text = Strings.nearNormal;
+        text = translation(context).nearNormal;
         break;
       case 4:
-        text = Strings.toMonitor;
+        text = translation(context).toMonitor;
         break;
       case 5:
-        text = Strings.toTreat;
+        text = translation(context).toTreat;
         break;
       default:
         return Container();
