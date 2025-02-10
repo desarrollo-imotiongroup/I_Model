@@ -171,8 +171,16 @@ class Strings{
   // static const String buyPoints = 'comprar bonos';
   // static const String add = 'Añadir';
   // static const String pointsQuantity = 'Cantidad de bonos';
-  // //
 
+  /// Strings that later need to add in translation files
+  static const maxTime = 'Seleccione el tiempo máximo';
+  static const minutes = 'min';
+  static const confirm = 'Confirmar';
+  static const maxTimeSnackBarConfirmation = 'Se ha seleccionado el tiempo máximo';
+  static const notSelectedMaxTimeError = 'Por favor seleccione un tiempo máximo diferente al anterior';
+
+  /// Shared Preferences
+  static const maxTimeSP = 'MaxTimeSP';
 
   /// Language codes
   static const String englishLanguageCode = 'en';

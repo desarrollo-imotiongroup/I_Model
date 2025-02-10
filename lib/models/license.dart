@@ -1,7 +1,9 @@
+import 'package:get/get.dart';
+
 class License {
   final String mci;
   final String type;
-  final String status;
+  RxString status;
 
   License({
     required this.mci,

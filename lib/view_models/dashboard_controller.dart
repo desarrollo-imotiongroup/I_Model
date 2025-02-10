@@ -8,6 +8,7 @@ import 'package:i_model/core/enum/program_status.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/client/clients.dart';
 import 'package:i_model/models/program.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardController extends GetxController {
   /// Programs value percentages
@@ -76,6 +77,7 @@ class DashboardController extends GetxController {
     var program = programsStatus.firstWhereOrNull((p) => p.name == programName);
     if (program != null) {
       program.status!.value = newStatus;
+
     }
     update();
 
@@ -94,7 +96,6 @@ class DashboardController extends GetxController {
   Color calvesIntensityColor = AppColors.lowIntensityColor;
 
   /// Timer values
-  int initialMinutes = 25;
   RxInt remainingSeconds = 0.obs;
   RxInt minutes = 0.obs;
   RxBool isTimerPaused = true.obs;
@@ -112,8 +113,10 @@ class DashboardController extends GetxController {
 
   @override
   Future<void> onInit() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    int initialMinutes = sharedPreferences.getInt(Strings.maxTimeSP) ?? 25;
+    remainingSeconds.value = initialMinutes * 60;
     super.onInit();
-    remainingSeconds.value = initialMinutes * 60; // Total time in seconds
   }
 
 

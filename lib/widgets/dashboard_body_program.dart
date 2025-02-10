@@ -7,7 +7,6 @@ import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
 
-
 class DashboardBodyProgram extends StatelessWidget {
   final String title;
   final String image;
@@ -41,25 +40,23 @@ class DashboardBodyProgram extends StatelessWidget {
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
 
-    Widget circleAvatar(Function()? onTap, {required ProgramStatus programStatus}){
+    Widget circleAvatar(Function()? onTap,
+        {required ProgramStatus programStatus}) {
       return GestureDetector(
         onTap: onTap,
         onLongPress: onLongPress,
         child: Stack(
           children: [
             CircleAvatar(
-                backgroundColor:
-                intensityColor ?? AppColors.lowIntensityColor,
+                backgroundColor: (programStatus == ProgramStatus.blocked || programStatus == ProgramStatus.inactive)
+                    ? AppColors.greyColor
+                    : intensityColor ?? AppColors.lowIntensityColor,
                 backgroundImage: AssetImage(image),
-                radius: screenHeight * 0.05
-            ),
+                radius: screenHeight * 0.05),
             programStatus == ProgramStatus.blocked
-            ? Positioned.fill(
-                child: imageWidget(
-                    image: Strings.blockMuscleGroupIcon
-                )
-            )
-            : Container()
+                ? Positioned.fill(
+                    child: imageWidget(image: Strings.blockMuscleGroupIcon))
+                : Container()
           ],
         ),
       );
@@ -89,7 +86,9 @@ class DashboardBodyProgram extends StatelessWidget {
                         ? AppColors.greyColor
                         : AppColors.pureWhiteColor,
                     widget: Row(
-                      mainAxisAlignment: isImageLeading ? MainAxisAlignment.end : MainAxisAlignment.start,
+                      mainAxisAlignment: isImageLeading
+                          ? MainAxisAlignment.end
+                          : MainAxisAlignment.start,
                       children: [
                         GestureDetector(
                           onTap: onIncrease,
@@ -114,7 +113,6 @@ class DashboardBodyProgram extends StatelessWidget {
                         ),
                       ],
                     )),
-
                 SizedBox(
                   width: !isImageLeading ? screenWidth * 0.02 : 0,
                 ),
@@ -122,17 +120,17 @@ class DashboardBodyProgram extends StatelessWidget {
             ),
             if (isImageLeading)
               Positioned(
-                    left: 0,
-                    bottom: 0,
-                    top: 0,
-                    child: circleAvatar(onPress, programStatus: programStatus),
-                  ) else
-                    Positioned(
-                    right: 0,
-                    bottom: 0,
-                    top: 0,
-                    child: circleAvatar(onPress, programStatus: programStatus)
-                  )
+                left: 0,
+                bottom: 0,
+                top: 0,
+                child: circleAvatar(onPress, programStatus: programStatus),
+              )
+            else
+              Positioned(
+                  right: 0,
+                  bottom: 0,
+                  top: 0,
+                  child: circleAvatar(onPress, programStatus: programStatus))
           ],
         )
       ],

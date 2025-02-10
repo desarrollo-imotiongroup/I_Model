@@ -17,6 +17,7 @@ class DashboardScreen extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
+    controller.onInit();
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;

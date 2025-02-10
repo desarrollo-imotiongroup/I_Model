@@ -5,7 +5,8 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/menu/license_controller.dart';
-import 'package:i_model/views/overlays/license_detail_overlay.dart';
+import 'package:i_model/views/dialogs/license_detail_dialog.dart';
+import 'package:i_model/views/overlays/maxTimeSelectionOverlay.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/table_text_info.dart';
@@ -24,257 +25,318 @@ class LicenseScreen extends StatelessWidget {
     double screenHeight = mediaQuery.size.height;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage(
-                Strings.bgImage,
+      body: GetBuilder<LicenseController>(
+        builder: (LicenseController controller) {
+          return Container(
+            width: double.infinity,
+            height: double.infinity,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage(
+                    Strings.bgImage,
+                  ),
+                  fit: BoxFit.cover),
+            ),
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: screenHeight * 0.07,
+                left: screenHeight * 0.1,
+                right: screenHeight * 0.04,
               ),
-              fit: BoxFit.cover),
-        ),
-        child: Padding(
-          padding: EdgeInsets.only(
-            top: screenHeight * 0.07,
-            left: screenHeight * 0.1,
-            right: screenHeight * 0.04,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                /// License
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    TextView.title(
-                      translation(context).license,
-                      isUnderLine: true,
-                      color: AppColors.pinkColor,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: Image(
-                        image: AssetImage(
-                          Strings.backIcon,
-                        ),
-                        height: screenHeight * 0.1,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: screenHeight * 0.01,
-                ),
-
-                /// Row for license data and details
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    /// License data - datos licencia
-                    Column(
+                    /// License title
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        SizedBox(
-                          width: screenWidth * 0.53,
-                          height: screenHeight * 0.75,
-                          child: Column(
-                            children: [
-                              TextView.title(translation(context).licenseData.toUpperCase(),
-                                  isUnderLine: true,
-                                  color: AppColors.pinkColor,
-                                  fontSize: 13.sp),
+                        TextView.title(
+                          translation(context).license.toUpperCase(),
+                          isUnderLine: true,
+                          color: AppColors.pinkColor,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Image(
+                            image: AssetImage(
+                              Strings.backIcon,
+                            ),
+                            height: screenHeight * 0.1,
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: screenHeight * 0.01,
+                    ),
 
-                              SizedBox(height: screenHeight * 0.03,),
-
-                              /// For TextFields in 2 rows
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    /// Row for license data and details
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        /// License data - datos licencia
+                        Column(
+                          children: [
+                            SizedBox(
+                              width: screenWidth * 0.53,
+                              height: screenHeight * 0.75,
+                              child: Column(
                                 children: [
-                                  Column(
+                                  TextView.title(translation(context).licenseData.toUpperCase(),
+                                      isUnderLine: true,
+                                      color: AppColors.pinkColor,
+                                      fontSize: 13.sp),
+
+                                  SizedBox(height: screenHeight * 0.03,),
+
+                                  /// For TextFields in 2 rows
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      /// License Number textField
-                                      TextFieldLabel(
-                                        label: translation(context).licenseNo.toUpperCase(),
-                                        textEditingController: controller.licenseNumberController,
-                                        fontSize: 12.sp,
-                                      ),
+                                      Column(
+                                        children: [
+                                          /// License Number textField
+                                          TextFieldLabel(
+                                            label: translation(context).licenseNo.toUpperCase(),
+                                            textEditingController: controller.licenseNumberController,
+                                            fontSize: 12.sp,
+                                            onNext: () {
+                                              controller.moveFocusTo(context, controller.nameFocusNode);
+                                            },
+                                          ),
 
-                                      /// Name textField
-                                      TextFieldLabel(
-                                        label: translation(context).name.toUpperCase(),
-                                        textEditingController: controller.nameController,
-                                        fontSize: 12.sp,
-                                      ),
+                                          /// Name textField
+                                          TextFieldLabel(
+                                            label: translation(context).name.toUpperCase(),
+                                            textEditingController: controller.nameController,
+                                            fontSize: 12.sp,
+                                            focusNode: controller.nameFocusNode,
+                                            onNext: () {
+                                              controller.moveFocusTo(context, controller.directionFocusNode);
+                                            },
+                                          ),
 
-                                      /// Direction/address textField
-                                      TextFieldLabel(
-                                        label: translation(context).address.toUpperCase(),
-                                        textEditingController: controller.addressController,
-                                        fontSize: 12.sp,
-                                      ),
+                                          /// Direction/address textField
+                                          TextFieldLabel(
+                                            label: translation(context).address.toUpperCase(),
+                                            textEditingController: controller.addressController,
+                                            fontSize: 12.sp,
+                                            focusNode: controller.directionFocusNode,
+                                            onNext: () {
+                                              controller.moveFocusTo(context, controller.cityFocusNode);
+                                            },
+                                          ),
 
-                                      /// City textField
-                                      TextFieldLabel(
-                                        label: translation(context).city.toUpperCase(),
-                                        textEditingController: controller.cityController,
-                                        fontSize: 12.sp,
+                                          /// City textField
+                                          TextFieldLabel(
+                                            label: translation(context).city.toUpperCase(),
+                                            textEditingController: controller.cityController,
+                                            fontSize: 12.sp,
+                                            focusNode: controller.cityFocusNode,
+                                            onNext: () {
+                                              controller.moveFocusTo(context, controller.provinceFocusNode);
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      Column(
+                                        children: [
+                                          /// Province textField
+                                          TextFieldLabel(
+                                            label: translation(context).province.toUpperCase(),
+                                            textEditingController: controller.provinceController,
+                                            fontSize: 12.sp,
+                                            focusNode: controller.provinceFocusNode,
+                                            onNext: () {
+                                              controller.moveFocusTo(context, controller.countryFocusNode);
+                                            },
+                                          ),
+
+                                          /// Country textField
+                                          TextFieldLabel(
+                                            label: translation(context).country.toUpperCase(),
+                                            textEditingController: controller.countryController,
+                                            fontSize: 12.sp,
+                                            focusNode: controller.countryFocusNode,
+                                            onNext: () {
+                                              controller.moveFocusTo(context, controller.phoneFocusNode);
+                                            },
+                                          ),
+
+                                          ///  Telephone textField
+                                          TextFieldLabel(
+                                            label: translation(context).phone.toUpperCase(),
+                                            textEditingController: controller.phoneController,
+                                            fontSize: 12.sp,
+                                            isAllowNumberOnly: true,
+                                            focusNode: controller.phoneFocusNode,
+                                            onNext: () {
+                                              controller.moveFocusTo(context, controller.emailFocusNode);
+                                            },
+                                          ),
+
+                                          /// Email textField
+                                          TextFieldLabel(
+                                            label: translation(context).email.toUpperCase(),
+                                            textEditingController: controller.emailController,
+                                            fontSize: 12.sp,
+                                            textInputAction: TextInputAction.done,
+                                            focusNode: controller.emailFocusNode,
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
-                                  Column(
-                                    children: [
-                                      /// Province textField
-                                      TextFieldLabel(
-                                        label: translation(context).province.toUpperCase(),
-                                        textEditingController: controller.provinceController,
-                                        fontSize: 12.sp,
-                                      ),
 
-                                      /// Country textField
-                                      TextFieldLabel(
-                                        label: translation(context).country.toUpperCase(),
-                                        textEditingController: controller.countryController,
-                                        fontSize: 12.sp,
-                                      ),
+                                  SizedBox(height: screenHeight * 0.06,),
 
-                                      ///  Telephone textField
-                                      TextFieldLabel(
-                                        label: translation(context).phone.toUpperCase(),
-                                        textEditingController: controller.phoneController,
-                                        fontSize: 12.sp,
-                                        isAllowNumberOnly: true,
-                                      ),
-
-                                      /// Email textField
-                                      TextFieldLabel(
-                                        label: translation(context).email.toUpperCase(),
-                                        textEditingController: controller.emailController,
-                                        fontSize: 12.sp,
-                                        textInputAction: TextInputAction.done,
-                                      ),
-                                    ],
+                                  RoundedContainer(
+                                      onTap: () {
+                                        controller.validateLicense();
+                                      },
+                                      borderRadius: screenHeight * 0.01,
+                                      width: screenWidth * 0.2,
+                                      widget: TextView.title(
+                                        translation(context).validateLicense.toUpperCase(),
+                                        color: AppColors.blackColor,
+                                        fontSize: 14.sp,
+                                      )
                                   ),
                                 ],
                               ),
+                            )
+                          ],
+                        ),
 
-                              SizedBox(height: screenHeight * 0.06,),
-
-                              RoundedContainer(
-                                  onTap: (){
-                                    controller.validateLicense();
-                                  },
-                                  borderRadius: screenHeight * 0.01,
-                                  width: screenWidth * 0.2,
-                                  widget: TextView.title(
-                                    translation(context).validateLicense.toUpperCase(),
-                                    color: AppColors.blackColor,
-                                    fontSize: 14.sp,
-                                  )
+                        /// License numbers - N licencia
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  right: screenWidth * 0.02
                               ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    width: screenWidth * 0.3,
+                                    height: screenHeight * 0.75,
+                                    child: Column(
+                                      children: [
+                                        TextView.title(
+                                          translation(context).licenseNumber.toUpperCase(),
+                                          isUnderLine: true,
+                                          color: AppColors.pinkColor,
+                                          fontSize: 13.sp,
+                                        ),
+                                        SizedBox(height: screenHeight * 0.04,),
 
-                    /// License numbers - N licencia
-                    Padding(
-                      padding: EdgeInsets.only(
-                        right: screenWidth * 0.05
-                      ),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            width: screenWidth * 0.3,
-                            height: screenHeight * 0.75,
-                            child: Column(
-                              children: [
-                                TextView.title(
-                                  translation(context).licenseNumber.toUpperCase(),
-                                    isUnderLine: true,
-                                    color: AppColors.pinkColor,
-                                    fontSize: 13.sp,
-                                ),
-                                SizedBox(height: screenHeight * 0.05,),
+                                        /// Table header
+                                        SizedBox(
+                                          width: screenWidth * 0.26,
+                                          child: Row(
+                                            children: [
+                                              tableTextInfo(title: translation(context).mci),
+                                              tableTextInfo(title: translation(context).type),
+                                              tableTextInfo(title: translation(context).status),
+                                            ],
+                                          ),
+                                        ),
 
-                                /// Table header
-                                SizedBox(
-                                  width: screenWidth * 0.26,
-                                  child: Row(
-                                    children: [
-                                      tableTextInfo(title: translation(context).mci),
-                                      tableTextInfo(title: translation(context).type),
-                                      tableTextInfo(title: translation(context).status),
-                                    ],
-                                  ),
-                                ),
-                                Obx(() =>
-                                    CustomContainer(
-                                        color: AppColors.greyColor,
-                                        width: screenWidth * 0.3,
-                                        height: screenHeight * 0.6,
-                                        widget: ListView.builder(
-                                          padding: EdgeInsets.zero,
-                                          itemCount: controller.mciLicenseList.length,
-                                          itemBuilder: (BuildContext context, int index) {
-                                            return  GestureDetector(
-                                              onTap: (){
-                                                licenseDetailOverlay(context);
-                                              },
-                                              child: Column(
-                                                children: [
-                                                  Padding(
-                                                    padding: EdgeInsets.symmetric(
-                                                      vertical: screenHeight * 0.01,
-                                                    ),
-                                                    child: RoundedContainer(
-                                                        width: screenWidth * 0.3,
-                                                        borderColor: AppColors.transparentColor,
-                                                        borderRadius: screenWidth * 0.006,
-                                                        color: AppColors.pureWhiteColor,
-                                                        widget: Row(
-                                                          children: [
-                                                            /// Table cells info
-                                                            tableTextInfo(
-                                                              title: controller.mciLicenseList[index].mci,
-                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                              fontSize: 10.sp,
-                                                            ),
-                                                            tableTextInfo(
-                                                              title: controller.mciLicenseList[index].type.toUpperCase(),
-                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                              fontSize: 10.sp,
-                                                            ),
-                                                            tableTextInfo(
-                                                              title: controller.mciLicenseList[index].status.toUpperCase(),
-                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                              fontSize: 10.sp,
-                                                            ),
-                                                          ],
-                                                        )
-                                                    ),
+                                        CustomContainer(
+                                            color: AppColors.greyColor,
+                                            width: screenWidth * 0.3,
+                                            height: screenHeight * 0.6,
+                                            widget: ListView.builder(
+                                              padding: EdgeInsets.zero,
+                                              itemCount: controller.mciLicenseList.length,
+                                              itemBuilder: (BuildContext context, int index) {
+                                                return  GestureDetector(
+                                                  onTap: () async {
+                                                    controller.selectedStatus.value =
+                                                        controller.mciLicenseList[index].status.value;
+
+                                                    licenseDetailDialog(
+                                                      context,
+                                                      index: index,
+                                                    );
+                                                  },
+                                                  child: Column(
+                                                    children: [
+                                                      Padding(
+                                                        padding: EdgeInsets.symmetric(
+                                                          vertical: screenHeight * 0.01,
+                                                        ),
+                                                        child: RoundedContainer(
+                                                            width: screenWidth * 0.3,
+                                                            borderColor: AppColors.transparentColor,
+                                                            borderRadius: screenWidth * 0.006,
+                                                            color: AppColors.pureWhiteColor,
+                                                            widget: Row(
+                                                              children: [
+                                                                /// Table cells info
+                                                                tableTextInfo(
+                                                                  title: controller.mciLicenseList[index].mci,
+                                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                                  fontSize: 10.sp,
+                                                                ),
+                                                                tableTextInfo(
+                                                                  title: controller.mciLicenseList[index].type.toUpperCase(),
+                                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                                  fontSize: 10.sp,
+                                                                ),
+                                                                tableTextInfo(
+                                                                  title: controller.mciLicenseList[index].status.value.toUpperCase(),
+                                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                                  fontSize: 10.sp,
+                                                                ),
+                                                              ],
+                                                            )
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
-                                            );
-                                          },
+                                                );
+                                              },
+                                            )
                                         )
-                                    )
-                                )
-                              ],
+
+                                      ],
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
-                          )
-                        ],
-                      ),
-                    ),
+                            /// Setting button for max time selection
+                            Padding(
+                              padding: EdgeInsets.only(
+                                bottom: screenHeight * 0.03
+                              ),
+                              child: GestureDetector(
+                                onTap: (){
+                                  maxTimeSelectionOverlay(context);
+                                },
+                                child: Icon(
+                                    Icons.settings,
+                                    color: AppColors.blackColor,
+                                    size: screenHeight * 0.05,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+
+
+                      ],
+                    )
                   ],
-                )
-              ],
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

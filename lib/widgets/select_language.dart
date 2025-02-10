@@ -106,25 +106,23 @@ class SelectLanguage extends StatelessWidget {
                       boxShadow: [
                         BoxShadow(
                           color: Colors.grey.withValues(alpha: 0.3),
-                          // Adjusted shadow color opacity
                           spreadRadius: 3,
-                          // Shadow spread radius
                           blurRadius: 3,
-                          // Shadow blur effect
                           offset: const Offset(0, 2), // Shadow position
                         ),
                       ],
                     ),
                     child: Center(
                       child: ListTile(
+                        onTap: (){
+                          selectLanguageController.selectedLanguage.value = selectLanguageController.languages[index];
+                          selectLanguageController.chooseLanguage(context: context);
+                        },
                         contentPadding: EdgeInsets.symmetric(
                             horizontal: screenWidth * 0.015,
                             vertical: screenHeight * 0.01),
-                        // Adjust padding inside ListTile
                         minVerticalPadding: 0,
-                        // Reduces the vertical padding inside ListTile
                         horizontalTitleGap: 0,
-                        // Reduces the gap between the leading widget and title
                         title: Center(
                           child: Text(
                             selectLanguageController.languages[index],
@@ -135,10 +133,8 @@ class SelectLanguage extends StatelessWidget {
                             width: screenWidth * 0.015,
                             child: Obx(
                               () => Radio<String>(
-                                value:
-                                    selectLanguageController.languages[index],
-                                groupValue:
-                                    selectLanguageController.selectedLanguage.value,
+                                value: selectLanguageController.languages[index],
+                                groupValue: selectLanguageController.selectedLanguage.value,
                                 activeColor: AppColors.pinkColor,
                                 onChanged: (value) async {
                                   selectLanguageController.selectedLanguage.value = value!;
