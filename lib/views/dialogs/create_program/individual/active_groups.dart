@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/widgets/active_group_icon.dart';
@@ -28,7 +29,7 @@ class ActiveGroups extends StatelessWidget {
             children: [
               Expanded(
                 child: TextFieldLabel(
-                  label: Strings.programName2,
+                  label: translation(context).programName2,
                   textEditingController: controller.individualProgramNameController,
                   fontSize: 11.sp,
                   isReadOnly: true,
@@ -37,7 +38,7 @@ class ActiveGroups extends StatelessWidget {
 
               /// Client status drop down
               DropDownLabelWidget(
-                label: Strings.equipment,
+                label: translation(context).equipment,
                 selectedValue: controller.selectedEquipment.value,
                 dropDownList: controller.equipmentOptions,
                 onChanged: (value){

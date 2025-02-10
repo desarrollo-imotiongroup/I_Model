@@ -16,6 +16,7 @@ class CreateNewClientController extends GetxController {
   final TextEditingController clientHeightController = TextEditingController();
   final TextEditingController clientWeightController = TextEditingController();
   final TextEditingController clientEmailController = TextEditingController();
+  FocusNode weightFocusNode = FocusNode();
   RxString clientSelectedGender = Strings.nothing.obs;
 
   @override

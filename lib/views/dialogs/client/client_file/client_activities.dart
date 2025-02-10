@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
@@ -32,7 +33,7 @@ class ClientActivities extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFieldLabel(
-                    label: Strings.name,
+                    label: translation(context).name,
                     textEditingController: controller.clientNameController,
                     isReadOnly: true,
                     fontSize: 11.sp,
@@ -65,26 +66,26 @@ class ClientActivities extends StatelessWidget {
                     Row(
                       children: [
                         tableTextInfo(
-                          title: Strings.date,
+                          title: translation(context).date,
                           fontSize: 10.sp,
                         ),
                         tableTextInfo(
-                          title: Strings.hour,
+                          title: translation(context).hour,
                           fontSize: 10.sp,
                         ),
                         tableTextInfo(
-                          title: Strings.cards,
+                          title: translation(context).cards,
                           fontSize: 10.sp,
                         ),
                         tableTextInfo(
-                          title: Strings.points,
+                          title: translation(context).points,
                           fontSize: 10.sp,
                         ),
                         Expanded(
                           child: Row(
                             children: [
                               tableTextInfo(
-                                title: Strings.eKcal,
+                                title: translation(context).eKcal,
                                 fontSize: 10.sp,
                               ),
                               SizedBox(width: screenWidth * 0.035,)

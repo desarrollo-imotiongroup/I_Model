@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/views/dialogs/client/client_file/client_active_groups.dart';
 import 'package:i_model/views/dialogs/client/client_file/client_activities.dart';
@@ -41,7 +41,7 @@ void clientFileDialog(BuildContext context) {
                   Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title: Strings.clientFile),
+                    child: TopTitleButton(title: translation(context).clientFile),
                   ),
                   Divider(color: AppColors.pinkColor),
 
@@ -51,11 +51,11 @@ void clientFileDialog(BuildContext context) {
                     child: Column(
                       children: [
                         TabHeader(tabs: [
-                          Tab(text: Strings.personalData.toUpperCase()),
-                          Tab(text: Strings.activities.toUpperCase()),
-                          Tab(text: Strings.cards.toUpperCase()),
-                          Tab(text: Strings.bioimpedancia.toUpperCase()),
-                          Tab(text: Strings.activeGroups.toUpperCase()),
+                          Tab(text: translation(context).personalData.toUpperCase()),
+                          Tab(text: translation(context).activities.toUpperCase()),
+                          Tab(text: translation(context).cards.toUpperCase()),
+                          Tab(text: translation(context).biompedancia.toUpperCase()),
+                          Tab(text: translation(context).activeGroups.toUpperCase()),
                         ],),
                         SizedBox(
                           height: screenHeight * 0.7,

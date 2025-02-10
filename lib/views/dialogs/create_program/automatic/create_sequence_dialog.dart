@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
@@ -51,7 +52,7 @@ void createSequenceDialog(BuildContext context,) {
               child: Column(
                 children: [
                   SizedBox(height: screenWidth * 0.015),
-                  TopTitleButton(title:  Strings.createSequence),
+                  TopTitleButton(title:  translation(context).createSequence),
                   Divider(color: AppColors.pinkColor),
 
                   SizedBox(
@@ -79,16 +80,16 @@ void createSequenceDialog(BuildContext context,) {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   textFieldWidget(
-                                    label: Strings.order,
+                                    label: translation(context).order,
                                     textEditingController: controller.orderController,
                                   ),
                                   textFieldWidget(
-                                      label: Strings.duration,
+                                      label: translation(context).duration,
                                       textEditingController: controller.durationController,
                                       isUnitNeeded: true
                                   ),
                                   textFieldWidget(
-                                      label: Strings.adjustment,
+                                      label: translation(context).adjustment,
                                       textEditingController: controller.adjustmentController,
                                       isDone: true
                                   ),

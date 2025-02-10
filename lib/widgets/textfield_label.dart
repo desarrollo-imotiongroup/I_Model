@@ -14,7 +14,9 @@ class TextFieldLabel extends StatelessWidget {
   final double? width;
   final String? unit;
   final Function(String)? onChanged;
+  final Function()? onNext;
   final bool isObscureText;
+  final FocusNode? focusNode;
   final bool isSuffixIcon;
   final Widget? suffixIcon;
 
@@ -31,7 +33,9 @@ class TextFieldLabel extends StatelessWidget {
     this.onChanged,
     this.isObscureText = false,
     this.isSuffixIcon = false,
-    this.suffixIcon
+    this.suffixIcon,
+    this.onNext,
+    this.focusNode,
   });
 
   @override
@@ -62,6 +66,8 @@ class TextFieldLabel extends StatelessWidget {
         TextFieldWidget(
           onChanged: onChanged,
           textEditingController: textEditingController,
+          onNext: onNext,
+          focusNode: focusNode,
           bgColor: AppColors.greyColor,
           width: width ?? screenWidth * 0.25,
           height: screenHeight * 0.07,

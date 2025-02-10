@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/beautician_controller.dart';
 import 'package:i_model/views/dialogs/beautician_file/beautician_activities.dart';
 import 'package:i_model/views/dialogs/beautician_file/beautician_card.dart';
@@ -40,7 +40,7 @@ void beauticianFileDialog(BuildContext context,) {
                   Padding(
                     padding:
                     EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title: Strings.beauticianFile),
+                    child: TopTitleButton(title: translation(context).beauticianFile),
                   ),
                   Divider(color: AppColors.pinkColor),
 
@@ -51,9 +51,9 @@ void beauticianFileDialog(BuildContext context,) {
                       children: [
                         TabHeader(
                           tabs: [
-                          Tab(text: Strings.personalData.toUpperCase()),
-                          Tab(text: Strings.cards.toUpperCase()),
-                          Tab(text: Strings.activities.toUpperCase()),
+                          Tab(text: translation(context).personalData.toUpperCase()),
+                          Tab(text: translation(context).cards.toUpperCase()),
+                          Tab(text: translation(context).activities.toUpperCase()),
                         ],),
                         SizedBox(
                           height: screenHeight * 0.7,

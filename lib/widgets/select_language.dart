@@ -3,8 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
-import 'package:i_model/main.dart';
 import 'package:i_model/view_models/select_language_controller.dart';
 import 'package:i_model/widgets/textview.dart';
 

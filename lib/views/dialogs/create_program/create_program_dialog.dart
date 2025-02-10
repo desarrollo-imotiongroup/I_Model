@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/views/dialogs/create_program/automatic/automatic_program.dart';
 import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/views/dialogs/create_program/individual/active_groups.dart';
@@ -36,7 +36,7 @@ void createProgramDialog(BuildContext context,) {
                   Padding(
                     padding:
                     EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title:  Strings.createProgram),
+                    child: TopTitleButton(title:  translation(context).createProgram),
                   ),
                   Divider(color: AppColors.pinkColor),
 
@@ -46,8 +46,8 @@ void createProgramDialog(BuildContext context,) {
                     child: Column(
                       children: [
                         TabHeader(tabs: [
-                          Tab(text: Strings.individual.toUpperCase()),
-                          Tab(text: Strings.automatics.toUpperCase()),
+                          Tab(text: translation(context).individual.toUpperCase()),
+                          Tab(text: translation(context).automatics.toUpperCase()),
                         ],),
                         SizedBox(
                           height: screenHeight * 0.7,
@@ -65,9 +65,9 @@ void createProgramDialog(BuildContext context,) {
                                         bgColor: AppColors.pureWhiteColor,
                                         unSelectedColor: AppColors.blackColor,
                                         tabs: [
-                                        Tab(text: Strings.configurationTab.toUpperCase()),
-                                        Tab(text: Strings.cronaxiaTab.toUpperCase()),
-                                        Tab(text: Strings.activeGroups.toUpperCase()),
+                                        Tab(text: translation(context).configurationTab.toUpperCase()),
+                                        Tab(text: translation(context).cronaxiaTab.toUpperCase()),
+                                        Tab(text: translation(context).activeGroups.toUpperCase()),
                                       ],),
                                     ),
                                     SizedBox(

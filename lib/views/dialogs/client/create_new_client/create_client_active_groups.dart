@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/create_new_client_controller.dart';
 import 'package:i_model/widgets/active_group_icon.dart';
@@ -30,7 +31,7 @@ class CreateClientActiveGroups extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFieldLabel(
-                    label: Strings.name,
+                    label: translation(context).name,
                     textEditingController: controller.clientNameController,
                     fontSize: 11.sp,
                   ),
@@ -201,7 +202,7 @@ class CreateClientActiveGroups extends StatelessWidget {
 
                           /// Extra
                           CheckBox(
-                            title: Strings.extra,
+                            title: translation(context).extra,
                             isChecked: controller.isExtraChecked.value,
                             onTap: (){
                               controller.toggleExtra();

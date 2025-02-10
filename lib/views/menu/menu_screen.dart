@@ -3,11 +3,10 @@ import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/menu/menu_controller.dart';
+import 'package:i_model/widgets/image_widget.dart';
+import 'package:i_model/widgets/menu_widget.dart';
 import 'package:i_model/widgets/with_device_biompedancia.dart';
 import 'package:i_model/widgets/without_device_biompedancia.dart';
-import 'package:i_model/widgets/menu_widget.dart';
-import 'package:i_model/widgets/image_widget.dart';
-import 'package:i_model/widgets/technical_service.dart';
 
 class MenuScreen extends StatelessWidget {
   MenuScreen({super.key});
@@ -108,8 +107,7 @@ class MenuScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                        (menuController.isBiomPedancia.value &&
-                                !menuController.isBiomPedanciaDevice.value)
+                        (menuController.isBiomPedancia.value && !menuController.isBiomPedanciaDevice.value)
                             ? WithoutDeviceBiompedancia(
                                 onCancel: () {
                                   menuController.dismissBiomPedanciaState();

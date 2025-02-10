@@ -27,8 +27,8 @@ class LoginScreen extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) {
         alertOverlay(context,
-            heading: Strings.closeApplication,
-            buttonText: Strings.closeApplicationButton,
+            heading: translation(context).closeApplication,
+            buttonText: translation(context).closeApplicationButton,
             onTap: () {
           SystemNavigator.pop();});
       },

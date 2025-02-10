@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/containers/unbounded_container.dart';
-import 'package:i_model/widgets/top_title_button.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 
 void resetPasswordOverlay(BuildContext context) {
   final overlayState = Overlay.of(context);
@@ -41,7 +41,7 @@ void resetPasswordOverlay(BuildContext context) {
                     children: [
                       SizedBox(height: screenWidth * 0.015),
                       TopTitleButton(
-                        title: Strings.resetPassword,
+                        title: translation(context).resetPassword,
                         onCancel: () {
                           if (overlayEntry.mounted) {
                             overlayEntry.remove();
@@ -59,7 +59,7 @@ void resetPasswordOverlay(BuildContext context) {
                               builder: (context, isObscuredValue, _) {
                                 return TextFieldLabel(
                                   width: double.infinity,
-                                  label: Strings.newPassword,
+                                  label: translation(context).newPassword,
                                   textEditingController: newPasswordController,
                                   fontSize: 12.sp,
                                   isObscureText: isObscuredValue,
@@ -84,7 +84,7 @@ void resetPasswordOverlay(BuildContext context) {
                               builder: (context, isObscuredValue, _) {
                                 return TextFieldLabel(
                                   width: double.infinity,
-                                  label: Strings.repeatPassword,
+                                  label: translation(context).repeatPassword,
                                   textEditingController: repeatPasswordController,
                                   fontSize: 12.sp,
                                   isObscureText: isObscuredValue,
@@ -109,7 +109,7 @@ void resetPasswordOverlay(BuildContext context) {
                                 borderColor: AppColors.pinkColor,
                                 onTap: () {},
                                 widget: TextView.title(
-                                  Strings.logIn.toUpperCase(),
+                                  translation(context).logIn.toUpperCase(),
                                   fontSize: 11.sp,
                                   color: AppColors.pinkColor,
                                 ),

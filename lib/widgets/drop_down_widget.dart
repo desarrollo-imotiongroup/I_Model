@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/textview.dart';
 
@@ -38,7 +38,7 @@ class DropDownWidget extends StatelessWidget {
         value: selectedValue.isEmpty ? null : selectedValue,
         // If empty, set to null
         hint: selectedValue.isEmpty
-            ? TextView.title(Strings.pleaseSelect.toUpperCase(),
+            ? TextView.title(translation(context).pleaseSelect.toUpperCase(),
                 fontSize: 11.sp,
                 color:
                     AppColors.blackColor.withValues(alpha: 0.8)) // Placeholder
@@ -105,7 +105,7 @@ class DropDownLabelWidget extends StatelessWidget {
             value: selectedValue.isEmpty ? null : selectedValue,
             // If empty, set to null
             hint: selectedValue.isEmpty
-                ? TextView.title(Strings.pleaseSelect.toUpperCase(),
+                ? TextView.title(translation(context).pleaseSelect.toUpperCase(),
                     fontSize: 11.sp,
                     color: AppColors.blackColor
                         .withValues(alpha: 0.8)) // Placeholder

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/administrator_controller.dart';
@@ -32,7 +33,7 @@ class AdministratorActivities extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFieldLabel(
-                    label: Strings.nick,
+                    label: translation(context).nick,
                     textEditingController: controller.nickNameController,
                     isReadOnly: true,
                     fontSize: 11.sp,
@@ -65,26 +66,26 @@ class AdministratorActivities extends StatelessWidget {
                     Row(
                       children: [
                         tableTextInfo(
-                          title: Strings.date,
+                          title: translation(context).date,
                           fontSize: 10.sp,
                         ),
                         tableTextInfo(
-                          title: Strings.start,
+                          title: translation(context).start,
                           fontSize: 10.sp,
                         ),
                         tableTextInfo(
-                          title: Strings.end,
+                          title: translation(context).end,
                           fontSize: 10.sp,
                         ),
                         tableTextInfo(
-                          title: Strings.bonuses,
+                          title: translation(context).bonuses,
                           fontSize: 10.sp,
                         ),
                         Expanded(
                           child: Row(
                             children: [
                               tableTextInfo(
-                                title: Strings.client,
+                                title: translation(context).client,
                                 fontSize: 10.sp,
                               ),
                               SizedBox(width: screenWidth * 0.035,)

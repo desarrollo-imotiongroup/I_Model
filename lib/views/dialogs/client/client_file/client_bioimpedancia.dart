@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
@@ -164,12 +165,12 @@ class ClientBioimpedancia extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       TextView.title(
-                        '${Strings.date.toUpperCase()}: ${controller.selectedDate.value}',
+                        '${translation(context).date.toUpperCase()}: ${controller.selectedDate.value}',
                         color: AppColors.pinkColor,
                         fontSize: 12.sp,
                       ),
                       TextView.title(
-                        '${Strings.hour.toUpperCase()}: ${controller.selectedHour.value}',
+                        '${translation(context).hour.toUpperCase()}: ${controller.selectedHour.value}',
                         color: AppColors.pinkColor,
                         fontSize: 12.sp,
                       ),
@@ -190,20 +191,20 @@ class ClientBioimpedancia extends StatelessWidget {
                                   fontSize: 10.sp,
                                 ),
                                 tableTextInfo(
-                                    title: Strings.calculatedValue,
+                                    title: translation(context).calculatedValue,
                                     fontSize: 10.sp,
                                     lines: 2,
                                     isCenter: true
                                 ),
                                 tableTextInfo(
-                                  title: Strings.reference,
+                                  title: translation(context).reference,
                                   fontSize: 10.sp,
                                 ),
                                 Expanded(
                                   child: Row(
                                     children: [
                                       tableTextInfo(
-                                        title: Strings.result,
+                                        title: translation(context).result,
                                         fontSize: 10.sp,
                                       ),
                                       SizedBox(width: screenWidth * 0.02,)
@@ -322,7 +323,7 @@ class ClientBioimpedancia extends StatelessWidget {
             children: [
               Expanded(
                 child: TextFieldLabel(
-                  label: Strings.name,
+                  label: translation(context).name,
                   textEditingController: controller.clientNameController,
                   isReadOnly: true,
                   fontSize: 11.sp,
@@ -356,11 +357,11 @@ class ClientBioimpedancia extends StatelessWidget {
                     Row(
                       children: [
                         tableTextInfo(
-                          title: Strings.date,
+                          title: translation(context).date,
                           fontSize: 10.sp,
                         ),
                         tableTextInfo(
-                          title: Strings.hour,
+                          title: translation(context).hour,
                           fontSize: 10.sp,
                         ),
                       ],
@@ -428,7 +429,7 @@ class ClientBioimpedancia extends StatelessWidget {
                     vertical: screenHeight * 0.013
                 ),
                 widget: TextView.title(
-                    Strings.evolution.toUpperCase(),
+                    translation(context).evolution.toUpperCase(),
                     fontSize: 12.sp,
                     color: AppColors.blackColor.withValues(alpha: 0.8)
                 )),

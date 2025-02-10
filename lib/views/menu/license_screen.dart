@@ -81,7 +81,7 @@ class LicenseScreen extends StatelessWidget {
                           height: screenHeight * 0.75,
                           child: Column(
                             children: [
-                              TextView.title(Strings.licenseData.toUpperCase(),
+                              TextView.title(translation(context).licenseData.toUpperCase(),
                                   isUnderLine: true,
                                   color: AppColors.pinkColor,
                                   fontSize: 13.sp),
@@ -96,29 +96,28 @@ class LicenseScreen extends StatelessWidget {
                                     children: [
                                       /// License Number textField
                                       TextFieldLabel(
-                                        label: Strings.licenseNo.toUpperCase(),
+                                        label: translation(context).licenseNo.toUpperCase(),
                                         textEditingController: controller.licenseNumberController,
-                                        isAllowNumberOnly: true,
                                         fontSize: 12.sp,
                                       ),
 
                                       /// Name textField
                                       TextFieldLabel(
-                                        label: Strings.name.toUpperCase(),
+                                        label: translation(context).name.toUpperCase(),
                                         textEditingController: controller.nameController,
                                         fontSize: 12.sp,
                                       ),
 
                                       /// Direction/address textField
                                       TextFieldLabel(
-                                        label: Strings.address.toUpperCase(),
+                                        label: translation(context).address.toUpperCase(),
                                         textEditingController: controller.addressController,
                                         fontSize: 12.sp,
                                       ),
 
                                       /// City textField
                                       TextFieldLabel(
-                                        label: Strings.city.toUpperCase(),
+                                        label: translation(context).city.toUpperCase(),
                                         textEditingController: controller.cityController,
                                         fontSize: 12.sp,
                                       ),
@@ -128,21 +127,21 @@ class LicenseScreen extends StatelessWidget {
                                     children: [
                                       /// Province textField
                                       TextFieldLabel(
-                                        label: Strings.province.toUpperCase(),
+                                        label: translation(context).province.toUpperCase(),
                                         textEditingController: controller.provinceController,
                                         fontSize: 12.sp,
                                       ),
 
                                       /// Country textField
                                       TextFieldLabel(
-                                        label: Strings.country.toUpperCase(),
+                                        label: translation(context).country.toUpperCase(),
                                         textEditingController: controller.countryController,
                                         fontSize: 12.sp,
                                       ),
 
                                       ///  Telephone textField
                                       TextFieldLabel(
-                                        label: Strings.phone.toUpperCase(),
+                                        label: translation(context).phone.toUpperCase(),
                                         textEditingController: controller.phoneController,
                                         fontSize: 12.sp,
                                         isAllowNumberOnly: true,
@@ -150,7 +149,7 @@ class LicenseScreen extends StatelessWidget {
 
                                       /// Email textField
                                       TextFieldLabel(
-                                        label: Strings.email.toUpperCase(),
+                                        label: translation(context).email.toUpperCase(),
                                         textEditingController: controller.emailController,
                                         fontSize: 12.sp,
                                         textInputAction: TextInputAction.done,
@@ -169,7 +168,7 @@ class LicenseScreen extends StatelessWidget {
                                   borderRadius: screenHeight * 0.01,
                                   width: screenWidth * 0.2,
                                   widget: TextView.title(
-                                    Strings.validateLicense.toUpperCase(),
+                                    translation(context).validateLicense.toUpperCase(),
                                     color: AppColors.blackColor,
                                     fontSize: 14.sp,
                                   )
@@ -193,7 +192,7 @@ class LicenseScreen extends StatelessWidget {
                             child: Column(
                               children: [
                                 TextView.title(
-                                    Strings.licenseNumber.toUpperCase(),
+                                  translation(context).licenseNumber.toUpperCase(),
                                     isUnderLine: true,
                                     color: AppColors.pinkColor,
                                     fontSize: 13.sp,
@@ -205,9 +204,9 @@ class LicenseScreen extends StatelessWidget {
                                   width: screenWidth * 0.26,
                                   child: Row(
                                     children: [
-                                      tableTextInfo(title: Strings.mci),
-                                      tableTextInfo(title: Strings.type),
-                                      tableTextInfo(title: Strings.status),
+                                      tableTextInfo(title: translation(context).mci),
+                                      tableTextInfo(title: translation(context).type),
+                                      tableTextInfo(title: translation(context).status),
                                     ],
                                   ),
                                 ),

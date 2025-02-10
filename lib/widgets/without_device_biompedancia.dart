@@ -55,7 +55,7 @@ class WithoutDeviceBiompedancia extends StatelessWidget {
             ),
           ),
           TextView.title(
-               Strings.onlyForClients.toUpperCase(),
+              translation(context).onlyForClients.toUpperCase(),
               fontSize: 13.sp,
               color: AppColors.pinkColor
           ),
@@ -71,7 +71,7 @@ class WithoutDeviceBiompedancia extends StatelessWidget {
                 top: screenHeight * 0.02
             ),
             child: TextView.title(
-                Strings.contactWithUsForDevice,
+                translation(context).contactWithUsForDevice,
                 fontSize: 12.sp,
                 color: AppColors.blackColor.withValues(alpha: 0.7),
                 lines: 2,

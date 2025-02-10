@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
@@ -27,7 +28,7 @@ class ClientPersonalData extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFieldLabel(
-                    label: Strings.name,
+                    label: translation(context).name,
                     textEditingController: controller.clientNameController,
                     fontSize: 11.sp,
                   ),
@@ -64,7 +65,7 @@ class ClientPersonalData extends StatelessWidget {
                       onChanged: (value){
                         controller.clientSelectedGender.value = value;
                       },
-                      label: Strings.gender
+                      label: translation(context).gender
                   ),
                   SizedBox(height: screenHeight * 0.02,),
 
@@ -75,7 +76,7 @@ class ClientPersonalData extends StatelessWidget {
                     },
                     child: AbsorbPointer(
                       child: TextFieldLabel(
-                        label: Strings.birthDate,
+                        label: translation(context).birthDate,
                         textEditingController: controller.clientDobController,
                         fontSize: 11.sp,
                       ),
@@ -86,7 +87,7 @@ class ClientPersonalData extends StatelessWidget {
 
                   /// Phone text field
                   TextFieldLabel(
-                    label: Strings.phone,
+                    label: translation(context).phone,
                     textEditingController: controller.clientPhoneController,
                     isAllowNumberOnly: true,
                     fontSize: 11.sp,
@@ -99,7 +100,7 @@ class ClientPersonalData extends StatelessWidget {
                 children: [
                   /// Height text field
                   TextFieldLabel(
-                    label: Strings.height,
+                    label: translation(context).height,
                     textEditingController: controller.clientHeightController,
                     isAllowNumberOnly: true,
                     fontSize: 11.sp,
@@ -109,7 +110,7 @@ class ClientPersonalData extends StatelessWidget {
 
                   /// Weight text field
                   TextFieldLabel(
-                    label: Strings.weight,
+                    label: translation(context).weight,
                     textEditingController: controller.clientWeightController,
                     isAllowNumberOnly: true,
                     fontSize: 11.sp,
@@ -119,7 +120,7 @@ class ClientPersonalData extends StatelessWidget {
 
                   /// Email text field
                   TextFieldLabel(
-                    label: Strings.email,
+                    label: translation(context).email,
                     textEditingController: controller.clientEmailController,
                     textInputAction: TextInputAction.done,
                     fontSize: 11.sp,

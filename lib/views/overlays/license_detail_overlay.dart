@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
@@ -36,7 +37,7 @@ void licenseDetailOverlay(BuildContext context) {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
                 child: TopTitleButton(
-                    title: Strings.mci,
+                    title: translation(context).mci,
                     onCancel: (){
                       if (overlayEntry.mounted) {
                         overlayEntry.remove();
@@ -68,7 +69,7 @@ void licenseDetailOverlay(BuildContext context) {
                         Column(
                           children: [
                             TextView.title(
-                              Strings.info,
+                              translation(context).info,
                               color: AppColors.blackColor.withValues(alpha: 0.8),
                               fontSize: 12.sp,
                             ),
@@ -118,7 +119,7 @@ void licenseDetailOverlay(BuildContext context) {
                         Row(
                           children: [
                             TextView.title(
-                              '${Strings.status.toUpperCase()}: ',
+                              '${translation(context).status.toUpperCase()}: ',
                               color: AppColors.blackColor.withValues(alpha: 0.8),
                               fontSize: 12.sp,
                             ),
@@ -136,7 +137,7 @@ void licenseDetailOverlay(BuildContext context) {
                               borderColor: AppColors.pinkColor,
                               width: screenWidth * 0.12,
                                 widget: TextView.title(
-                                  Strings.recharge,
+                                    translation(context).recharge,
                                   fontSize: 12.sp,
                                   color: AppColors.pinkColor
                                 )

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
+import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
-import 'package:i_model/widgets/box_decoration.dart';
-import 'package:i_model/widgets/top_title_button.dart';
 import 'package:i_model/widgets/table_text_info.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 
 void selectClientOverlay(BuildContext context) {
   final overlayState = Overlay.of(context);
@@ -38,7 +38,7 @@ void selectClientOverlay(BuildContext context) {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
                   child: TopTitleButton(
-                    title: Strings.selectClient,
+                    title: translation(context).selectClient,
                     onCancel: (){
                       controller.isDropdownOpen.value = false;
                       if (overlayEntry.mounted) {
@@ -56,7 +56,7 @@ void selectClientOverlay(BuildContext context) {
                           Align(
                             alignment: Alignment.centerLeft,
                             child: TextFieldLabel(
-                              label: Strings.name,
+                              label: translation(context).name,
                               textEditingController: controller.nameController,
                               fontSize: 11.sp,
                             ),
@@ -75,16 +75,16 @@ void selectClientOverlay(BuildContext context) {
                                         child: Row(
                                           children: [
                                             SizedBox(width: screenWidth * 0.02,),
-                                            tableTextInfo(title: Strings.number),
+                                            tableTextInfo(title: translation(context).number),
                                           ],
                                         ),
                                       ),
-                                      tableTextInfo(title: Strings.name),
-                                      tableTextInfo(title: Strings.phone),
+                                      tableTextInfo(title: translation(context).name),
+                                      tableTextInfo(title: translation(context).phone),
                                       Expanded(
                                         child: Row(
                                           children: [
-                                            tableTextInfo(title: Strings.status),
+                                            tableTextInfo(title: translation(context).status),
                                             SizedBox(width: screenWidth * 0.03,),
                                           ],
                                         ),

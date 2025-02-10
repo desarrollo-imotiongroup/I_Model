@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/views/dialogs/create_file/create_cards.dart';
 import 'package:i_model/views/dialogs/create_file/create_personal_data.dart';
 import 'package:i_model/widgets/box_decoration.dart';
@@ -34,7 +34,7 @@ void createFileDialog(BuildContext context,) {
                   Padding(
                     padding:
                     EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title: Strings.createProfile)
+                    child: TopTitleButton(title: translation(context).createProfile)
                   ),
                   Divider(color: AppColors.pinkColor),
 
@@ -44,8 +44,8 @@ void createFileDialog(BuildContext context,) {
                     child: Column(
                       children: [
                         TabHeader(tabs: [
-                          Tab(text: Strings.personalData.toUpperCase()),
-                          Tab(text: Strings.cards.toUpperCase()),
+                          Tab(text: translation(context).personalData.toUpperCase()),
+                          Tab(text: translation(context).cards.toUpperCase()),
                         ],),
                         SizedBox(
                           height: screenHeight * 0.7,

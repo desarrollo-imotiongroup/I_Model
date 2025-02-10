@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
@@ -73,7 +74,7 @@ class ClientScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextView.title(
-                                  Strings.clients.toUpperCase(),
+                                  translation(context).clients.toUpperCase(),
                                   color: AppColors.pinkColor,
                                   isUnderLine: true,
                                   fontSize: 18.sp
@@ -82,7 +83,7 @@ class ClientScreen extends StatelessWidget {
 
                               /// Clients list
                               MenuWidget(
-                                  title: Strings.clientList.toUpperCase(),
+                                  title: translation(context).clientList.toUpperCase(),
                                   onTap: (){
                                     clientListOverlay(context);
                                   },
@@ -90,7 +91,7 @@ class ClientScreen extends StatelessWidget {
                               SizedBox(height: screenHeight * 0.01,),
                               /// Create new client
                               MenuWidget(
-                                title: Strings.createNewClient.toUpperCase(),
+                                title: translation(context).createNewClient.toUpperCase(),
                                 onTap: (){
                                   createNewClientDialog(context);
                                 },

@@ -4,14 +4,10 @@ import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/login_controller.dart';
 import 'package:i_model/view_models/tutorial_controller.dart';
-import 'package:i_model/widgets/button.dart';
 import 'package:i_model/widgets/first_step_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/menu_widget.dart';
-import 'package:i_model/widgets/technical_service.dart';
-import 'package:i_model/widgets/textfield.dart';
 import 'package:i_model/widgets/textview.dart';
 
 class TutorialScreen extends StatelessWidget {
@@ -75,7 +71,7 @@ class TutorialScreen extends StatelessWidget {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextView.title(Strings.tutorials.toUpperCase(),
+                                TextView.title(translation(context).tutorials.toUpperCase(),
                                     color: AppColors.pinkColor,
                                     isUnderLine: true,
                                     fontSize: 18.sp),
@@ -85,7 +81,7 @@ class TutorialScreen extends StatelessWidget {
 
                                 /// First steps
                                 MenuWidget(
-                                  title: Strings.firstSteps.toUpperCase(),
+                                  title: translation(context).firstSteps.toUpperCase(),
                                   onTap: () {
                                     controller.isFirstStep.value = true;
                                   },
@@ -96,7 +92,7 @@ class TutorialScreen extends StatelessWidget {
 
                                 /// Software
                                 MenuWidget(
-                                  title: Strings.software.toUpperCase(),
+                                  title: translation(context).software.toUpperCase(),
                                   onTap: () {},
                                 ),
 
@@ -106,7 +102,7 @@ class TutorialScreen extends StatelessWidget {
 
                                 /// Common incidents
                                 MenuWidget(
-                                  title: Strings.commonIncidents.toUpperCase(),
+                                  title: translation(context).commonIncidents.toUpperCase(),
                                   onTap: () {},
                                 )
                               ],

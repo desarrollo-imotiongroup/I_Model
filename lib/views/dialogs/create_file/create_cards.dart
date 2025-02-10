@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/create_profile_controller.dart';
@@ -35,7 +36,7 @@ class CreateCards extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFieldLabel(
-                    label: Strings.nick,
+                    label: translation(context).nick,
                     textEditingController: controller.nickNameController,
                     isReadOnly: true,
                     fontSize: 11.sp,
@@ -71,7 +72,7 @@ class CreateCards extends StatelessWidget {
                             vertical: screenHeight * 0.013
                         ),
                         widget: TextView.title(
-                            Strings.addPoints.toUpperCase(),
+                            translation(context).addPoints.toUpperCase(),
                             fontSize: 12.sp,
                             color: AppColors.blackColor.withValues(alpha: 0.8)
                         ))
@@ -94,7 +95,7 @@ class CreateCards extends StatelessWidget {
                   child: Column(
                     children: [
                       TextView.title(
-                        Strings.availablePoints.toUpperCase(),
+                        translation(context).availablePoints.toUpperCase(),
                         color: AppColors.pinkColor,
                         fontSize: 11.sp,
                       ),
@@ -108,14 +109,14 @@ class CreateCards extends StatelessWidget {
                                 Row(
                                   children: [
                                     tableTextInfo(
-                                      title: Strings.date,
+                                      title: translation(context).date,
                                       fontSize: 10.sp,
                                     ),
                                     Expanded(
                                       child: Row(
                                         children: [
                                           tableTextInfo(
-                                            title: Strings.quantity,
+                                            title: translation(context).quantity,
                                             fontSize: 10.sp,
                                           ),
                                           SizedBox(width: screenWidth * 0.02,),
@@ -183,7 +184,7 @@ class CreateCards extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               TextView.title(
-                                  Strings.total.toUpperCase(),
+                                  translation(context).total.toUpperCase(),
                                   fontSize: 10.sp,
                                   color: AppColors.blackColor.withValues(alpha: 0.8)
                               ),
@@ -205,7 +206,7 @@ class CreateCards extends StatelessWidget {
                   child: Column(
                     children: [
                       TextView.title(
-                        Strings.consumedPoints.toUpperCase(),
+                        translation(context).consumedPoints.toUpperCase(),
                         color: AppColors.pinkColor,
                         fontSize: 11.sp,
                       ),
@@ -220,15 +221,15 @@ class CreateCards extends StatelessWidget {
                                 Row(
                                   children: [
                                     tableTextInfo(
-                                      title: Strings.date,
+                                      title: translation(context).date,
                                       fontSize: 10.sp,
                                     ),
                                     tableTextInfo(
-                                      title: Strings.hour,
+                                      title: translation(context).hour,
                                       fontSize: 10.sp,
                                     ),
                                     tableTextInfo(
-                                      title: Strings.quantity,
+                                      title: translation(context).quantity,
                                       fontSize: 10.sp,
                                     ),
                                     SizedBox(width: screenWidth * 0.02,),
@@ -298,7 +299,7 @@ class CreateCards extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               TextView.title(
-                                  Strings.total.toUpperCase(),
+                                  translation(context).total.toUpperCase(),
                                   fontSize: 10.sp,
                                   color: AppColors.blackColor.withValues(alpha: 0.8)
                               ),

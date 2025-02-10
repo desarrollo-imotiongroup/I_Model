@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
@@ -41,7 +42,7 @@ void selectedAutomaticProgramDialog(BuildContext context,) {
               child: Column(
                 children: [
                   SizedBox(height: screenWidth * 0.015),
-                  TopTitleButton(title: Strings.automaticProgrammes),
+                  TopTitleButton(title: translation(context).automaticProgrammes),
                   Divider(color: AppColors.pinkColor),
 
                   SizedBox(height: screenHeight * 0.02,),
@@ -73,7 +74,7 @@ void selectedAutomaticProgramDialog(BuildContext context,) {
                               SizedBox(
                                 width: screenWidth * 0.35,
                                 child: TextView.title(
-                                    Strings.celluliteProgramDescription,
+                                    translation(context).selectedProgramDescription,
                                     color: AppColors.blackColor.withValues(alpha: 0.8),
                                     fontSize: 10.sp,
                                     lines: 2
@@ -102,19 +103,19 @@ void selectedAutomaticProgramDialog(BuildContext context,) {
                   /// Table headers
                   Row(
                     children: [
-                      tabHeaderAdjustment(context, title: Strings.order),
+                      tabHeaderAdjustment(context, title: translation(context).order),
                       tabHeaderAdjustment(
                           context,
-                          title: Strings.program,
+                          title: translation(context).program,
                           padding: screenWidth * 0.01,
                       ),
                       tableTextInfo(
-                        title: Strings.duration,
+                        title: translation(context).duration,
                         fontSize: 10.sp,
                       ),
                       tabHeaderAdjustment(
                           context,
-                          title: Strings.adjustment,
+                          title: translation(context).adjustment,
                           isEnd: true,
                           padding: screenWidth * 0.02,
                       )

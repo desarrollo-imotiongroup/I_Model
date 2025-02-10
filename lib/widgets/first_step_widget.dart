@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/image_widget.dart';
@@ -78,7 +79,7 @@ class FirstStepWidget extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(left: screenWidth * 0.01),
                       child: TextView.title(
-                        Strings.firstSteps.toUpperCase(),
+                        translation(context).firstSteps.toUpperCase(),
                         isUnderLine: true,
                         color: AppColors.pinkColor,
                         fontSize: 14.sp,
@@ -118,14 +119,14 @@ class FirstStepWidget extends StatelessWidget {
             children: [
               /// License
               tutorialStepWidget(
-                title: Strings.license,
+                title: translation(context).license,
                 image: Strings.newMeasurementIcon,
                 onTap: onTapLicense,
               ),
 
               /// How to prepare equipment
               tutorialStepWidget(
-                title: Strings.howToPrepareEquipment,
+                title: translation(context).howToPrepareEquipment,
                 image: Strings.newMeasurementIcon,
                 onTap: onTapHowToPrepare,
               ),

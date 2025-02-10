@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
@@ -26,7 +27,7 @@ class Configuration extends StatelessWidget {
           children: [
             Expanded(
               child: TextFieldLabel(
-                label: Strings.programName2,
+                label: translation(context).programName2,
                 textEditingController: controller.individualProgramNameController,
                 fontSize: 11.sp,
               ),
@@ -35,7 +36,7 @@ class Configuration extends StatelessWidget {
             /// Client status drop down
             Obx(() =>
                 DropDownLabelWidget(
-                  label: Strings.equipment,
+                  label: translation(context).equipment,
                   selectedValue: controller.selectedEquipment.value,
                   dropDownList: controller.equipmentOptions,
                   onChanged: (value){
@@ -64,7 +65,7 @@ class Configuration extends StatelessWidget {
                     /// Frequency text field
                     TextFieldLabel(
                       width: screenWidth * 0.15,
-                      label: Strings.frequency,
+                      label: translation(context).frequency,
                       textEditingController: controller.frequencyController,
                       isAllowNumberOnly: true,
                       fontSize: 11.sp,
@@ -75,7 +76,7 @@ class Configuration extends StatelessWidget {
                     /// Pulse text field
                     TextFieldLabel(
                       width: screenWidth * 0.15,
-                      label: Strings.pulse,
+                      label: translation(context).pulse,
                       unit: ' (ms)',
                       textEditingController: controller.pulseController,
                       isAllowNumberOnly: true,
@@ -90,7 +91,7 @@ class Configuration extends StatelessWidget {
                     /// Ramp text field
                     TextFieldImage(
                         icon: Strings.rampIcon,
-                        label: Strings.ramp,
+                        label: translation(context).ramp,
                         unit: ' (sx10)',
                         textEditingController: controller.rampController
                     ),
@@ -98,7 +99,7 @@ class Configuration extends StatelessWidget {
                     /// Contraction text field
                     TextFieldImage(
                       icon: Strings.contractionIcon,
-                      label: Strings.contraction,
+                      label: translation(context).contraction,
                       unit: ' (s.)',
                       textEditingController: controller.contractionController,
                       textInputAction: TextInputAction.done,
@@ -112,7 +113,7 @@ class Configuration extends StatelessWidget {
                     /// Pause text field
                     TextFieldImage(
                       icon: Strings.pauseProgramIcon,
-                      label: Strings.pause,
+                      label: translation(context).pause,
                       unit: ' (s.)',
                       textEditingController: controller.pauseController,
                     ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/menu/center_management_controller.dart';
@@ -73,7 +74,7 @@ class CenterManagementScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextView.title(
-                                Strings.centerManagement.toUpperCase(),
+                                translation(context).centerManagement.toUpperCase(),
                                 color: AppColors.pinkColor,
                                 isUnderLine: true,
                                 fontSize: 18.sp,
@@ -84,7 +85,7 @@ class CenterManagementScreen extends StatelessWidget {
 
                               /// Administrators
                               MenuWidget(
-                                title: Strings.administrators.toUpperCase(),
+                                title: translation(context).administrators.toUpperCase(),
                                 onTap: () {
                                   administratorListOverlay(context);
                                 },
@@ -95,7 +96,7 @@ class CenterManagementScreen extends StatelessWidget {
 
                               /// Beauticians list
                               MenuWidget(
-                                title: Strings.beauticiansList.toUpperCase(),
+                                title: translation(context).beauticiansList.toUpperCase(),
                                 onTap: () {
                                   beauticianListOverlay(context);
                                 },
@@ -107,7 +108,7 @@ class CenterManagementScreen extends StatelessWidget {
 
                               /// Create new
                               MenuWidget(
-                                title: Strings.createNew.toUpperCase(),
+                                title: translation(context).createNew.toUpperCase(),
                                 onTap: () {
                                   createFileDialog(context);
                                 },

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
@@ -74,7 +75,7 @@ class ProgramsScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextView.title(
-                                  Strings.programs.toUpperCase(),
+                                  translation(context).programs.toUpperCase(),
                                   color: AppColors.pinkColor,
                                   isUnderLine: true,
                                   fontSize: 18.sp
@@ -83,7 +84,7 @@ class ProgramsScreen extends StatelessWidget {
 
                               /// Individuals
                               MenuWidget(
-                                title: Strings.individuals.toUpperCase(),
+                                title: translation(context).individuals.toUpperCase(),
                                 onTap: (){
                                   individualProgramsOverlay(context);
                                 },
@@ -105,7 +106,7 @@ class ProgramsScreen extends StatelessWidget {
 
                               /// Create program
                               MenuWidget(
-                                title: Strings.createProgram.toUpperCase(),
+                                title: translation(context).createProgram.toUpperCase(),
                                 onTap: (){
                                   createProgramDialog(context);
                                 },

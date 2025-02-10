@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/beautician_controller.dart';
@@ -32,7 +33,7 @@ class BeauticianPersonalData extends StatelessWidget {
               children: [
                 Expanded(
                   child: TextFieldLabel(
-                    label: Strings.nick,
+                    label: translation(context).nick,
                     textEditingController: controller.nickNameController,
                     fontSize: 11.sp,
                   ),
@@ -63,7 +64,7 @@ class BeauticianPersonalData extends StatelessWidget {
                   /// Name text field
                   TextFieldLabel(
                     width: screenWidth * 0.2,
-                    label: Strings.name,
+                    label: translation(context).name,
                     textEditingController: controller.perDataNameController,
                     fontSize: 11.sp,
                   ),
@@ -77,7 +78,7 @@ class BeauticianPersonalData extends StatelessWidget {
                       onChanged: (value){
                         controller.selectedGender.value = value;
                       },
-                      label: Strings.gender
+                      label: translation(context).gender
                   ),
 
                   SizedBox(height: screenHeight * 0.02,),
@@ -89,7 +90,7 @@ class BeauticianPersonalData extends StatelessWidget {
                     child: AbsorbPointer(
                       child: TextFieldLabel(
                         width: screenWidth * 0.2,
-                        label: Strings.birthDate,
+                        label: translation(context).birthDate,
                         textEditingController: controller.birthDateController,
                         fontSize: 11.sp,
                       ),
@@ -110,7 +111,7 @@ class BeauticianPersonalData extends StatelessWidget {
                       onChanged: (value){
                         controller.selectedProfile.value = value;
                       },
-                      label: Strings.profile
+                      label: translation(context).profile
                   ),
 
                   SizedBox(height: screenHeight * 0.035,),
@@ -123,7 +124,7 @@ class BeauticianPersonalData extends StatelessWidget {
                       onChanged: (value){
                         controller.selectedSessionControl.value = value;
                       },
-                      label: Strings.sessionControl
+                      label: translation(context).sessionControl
                   ),
                   SizedBox(height: screenHeight * 0.035,),
 
@@ -135,7 +136,7 @@ class BeauticianPersonalData extends StatelessWidget {
                       onChanged: (value){
                         controller.selectedTimeControl.value = value;
                       },
-                      label: Strings.timeControl
+                      label: translation(context).timeControl
                   ),
                 ],
               ),
@@ -151,7 +152,7 @@ class BeauticianPersonalData extends StatelessWidget {
                     child: AbsorbPointer(
                       child: TextFieldLabel(
                         width: screenWidth * 0.2,
-                        label: Strings.registrationDate,
+                        label: translation(context).registrationDate,
                         textEditingController: controller.registrationDateController,
                         fontSize: 11.sp,
                       ),
@@ -170,7 +171,7 @@ class BeauticianPersonalData extends StatelessWidget {
                           vertical: screenHeight * 0.013
                       ),
                       widget: TextView.title(
-                          Strings.resetPassword.toUpperCase(),
+                          translation(context).resetPassword.toUpperCase(),
                           fontSize: 11.sp,
                           color: AppColors.blackColor.withValues(alpha: 0.8)
                       ))

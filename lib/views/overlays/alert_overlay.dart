@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
-import 'package:i_model/widgets/containers/unbounded_container.dart';
 import 'package:i_model/widgets/box_decoration.dart';
-import 'package:i_model/widgets/top_title_button.dart';
+import 'package:i_model/widgets/containers/unbounded_container.dart';
 import 'package:i_model/widgets/textview.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 
 void alertOverlay(
   BuildContext context, {
@@ -78,7 +78,7 @@ void alertOverlay(
                             }
                           },
                           widget: TextView.title(
-                              Strings.gotIt.toUpperCase(),
+                              translation(context).gotIt.toUpperCase(),
                               fontSize: 11.sp,
                               color: AppColors.pinkColor),
                         ),
@@ -94,7 +94,7 @@ void alertOverlay(
                             }
                           },
                           widget: TextView.title(
-                              Strings.cancel.toUpperCase(),
+                              translation(context).cancel.toUpperCase(),
                               fontSize: 11.sp,
                               color: AppColors.pinkColor),
                         ),

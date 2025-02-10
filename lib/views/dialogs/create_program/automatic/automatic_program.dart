@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
@@ -33,14 +34,14 @@ class AutomaticProgram extends StatelessWidget {
             children: [
               Expanded(
                 child: TextFieldLabel(
-                  label: Strings.programName2,
+                  label: translation(context).programName2,
                   textEditingController: controller.automaticProgramNameController,
                   fontSize: 11.sp,
                 ),
               ),
               // Client status drop down
               DropDownLabelWidget(
-                label: Strings.equipment,
+                label: translation(context).equipment,
                 selectedValue: controller.selectedEquipment.value,
                 dropDownList: controller.equipmentOptions,
                 onChanged: (value) {
@@ -66,11 +67,11 @@ class AutomaticProgram extends StatelessWidget {
                         // Table headers
                         Row(
                           children: [
-                            tabHeaderAdjustment(context, title: Strings.order),
-                            tabHeaderAdjustment(context, title: Strings.program, padding: screenWidth * 0.01),
-                            tableTextInfo(title: '${Strings.duration} s.', fontSize: 10.sp),
-                            tabHeaderAdjustment(context, title: Strings.adjustment, isEnd: true, padding: screenWidth * 0.01),
-                            tabHeaderAdjustment(context, title: Strings.action, isEnd: true, padding: screenWidth * 0.03),
+                            tabHeaderAdjustment(context, title: translation(context).order),
+                            tabHeaderAdjustment(context, title: translation(context).program, padding: screenWidth * 0.01),
+                            tableTextInfo(title: '${translation(context).duration} s.', fontSize: 10.sp),
+                            tabHeaderAdjustment(context, title: translation(context).adjustment, isEnd: true, padding: screenWidth * 0.01),
+                            tabHeaderAdjustment(context, title: translation(context).action, isEnd: true, padding: screenWidth * 0.03),
                           ],
                         ),
                         SizedBox(height: screenHeight * 0.005),
@@ -153,7 +154,7 @@ class AutomaticProgram extends StatelessWidget {
                   borderColor: AppColors.blackColor,
                   padding: EdgeInsets.symmetric(vertical: screenHeight * 0.013),
                   widget: TextView.title(
-                    Strings.createSequence.toUpperCase(),
+                    translation(context).createSequence.toUpperCase(),
                     fontSize: 12.sp,
                     color: AppColors.blackColor.withValues(alpha: 0.8),
                   ),

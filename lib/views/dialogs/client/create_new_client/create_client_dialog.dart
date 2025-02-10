@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_active_groups.dart';
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_card.dart';
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_personal_data.dart';
@@ -35,7 +35,7 @@ void createNewClientDialog(BuildContext context) {
                   Padding(
                     padding:
                     EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title: Strings.createNewClient),
+                    child: TopTitleButton(title: translation(context).createNewClient),
                   ),
                   Divider(color: AppColors.pinkColor),
 
@@ -45,9 +45,9 @@ void createNewClientDialog(BuildContext context) {
                     child: Column(
                       children: [
                         TabHeader(tabs: [
-                          Tab(text: Strings.personalData.toUpperCase()),
-                          Tab(text: Strings.cards.toUpperCase()),
-                          Tab(text: Strings.activeGroups.toUpperCase()),
+                          Tab(text: translation(context).personalData.toUpperCase()),
+                          Tab(text: translation(context).cards.toUpperCase()),
+                          Tab(text: translation(context).activeGroups.toUpperCase()),
                         ],),
                         SizedBox(
                           height: screenHeight * 0.7,

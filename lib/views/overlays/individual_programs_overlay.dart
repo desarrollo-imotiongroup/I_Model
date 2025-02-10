@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
+import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/image_widget.dart';
-import 'package:i_model/widgets/box_decoration.dart';
-import 'package:i_model/widgets/top_title_button.dart';
 import 'package:i_model/widgets/table_text_info.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 
 void individualProgramsOverlay(BuildContext context) {
   final overlayState = Overlay.of(context);
@@ -34,7 +34,7 @@ void individualProgramsOverlay(BuildContext context) {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
                 child: TopTitleButton(
-                  title: Strings.individuals,
+                  title: translation(context).individuals,
                   onCancel: (){
                     if (overlayEntry.mounted) {
                       overlayEntry.remove();
@@ -63,7 +63,7 @@ void individualProgramsOverlay(BuildContext context) {
                             children: [
                               Expanded(child: Container()),
                               tableTextInfo(
-                                title: Strings.programName,
+                                title: translation(context).programName,
                                 fontSize: 10.sp,
                                 lines: 2
                               ),
@@ -72,14 +72,14 @@ void individualProgramsOverlay(BuildContext context) {
                                   children: [
                                     SizedBox(width: screenWidth * 0.01,),
                                     tableTextInfo(
-                                      title: Strings.frequency,
+                                      title: translation(context).frequency,
                                       fontSize: 10.sp,
                                     ),
                                   ],
                                 ),
                               ),
                               tableTextInfo(
-                                title: Strings.pulse,
+                                title: translation(context).pulse,
                                 fontSize: 10.sp,
                                 lines: 2
                               ),
@@ -87,7 +87,7 @@ void individualProgramsOverlay(BuildContext context) {
                                 child: Row(
                                   children: [
                                     tableTextInfo(
-                                      title: Strings.ramp,
+                                      title: translation(context).ramp,
                                       fontSize: 10.sp,
                                     ),
                                     SizedBox(width: screenWidth * 0.01,)
@@ -98,7 +98,7 @@ void individualProgramsOverlay(BuildContext context) {
                                 child: Row(
                                   children: [
                                     tableTextInfo(
-                                      title: Strings.contraction,
+                                      title: translation(context).contraction,
                                       fontSize: 10.sp,
                                     ),
                                     SizedBox(width: screenWidth * 0.01,)
@@ -109,7 +109,7 @@ void individualProgramsOverlay(BuildContext context) {
                                 child: Row(
                                   children: [
                                     tableTextInfo(
-                                      title: Strings.pause,
+                                      title: translation(context).pause,
                                       fontSize: 10.sp,
                                     ),
                                     SizedBox(width: screenWidth * 0.03,)

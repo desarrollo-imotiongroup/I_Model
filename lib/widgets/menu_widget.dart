@@ -33,7 +33,7 @@ class MenuWidget extends StatelessWidget {
           shadowColor: AppColors.pureWhiteColor,
           child: Center(
             child: TextView.title(
-                title,
+                title.toUpperCase(),
                 color: AppColors.pinkColor,
                 fontSize: 14.sp
             ),

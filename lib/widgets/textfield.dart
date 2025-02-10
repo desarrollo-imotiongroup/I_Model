@@ -17,8 +17,10 @@ class TextFieldWidget extends StatelessWidget {
   final Color? hintTextColor;
   final Color? cursorColor;
   final TextInputAction? textInputAction;
+  final FocusNode? focusNode;
   final bool? isReadyOnly;
   final Function(String)? onChanged;
+  final Function()? onNext;
   final bool isSuffixIcon;
   final Widget? suffixIcon;
 
@@ -41,7 +43,9 @@ class TextFieldWidget extends StatelessWidget {
         this.isReadyOnly,
         this.onChanged,
         this.isSuffixIcon = false,
-        this.suffixIcon
+        this.suffixIcon,
+        this.onNext,
+        this.focusNode
       });
 
   @override
@@ -60,10 +64,12 @@ class TextFieldWidget extends StatelessWidget {
           controller: textEditingController,
           obscureText:obscureText ?? false,
           cursorHeight: 12.sp,
+          focusNode: focusNode,
           keyboardType: textInputType??TextInputType.text,
           cursorColor: cursorColor?? AppColors.lightBlack,
           readOnly: isReadyOnly ?? false ? true : false,
           onChanged: onChanged,
+          onEditingComplete: onNext,
           style: TextStyle(
             color: textColor ?? AppColors.blackColor.withValues(alpha: 0.8),
             fontSize: fontSize ?? 15.sp,

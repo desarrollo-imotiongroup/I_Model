@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/program.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/views/dialogs/selected_auto_program_dialog.dart';
-import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/box_decoration.dart';
-import 'package:i_model/widgets/top_title_button.dart';
+import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textview.dart';
+import 'package:i_model/widgets/top_title_button.dart';
 
 void automaticProgramOverlay(
     BuildContext context,{
@@ -36,7 +36,7 @@ void automaticProgramOverlay(
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
                 child: TopTitleButton(
-                  title: Strings.selectProgram,
+                  title: translation(context).selectProgram,
                   onCancel: (){
                     if (overlayEntry.mounted) {
                       overlayEntry.remove();

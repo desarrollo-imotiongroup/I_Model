@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
@@ -172,7 +173,7 @@ void selectProgramOverlay(
                                 overlayEntry.remove();
                               }
                             },
-                            text: Strings.select.toUpperCase(),
+                            text: translation(context).select.toUpperCase(),
                             btnColor: AppColors.pinkColor,
                             width: screenWidth * 0.15,
                             borderRadius: screenWidth * 0.007,

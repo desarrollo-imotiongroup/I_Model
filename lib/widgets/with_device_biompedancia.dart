@@ -5,6 +5,7 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/menu/menu_controller.dart';
+import 'package:i_model/views/overlays/select_client_overlay.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textfield_label.dart';
@@ -89,10 +90,13 @@ void withDeviceBiompedancia(BuildContext context) {
                       Column(
                         children: [
                           RoundedContainer(
+                            onTap: (){
+                              selectClientOverlay(context);
+                            },
                             borderRadius: screenHeight * 0.01,
                             width: screenWidth * 0.2,
                               widget: TextView.title(
-                                Strings.selectClient.toUpperCase(),
+                                translation(context).selectClient.toUpperCase(),
                                 color: AppColors.blackColor,
                                 fontSize: 14.sp,
                               )
@@ -100,35 +104,35 @@ void withDeviceBiompedancia(BuildContext context) {
                           SizedBox(height: screenHeight * 0.02,),
                           /// Name - TextField
                           TextFieldLabel(
-                              label: Strings.name,
+                              label: translation(context).name,
                               textEditingController: controller.nameEditingController,
                               isReadOnly: true,
                           ),
 
                           /// Gender - TextField
                           TextFieldLabel(
-                            label: Strings.gender,
+                            label: translation(context).gender,
                             textEditingController: controller.genderEditingController,
                             isReadOnly: true,
                           ),
 
                           /// Height - TextField
                           TextFieldLabel(
-                            label: Strings.height,
+                            label: translation(context).height,
                             textEditingController: controller.heightEditingController,
                             isReadOnly: true,
                           ),
 
                           /// Weight - TextField
                           TextFieldLabel(
-                            label: Strings.weight,
+                            label: translation(context).weight,
                             textEditingController: controller.weightEditingController,
                             isReadOnly: true,
                           ),
 
                           /// Email - TextField
                           TextFieldLabel(
-                            label: Strings.email,
+                            label: translation(context).email,
                             textEditingController: controller.emailEditingController,
                             isReadOnly: true,
                           ),
@@ -153,7 +157,7 @@ void withDeviceBiompedancia(BuildContext context) {
                                 borderRadius: screenHeight * 0.01,
                                 width: screenWidth * 0.2,
                                 widget: TextView.title(
-                                  Strings.takeNewMeasurement.toUpperCase(),
+                                  translation(context).takeNewMeasurement.toUpperCase(),
                                   color: AppColors.blackColor,
                                   fontSize: 14.sp,
                                 )
@@ -161,7 +165,7 @@ void withDeviceBiompedancia(BuildContext context) {
                             Column(
                               children: [
                                 TextView.title(
-                                  Strings.howToTakeMeasurement.toUpperCase(),
+                                  translation(context).howToTakeMeasurement.toUpperCase(),
                                   color: AppColors.pinkColor,
                                   fontSize: 13.sp,
                                 ),
@@ -171,16 +175,7 @@ void withDeviceBiompedancia(BuildContext context) {
                                 )
                               ],
                             ),
-                            SizedBox(
-                              width: screenWidth * 0.32,
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: imageWidget(
-                                    image: Strings.checkIcon,
-                                    height: screenHeight * 0.09
-                                ),
-                              ),
-                            )
+
                           ],
                         ),
                       )
