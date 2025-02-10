@@ -688,6 +688,30 @@ class DashboardController extends GetxController {
     Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
   ].obs;
 
+  /// Reset
+  reset() {
+    chestPercentage.value = 0;
+    armsPercentage.value = 0;
+    abdomenPercentage.value = 0;
+    legsPercentage.value = 0;
+    upperBackPercentage.value = 0;
+    middleBackPercentage.value = 0;
+    lumbarPercentage.value = 0;
+    buttocksPercentage.value = 0;
+    hamStringsPercentage.value = 0;
+    calvesPercentage.value = 0;
+    chestIntensityColor = AppColors.lowIntensityColor;
+    armsIntensityColor = AppColors.lowIntensityColor;
+    abdomenIntensityColor = AppColors.lowIntensityColor;
+    legsIntensityColor = AppColors.lowIntensityColor;
+    upperBackIntensityColor = AppColors.lowIntensityColor;
+    middleBackIntensityColor = AppColors.lowIntensityColor;
+    lumbarsIntensityColor = AppColors.lowIntensityColor;
+    buttocksIntensityColor = AppColors.lowIntensityColor;
+    hamstringsIntensityColor = AppColors.lowIntensityColor;
+    calvesIntensityColor = AppColors.lowIntensityColor;
+
+  }
 
   @override
   void onClose() {

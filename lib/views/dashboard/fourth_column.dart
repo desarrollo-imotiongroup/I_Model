@@ -160,8 +160,13 @@ class DashboardFourthColumn extends StatelessWidget {
                             height: screenHeight * 0.1),
                       ),
                     ),
-                    imageWidget(
-                        image: Strings.resetIcon, height: screenHeight * 0.1),
+                    GestureDetector(
+                      onTap: (){
+                        controller.reset();
+                      },
+                      child: imageWidget(
+                          image: Strings.resetIcon, height: screenHeight * 0.1),
+                    ),
                   ],
                 ),
                 SizedBox(
