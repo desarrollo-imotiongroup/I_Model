@@ -20,7 +20,6 @@ class LinePainterWithSeconds extends StatelessWidget {
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenWidth = mediaQuery.size.width;
-    double screenHeight = mediaQuery.size.height;
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
