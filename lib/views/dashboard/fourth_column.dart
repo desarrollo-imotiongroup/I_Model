@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/widgets/eckal_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
-import 'package:i_model/widgets/line_painter_widget.dart';
+import 'package:i_model/widgets/line_painter_with_seconds.dart';
 
 class DashboardFourthColumn extends StatelessWidget {
   DashboardFourthColumn({super.key});
@@ -129,16 +128,22 @@ class DashboardFourthColumn extends StatelessWidget {
                 /// Line painters
                 Column(
                   children: [
-                    LinePainterWidget(
-                      title: translation(context).contractionTime,
-                      progressValue: controller.progressContractionValue,
-                      progressColor: AppColors.redColor,
+                    /// Contraction time line painter
+                    LinePainterWithSeconds(
+                        progressValue: controller.contractionProgress.value,
+                        secondsPerCycle: controller.isContractionPauseCycleActive.value
+                            ? controller.remainingContractionSeconds.value.toInt()
+                            : controller.contractionSeconds.value,
                     ),
                     SizedBox(height: screenHeight * 0.04),
-                    LinePainterWidget(
-                      title: translation(context).pauseTime,
-                      progressValue: controller.progressPauseValue,
-                      progressColor: AppColors.greenColor,
+
+                    /// Pause time line painter
+                    LinePainterWithSeconds(
+                      progressValue: controller.pauseProgress.value,
+                      secondsPerCycle: controller.isContractionPauseCycleActive.value
+                          ? controller.remainingPauseSeconds.value.toInt()
+                          : controller.pauseSeconds.value,
+                      isPause: true,
                     ),
                   ],
                 ),
@@ -162,7 +167,7 @@ class DashboardFourthColumn extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: (){
-                        controller.reset();
+                        controller.resetProgramValues();
                       },
                       child: imageWidget(
                           image: Strings.resetIcon, height: screenHeight * 0.1),

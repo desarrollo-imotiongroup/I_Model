@@ -28,6 +28,7 @@ class DashboardController extends GetxController {
 
   RxBool isPantSelected = false.obs;
   RxBool isActive = false.obs;
+  RxBool isProgramSelected = false.obs;
 
   /// Handling program active, inactive and block states
   RxList<Program> programsStatus = <Program>[
@@ -107,8 +108,6 @@ class DashboardController extends GetxController {
   int maxPercentage = 100;
   int minPercentage = 0;
   int maxMinutes = 30;
-  double progressContractionValue = 1.0;
-  double progressPauseValue = 1.0;
   RxBool isEKalWidgetVisible = true.obs;
 
   @override
@@ -128,6 +127,7 @@ class DashboardController extends GetxController {
     return "${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}";
   }
 
+  /// Main Timer
   void startTimer() {
     isTimerPaused.value = false;
     update();
@@ -141,12 +141,77 @@ class DashboardController extends GetxController {
         if (remainingSeconds.value > 0) {
           remainingSeconds.value = remainingSeconds.value - 1;
         }
+        else{
+          timer.cancel();
+          cancelTimersOnTimeUp();
+        }
       } else {
         timer.cancel();
-        print("Timer finished!");
+
       }
       update();
     });
+  }
+
+  /// Contraction and pause line painters
+  RxInt pauseSeconds = 0.obs;
+  RxInt contractionSeconds = 0.obs;
+  RxDouble contractionProgress = 0.0.obs;
+  RxDouble pauseProgress = 0.0.obs;
+  Timer? contractionCycleTimer;
+  Timer? pauseCycleTimer;
+  RxBool isContractionPauseCycleActive = false.obs;
+  RxDouble remainingContractionSeconds = 0.0.obs;
+  RxDouble remainingPauseSeconds = 0.0.obs;
+
+  /// Contraction time cycle
+  Future<void> startContractionTimeCycle() async {
+    isContractionPauseCycleActive.value = true;
+    contractionProgress.value = 1.0;
+    double decrementAmount = 1.0 / (contractionSeconds.value * 10);
+
+    /// Calculate the seconds while decreasing progress value to show on line painters
+    int totalDurationInSeconds = contractionSeconds.value;
+    contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (contractionProgress.value > 0) {
+          remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
+          contractionProgress.value -= decrementAmount;
+      }
+      else {
+        contractionProgress.value = 0;
+        contractionCycleTimer!.cancel();
+        startPauseTimeCycle();
+      }
+    });
+  }
+
+  /// Pause time cycle
+  Future<void> startPauseTimeCycle() async {
+    pauseProgress.value = 1.0;
+    double decrementAmount = 1.0 / (pauseSeconds.value * 10);
+
+    /// Calculate the seconds while decreasing progress value to show on line painters
+    int totalDurationInSeconds = pauseSeconds.value;
+    pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (pauseProgress.value > 0) {
+        remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
+        pauseProgress.value -= decrementAmount;
+      }
+      else {
+        pauseProgress.value = 0;
+        pauseCycleTimer!.cancel();
+        startContractionTimeCycle();
+      }
+    });
+  }
+
+  cancelTimersOnTimeUp(){
+    contractionCycleTimer?.cancel();
+    pauseCycleTimer?.cancel();
+    isTimerPaused.value = true;
+    contractionProgress.value = 0;
+    pauseProgress.value = 0;
+    isContractionPauseCycleActive.value = false;
   }
 
   pauseTimer() {
@@ -196,6 +261,7 @@ class DashboardController extends GetxController {
   setProgramDetails({required String name, required String image}){
     selectedProgramName.value = name;
     selectedProgramImage.value = image;
+    isProgramSelected.value = true;
     update();
   }
 
@@ -593,77 +659,6 @@ class DashboardController extends GetxController {
     update();
   }
 
-  // changeAllProgramsPercentage({bool isDecrease = false, bool isIncrease = false}) {
-  //   if (isIncrease) {
-  //     if(isPantSelected.value){
-  //       armsPercentage.value = clampValue(armsPercentage.value + 1, minPercentage, maxPercentage);
-  //       abdomenPercentage.value = clampValue(abdomenPercentage.value + 1, minPercentage, maxPercentage);
-  //       legsPercentage.value = clampValue(legsPercentage.value + 1, minPercentage, maxPercentage);
-  //       buttocksPercentage.value = clampValue(buttocksPercentage.value + 1, minPercentage, maxPercentage);
-  //       hamStringsPercentage.value = clampValue(hamStringsPercentage.value + 1, minPercentage, maxPercentage);
-  //       calvesPercentage.value = clampValue(calvesPercentage.value + 1, minPercentage, maxPercentage);
-  //     }
-  //     else {
-  //       if(programsStatus[0].status!.value == ProgramStatus.active){
-  //         chestPercentage.value = clampValue(chestPercentage.value + 1, minPercentage, maxPercentage);
-  //       }
-  //       armsPercentage.value = clampValue(armsPercentage.value + 1, minPercentage, maxPercentage);
-  //       abdomenPercentage.value = clampValue(abdomenPercentage.value + 1, minPercentage, maxPercentage);
-  //       legsPercentage.value = clampValue(legsPercentage.value + 1, minPercentage, maxPercentage);
-  //       upperBackPercentage.value = clampValue(upperBackPercentage.value + 1, minPercentage, maxPercentage);
-  //       middleBackPercentage.value = clampValue(middleBackPercentage.value + 1, minPercentage, maxPercentage);
-  //       lumbarPercentage.value = clampValue(lumbarPercentage.value + 1, minPercentage, maxPercentage);
-  //       buttocksPercentage.value = clampValue(buttocksPercentage.value + 1, minPercentage, maxPercentage);
-  //       hamStringsPercentage.value = clampValue(hamStringsPercentage.value + 1, minPercentage, maxPercentage);
-  //     }
-  //   }
-  //   if (isDecrease) {
-  //     if(isPantSelected.value){
-  //       armsPercentage.value = clampValue(armsPercentage.value - 1, minPercentage, maxPercentage);
-  //       abdomenPercentage.value = clampValue(abdomenPercentage.value - 1, minPercentage, maxPercentage);
-  //       legsPercentage.value = clampValue(legsPercentage.value - 1, minPercentage, maxPercentage);
-  //       buttocksPercentage.value = clampValue(buttocksPercentage.value - 1, minPercentage, maxPercentage);
-  //       hamStringsPercentage.value = clampValue(hamStringsPercentage.value - 1, minPercentage, maxPercentage);
-  //       calvesPercentage.value = clampValue(calvesPercentage.value - 1, minPercentage, maxPercentage);
-  //     }
-  //     else {
-  //       if(programsStatus[0].status!.value == ProgramStatus.active){
-  //         chestPercentage.value = clampValue(chestPercentage.value - 1, minPercentage, maxPercentage);
-  //       }
-  //       armsPercentage.value = clampValue(armsPercentage.value - 1, minPercentage, maxPercentage);
-  //       abdomenPercentage.value = clampValue(abdomenPercentage.value - 1, minPercentage, maxPercentage);
-  //       legsPercentage.value = clampValue(legsPercentage.value - 1, minPercentage, maxPercentage);
-  //       upperBackPercentage.value = clampValue(upperBackPercentage.value - 1, minPercentage, maxPercentage);
-  //       middleBackPercentage.value = clampValue(middleBackPercentage.value - 1, minPercentage, maxPercentage);
-  //       lumbarPercentage.value = clampValue(lumbarPercentage.value - 1, minPercentage, maxPercentage);
-  //       buttocksPercentage.value = clampValue(buttocksPercentage.value - 1, minPercentage, maxPercentage);
-  //       hamStringsPercentage.value = clampValue(hamStringsPercentage.value - 1, minPercentage, maxPercentage);
-  //     }
-  //   }
-  //
-  //   if(isPantSelected.value){
-  //     calculateIntensityColor(armsPercentage.value, isArms: true);
-  //     calculateIntensityColor(abdomenPercentage.value, isAbdomen: true);
-  //     calculateIntensityColor(legsPercentage.value, isLegs: true);
-  //     calculateIntensityColor(buttocksPercentage.value, isButtocks: true);
-  //     calculateIntensityColor(hamStringsPercentage.value, isHamstrings: true);
-  //     calculateIntensityColor(calvesPercentage.value, isCalves: true);
-  //   }
-  //   else{
-  //     calculateIntensityColor(chestPercentage.value, isChest: true);
-  //     calculateIntensityColor(armsPercentage.value, isArms: true);
-  //     calculateIntensityColor(abdomenPercentage.value, isAbdomen: true);
-  //     calculateIntensityColor(legsPercentage.value, isLegs: true);
-  //     calculateIntensityColor(upperBackPercentage.value, isUpperBack: true);
-  //     calculateIntensityColor(middleBackPercentage.value, isMiddleBack: true);
-  //     calculateIntensityColor(lumbarPercentage.value, isLumbars: true);
-  //     calculateIntensityColor(buttocksPercentage.value, isButtocks: true);
-  //     calculateIntensityColor(hamStringsPercentage.value, isHamstrings: true);
-  //   }
-  //
-  //   update();
-  // }
-
   /// Select client
   var isDropdownOpen = false.obs;
   final TextEditingController nameController = TextEditingController();
@@ -688,8 +683,17 @@ class DashboardController extends GetxController {
     Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
   ].obs;
 
-  /// Reset
-  reset() {
+
+  resetEverything(){
+    resetProgramValues();
+    _timer?.cancel();
+    isTimerPaused.value = true;
+    cancelTimersOnTimeUp();
+  }
+
+
+  /// Reset all programs value and intensity colors
+  resetProgramValues() {
     chestPercentage.value = 0;
     armsPercentage.value = 0;
     abdomenPercentage.value = 0;

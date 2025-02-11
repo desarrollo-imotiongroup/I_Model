@@ -63,6 +63,8 @@ void programListOverlay(
                             name: programList[index].name,
                             image: programList[index].image!
                         );
+                        controller.contractionSeconds.value = 10;
+                        controller.pauseSeconds.value = 8;
                         if (overlayEntry.mounted) {
                           overlayEntry.remove();
                         }

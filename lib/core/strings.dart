@@ -236,6 +236,7 @@ class Strings{
   static const String contractionIcon = 'assets/icons/contraction.png';
   static const String rampIcon = 'assets/icons/ramp.png';
   static const String calvesIcon = 'assets/icons/calves.png';
+  static const String selectProgram = 'assets/icons/select_programme.png';
 
 
   /// Body icons - Grupos Activos - Active groups

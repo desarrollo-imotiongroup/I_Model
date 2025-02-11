@@ -67,6 +67,7 @@ class DashboardScreen extends StatelessWidget
 
                     GestureDetector(
                       onTap: () {
+                        controller.resetEverything();
                         Navigator.pop(context);
                       },
                       child: Image(

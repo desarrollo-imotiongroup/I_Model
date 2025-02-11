@@ -28,7 +28,9 @@ class DashboardSecondColumn extends StatelessWidget {
       children: [
         SizedBox(height: screenHeight * 0.03,),
         TextView.title(
-            controller.selectedProgramName.value.toUpperCase(),
+            controller.isProgramSelected.value
+                ? controller.selectedProgramName.value.toUpperCase()
+                : Strings.nothing,
             fontSize: 12.sp,
             color: AppColors.pinkColor
         ),
@@ -54,7 +56,9 @@ class DashboardSecondColumn extends StatelessWidget {
         ),
         SizedBox(height: screenHeight * 0.025,),
         TextView.title(
-            controller.selectedProgramName.value.toUpperCase(),
+            controller.isProgramSelected.value
+                ? controller.selectedProgramName.value.toUpperCase()
+                : Strings.nothing,
             fontSize: 14.sp,
             color: AppColors.blackColor.withValues(alpha: 0.8)
         ),
@@ -70,7 +74,9 @@ class DashboardSecondColumn extends StatelessWidget {
             );
           },
           child: imageWidget(
-            image: controller.selectedProgramImage.value,
+            image: controller.isProgramSelected.value
+                ? controller.selectedProgramImage.value
+                : Strings.selectProgram,
             height: screenHeight * 0.13,
           ),
         ),
@@ -95,9 +101,17 @@ class DashboardSecondColumn extends StatelessWidget {
         /// Start, pause and Up down arrow
         TimeControlWidget(
           onPlayPause: (){
-            controller.isTimerPaused.value
-                ? controller.startTimer()
-                : controller.pauseTimer();
+            if (controller.isProgramSelected.value) {
+              if (controller.isTimerPaused.value && controller.minutes.value > 0) {
+                controller.startTimer();
+                controller.startContractionTimeCycle();
+              }
+              else {
+                controller.pauseTimer();
+                controller.contractionCycleTimer?.cancel();
+                controller.pauseCycleTimer?.cancel();
+              }
+            }
           },
           icon: controller.isTimerPaused.value ? Strings.playIcon : Strings.pauseIcon,
           onIncrease: (){
