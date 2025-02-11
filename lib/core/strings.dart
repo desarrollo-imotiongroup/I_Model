@@ -178,6 +178,20 @@ class Strings{
   static const confirm = 'Confirmar';
   static const maxTimeSnackBarConfirmation = 'Se ha seleccionado el tiempo máximo';
   static const notSelectedMaxTimeError = 'Por favor seleccione un tiempo máximo diferente al anterior';
+  static const securityVerification = 'VERIFICACIÓN DE SEGURIDAD';
+  static const solvePrompt = 'Para continuar resuelva:';
+  static const incorrectResult = 'Resultado erróneo';
+  static const verify = 'VERIFICAR';
+  static const enterSum = 'Ingrese la suma de números';
+  static const loading = 'Cargando ...';
+  static const emptySecurityVerifyNumber = 'Debes ingresar la suma antes de verificar';
+  static const technicalSupport = 'Soporte Técnico';
+  static const importClient = 'IMPORTAR CLIENTE';
+  static const reloadPrograms = 'RECARGAR PROGRAMAS';
+  static const reloadMCI18000 = 'RECARGAR MCI 18000';
+  static const searchMybodypro = 'BUSCAR MYBODYPRO';
+  static const timeTo100 = 'TIEMPO A 100';
+
 
   /// Shared Preferences
   static const maxTimeSP = 'MaxTimeSP';

@@ -7,7 +7,7 @@ import 'package:i_model/views/menu/center_management_screen.dart';
 import 'package:i_model/views/menu/license_screen.dart';
 import 'package:i_model/views/menu/menu_screen.dart';
 import 'package:i_model/views/programs_screen.dart';
-import 'package:i_model/views/setting_screen.dart';
+import 'package:i_model/views/settings/setting_screen.dart';
 import 'package:i_model/views/tutorial_screen.dart';
 import 'package:i_model/views/unknown_screen.dart';
 

@@ -689,6 +689,7 @@ class DashboardController extends GetxController {
     _timer?.cancel();
     isTimerPaused.value = true;
     cancelTimersOnTimeUp();
+    isProgramSelected.value = false;
   }
 
 
@@ -714,7 +715,6 @@ class DashboardController extends GetxController {
     buttocksIntensityColor = AppColors.lowIntensityColor;
     hamstringsIntensityColor = AppColors.lowIntensityColor;
     calvesIntensityColor = AppColors.lowIntensityColor;
-
   }
 
   @override

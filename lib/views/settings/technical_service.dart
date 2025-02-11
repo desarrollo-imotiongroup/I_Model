@@ -6,9 +6,11 @@ import 'package:i_model/widgets/textview.dart';
 
 class TechnicalService extends StatelessWidget {
   final Function()? onCancel;
+  final Function()? onClickSettings;
 
   const TechnicalService({
     this.onCancel,
+    this.onClickSettings,
     super.key});
 
   @override
@@ -128,7 +130,20 @@ class TechnicalService extends StatelessWidget {
                 ],
               ),
             ),
-          )
+          ),
+
+          Container(
+            alignment: Alignment.bottomRight,
+            margin: EdgeInsets.only(right: screenWidth * 0.01),
+            child: GestureDetector(
+              onTap: onClickSettings,
+              child: Icon(
+                Icons.settings,
+                color: AppColors.blackColor,
+                size: screenHeight * 0.05,
+              ),
+            ),
+          ),
         ],
       ),
     );
