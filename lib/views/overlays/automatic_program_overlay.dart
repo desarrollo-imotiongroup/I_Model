@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/models/program.dart';
+import 'package:i_model/models/programs/automatic/automatic_program.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/views/dialogs/selected_auto_program_dialog.dart';
 import 'package:i_model/widgets/box_decoration.dart';
@@ -13,7 +14,7 @@ import 'package:i_model/widgets/top_title_button.dart';
 
 void automaticProgramOverlay(
     BuildContext context,{
-      required List<Program> programList,
+      required List<AutomaticProgramModel> programList,
     }) {
   final overlayState = Overlay.of(context);
   late OverlayEntry overlayEntry;
@@ -21,6 +22,7 @@ void automaticProgramOverlay(
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
   final ProgramsController controller = Get.put(ProgramsController());
+  controller.onInit();
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(
@@ -62,12 +64,20 @@ void automaticProgramOverlay(
                       onTap: (){
                         controller.setProgramDetails(
                             name: programList[index].name,
-                            image: programList[index].image!
+                            image: programList[index].image
                         );
-                        selectedAutomaticProgramDialog(context);
+                        // automaticProgramsList[0]['subprogramas'][0]['nombre']
+
+                        print('SubPrograms: ${controller.automaticProgramsList[index]}');
+
+                        selectedAutomaticProgramDialog(context,
+                            selectedProgramData: controller.automaticProgramsList[index]
+                        );
+
                         if (overlayEntry.mounted) {
                           overlayEntry.remove();
                         }
+
                       },
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,

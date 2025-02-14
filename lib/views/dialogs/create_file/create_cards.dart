@@ -23,6 +23,10 @@ class CreateCards extends StatelessWidget {
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
     final CreateProfileController controller = Get.put(CreateProfileController());
+    controller.loadMostRecentUser();
+    if (controller.userId != null) {
+      controller.loadAvailableBonos(controller.userId!);
+    }
 
 
     return Obx(
@@ -61,8 +65,11 @@ class CreateCards extends StatelessWidget {
                           buyPointsOverlay(
                               context,
                               textEditingController: controller.pointsTextEditingController,
-                              onAdd: (){
-                                controller.buyPoints();
+                              onAdd: () async {
+                                await controller.saveBonosUser(
+                                    controller.lastUserId!,
+                                    int.parse(controller.pointsTextEditingController.text)
+                                );
                               }
                           );
                         },
@@ -132,7 +139,7 @@ class CreateCards extends StatelessWidget {
                                   color: AppColors.greyColor,
                                   widget: ListView.builder(
                                     padding: EdgeInsets.zero,
-                                    itemCount: controller.availablePoints.length,
+                                    itemCount: controller.availableBonos.length,
                                     itemBuilder: (BuildContext context, int index) {
                                       return  GestureDetector(
                                         onTap: (){},
@@ -150,12 +157,12 @@ class CreateCards extends StatelessWidget {
                                                     children: [
                                                       /// Table cells info
                                                       tableTextInfo(
-                                                        title: controller.availablePoints[index].date!,
+                                                        title: controller.availableBonos[index]['date'].toString(),
                                                         color: AppColors.blackColor.withValues(alpha: 0.8),
                                                         fontSize: 10.sp,
                                                       ),
                                                       tableTextInfo(
-                                                        title: controller.availablePoints[index].quantity.toString(),
+                                                        title: controller.availableBonos[index]['quantity'].toString(),
                                                         color: AppColors.blackColor.withValues(alpha: 0.8),
                                                         fontSize: 10.sp,
                                                       ),
@@ -189,7 +196,7 @@ class CreateCards extends StatelessWidget {
                                   color: AppColors.blackColor.withValues(alpha: 0.8)
                               ),
                               TextView.title(
-                                  controller.totalAvailablePoints.toString(),
+                                  controller.totalBonosAvailables.value.toString(),
                                   fontSize: 10.sp,
                                   color: AppColors.pinkColor
                               ),
@@ -320,10 +327,7 @@ class CreateCards extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
-              ),
+              Container(),
               imageWidget(
                   image: Strings.checkIcon,
                   height: screenHeight * 0.08

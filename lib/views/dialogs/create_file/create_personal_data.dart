@@ -2,15 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
-import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/create_profile_controller.dart';
-import 'package:i_model/views/overlays/reset_password_overlay.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
-import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/textfield_label.dart';
-import 'package:i_model/widgets/textview.dart';
 
 class CreatePersonalData extends StatelessWidget {
   const CreatePersonalData({super.key});
@@ -82,19 +78,13 @@ class CreatePersonalData extends StatelessWidget {
                   ),
 
                   SizedBox(height: screenHeight * 0.02,),
-                  /// Birth date text field
-                  GestureDetector(
-                    onTap: () async {
-                      controller.createProfilePickBirthDate(context);
-                    },
-                    child: AbsorbPointer(
-                      child: TextFieldLabel(
-                        width: screenWidth * 0.2,
-                        label: translation(context).birthDate,
-                        textEditingController: controller.birthDateController,
-                        fontSize: 11.sp,
-                      ),
-                    ),
+                  /// Phone text field
+                  TextFieldLabel(
+                    width: screenWidth * 0.2,
+                    label: translation(context).phone,
+                    textEditingController: controller.phoneController,
+                    fontSize: 11.sp,
+                    isAllowNumberOnly: true,
                   ),
 
                 ],
@@ -158,23 +148,37 @@ class CreatePersonalData extends StatelessWidget {
                       ),
                     ),
                   ),
+                  /// Birth date text field
+                  GestureDetector(
+                    onTap: () async {
+                      controller.createProfilePickBirthDate(context);
+                    },
+                    child: AbsorbPointer(
+                      child: TextFieldLabel(
+                        width: screenWidth * 0.2,
+                        label: translation(context).birthDate,
+                        textEditingController: controller.birthDateController,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ),
 
                   SizedBox(height: screenHeight * 0.035,),
-                  /// Registration date
-                  RoundedContainer(
-                      onTap: (){
-                        resetPasswordOverlay(context);
-                      },
-                      borderRadius: screenHeight * 0.01,
-                      width: screenWidth * 0.2,
-                      padding: EdgeInsets.symmetric(
-                          vertical: screenHeight * 0.013
-                      ),
-                      widget: TextView.title(
-                          translation(context).resetPassword.toUpperCase(),
-                          fontSize: 11.sp,
-                          color: AppColors.blackColor.withValues(alpha: 0.8)
-                      ))
+                  // /// Reset password
+                  // RoundedContainer(
+                  //     onTap: (){
+                  //       resetPasswordOverlay(context);
+                  //     },
+                  //     borderRadius: screenHeight * 0.01,
+                  //     width: screenWidth * 0.2,
+                  //     padding: EdgeInsets.symmetric(
+                  //         vertical: screenHeight * 0.013
+                  //     ),
+                  //     widget: TextView.title(
+                  //         translation(context).resetPassword.toUpperCase(),
+                  //         fontSize: 11.sp,
+                  //         color: AppColors.blackColor.withValues(alpha: 0.8)
+                  //     )),
                 ],
               ),
             ],
@@ -185,13 +189,15 @@ class CreatePersonalData extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
-              ),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
+              Container(),
+              GestureDetector(
+                onTap: (){
+                  controller.collectUserData(context);
+                },
+                child: imageWidget(
+                    image: Strings.checkIcon,
+                    height: screenHeight * 0.08
+                ),
               ),
             ],
           )

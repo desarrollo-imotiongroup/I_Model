@@ -4,18 +4,32 @@ import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
+import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 
-class ClientPersonalData extends StatelessWidget {
+class ClientPersonalData extends StatefulWidget {
   const ClientPersonalData({super.key});
+
+  @override
+  State<ClientPersonalData> createState() => _ClientPersonalDataState();
+}
+
+class _ClientPersonalDataState extends State<ClientPersonalData> {
+  final ClientController controller = Get.put(ClientController());
+
+  @override
+  void initState() {
+    controller.refreshControllers();
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenHeight = mediaQuery.size.height;
-    final ClientController controller = Get.put(ClientController());
 
     return Obx(
           () => Column(
@@ -135,13 +149,32 @@ class ClientPersonalData extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
+              GestureDetector(
+                onTap: (){
+                  alertOverlay(context,
+                      heading: Strings.delete,
+                      description: Strings.confirmDeleteClient,
+                      buttonText: Strings.yesSure,
+                      onPress: (){
+                              controller.deleteClient(context);
+                              Navigator.pop(context);
+
+                  }
+                  );
+                },
+                child: imageWidget(
+                    image: Strings.removeIcon,
+                    height: screenHeight * 0.08
+                ),
               ),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
+              GestureDetector(
+                onTap: (){
+                  controller.updateData(context);
+                },
+                child: imageWidget(
+                    image: Strings.checkIcon,
+                    height: screenHeight * 0.08
+                ),
               ),
             ],
           )

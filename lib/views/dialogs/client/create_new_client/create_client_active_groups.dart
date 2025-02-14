@@ -34,11 +34,13 @@ class CreateClientActiveGroups extends StatelessWidget {
                     label: translation(context).name,
                     textEditingController: controller.clientNameController,
                     fontSize: 11.sp,
+                    isReadOnly: true,
                   ),
                 ),
 
                 /// Client status drop down
                 DropDownWidget(
+                  isEnable: false,
                   selectedValue: controller.selectedStatus.value,
                   dropDownList: controller.clientStatusList,
                   onChanged: (value){
@@ -220,13 +222,16 @@ class CreateClientActiveGroups extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
-              ),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
+              Container(),
+              GestureDetector(
+                onTap: (){
+                  int clienteId = controller.selectedClient!['id'];
+                  controller.insertClientGroups(context: context);
+                },
+                child: imageWidget(
+                    image: Strings.checkIcon,
+                    height: screenHeight * 0.08
+                ),
               ),
             ],
           ),

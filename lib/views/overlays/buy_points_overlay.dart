@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
+import 'package:i_model/view_models/client/create_new_client_controller.dart';
 import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
@@ -19,6 +21,7 @@ void buyPointsOverlay(
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
+  CreateNewClientController controller = Get.put(CreateNewClientController());
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(

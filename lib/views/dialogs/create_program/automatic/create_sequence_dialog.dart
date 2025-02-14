@@ -68,9 +68,11 @@ void createSequenceDialog(BuildContext context,) {
                               /// Select program drop down
                               DropDownWidget(
                                 selectedValue: controller.selectedProgram.value,
-                                dropDownList: controller.individualProgramOptionList(context),
+                                dropDownList: controller.individualDropDownPrograms.map((program)
+                                => program['name'] as String).toSet().toList(),
                                 onChanged: (value){
                                   controller.selectedProgram.value = value;
+                                  print(controller.selectedProgram.value);
                                 },
                               ),
                               ),

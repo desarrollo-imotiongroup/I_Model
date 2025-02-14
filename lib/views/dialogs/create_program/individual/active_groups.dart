@@ -51,7 +51,8 @@ class ActiveGroups extends StatelessWidget {
 
           SizedBox(height: screenHeight * 0.02,),
 
-          Expanded(
+          controller.selectedEquipment.value == Strings.bioJacket
+          ? Expanded(
             child: Stack(
               children: [
                 SizedBox(
@@ -218,22 +219,156 @@ class ActiveGroups extends StatelessWidget {
                 Positioned(
                   bottom: 0,
                   right: 0,
-                  child: imageWidget(
-                      image: Strings.checkIcon,
-                      height: screenHeight * 0.08
+                  child: GestureDetector(
+                    onTap: (){
+                      controller.actualizarGruposEnPrograma(context);
+                    },
+                    child: imageWidget(
+                        image: Strings.checkIcon,
+                        height: screenHeight * 0.08
+                    ),
+                  ),
+                ),
+
+              ],
+            ),
+          )
+          : Expanded(
+            child: Stack(
+              children: [
+                SizedBox(
+                  width: screenWidth * 0.85,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Column(
+                            children: [
+                              SizedBox(height: screenHeight * 0.05,),
+                              /// Glutes - Buttocks
+                              CheckBox(
+                                title: Strings.glutes,
+                                isChecked: controller.isGlutesChecked.value,
+                                onTap: (){
+                                  controller.toggleGlutes();
+                                },),
+
+                              /// hamstrings / Isquios
+                              CheckBox(
+                                title: Strings.hamstrings,
+                                isChecked: controller.isHamstringsChecked.value,
+                                onTap: (){
+                                  controller.toggleHamstrings();
+                                },),
+
+                              /// Calves
+                              CheckBox(
+                                title: Strings.calves,
+                                isChecked: controller.isCalvesChecked.value,
+                                onTap: (){
+                                  controller.toggleCalves();
+                                },),
+
+                            ],
+                          ),
+                          SizedBox(width: screenWidth * 0.02,),
+                          Stack(
+                            children: [
+                              // First image widget
+                              imageWidget(
+                                image: Strings.avatarBackBioShapeIcon,
+                              ),
+                              ActiveGroupIcon(
+                                icon: Strings.buttocksBioShapeIcon,
+                                isChecked: controller.isGlutesChecked.value,
+                              ),
+                              ActiveGroupIcon(
+                                icon: Strings.hamstringsBioShapeIcon,
+                                isChecked: controller.isHamstringsChecked.value,
+                              ),
+                              ActiveGroupIcon(
+                                icon: Strings.calvesBioShapeIcon,
+                                isChecked: controller.isCalvesChecked.value,
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+
+                      Row(
+                        children: [
+                          Stack(
+                            children: [
+                              imageWidget(
+                                  image: Strings.avatarFrontBioShapeIcon
+                              ),
+                              ActiveGroupIcon(
+                                icon: Strings.abdomenBioShapeIcon,
+                                isChecked: controller.isAbdominalChecked.value,
+                              ),
+                              ActiveGroupIcon(
+                                icon: Strings.armsBioShapeIcon,
+                                isChecked: controller.isArmsChecked.value,
+                              ),
+                              ActiveGroupIcon(
+                                icon: Strings.legsBioShapeIcon,
+                                isChecked: controller.isLegsChecked.value,
+                              ),
+                            ],
+                          ),
+                          SizedBox(width: screenWidth * 0.02,),
+                          Column(
+                            children: [
+                              SizedBox(height: screenHeight * 0.05,),
+                              /// Abdominal
+                              CheckBox(
+                                title: Strings.abdominals,
+                                isChecked: controller.isAbdominalChecked.value,
+                                onTap: (){
+                                  controller.toggleAbdominal();
+                                },),
+
+                              /// Arms / Brazos
+                              CheckBox(
+                                title: Strings.arms,
+                                isChecked: controller.isArmsChecked.value,
+                                onTap: (){
+                                  controller.toggleArms();
+                                },),
+
+                              /// Legs / piernas
+                              CheckBox(
+                                title: Strings.legs,
+                                isChecked: controller.isLegsChecked.value,
+                                onTap: (){
+                                  controller.toggleLegs();
+                                },),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
                 Positioned(
                   bottom: 0,
-                  left: 0,
-                  child: imageWidget(
-                      image: Strings.removeIcon,
-                      height: screenHeight * 0.08
+                  right: 0,
+                  child: GestureDetector(
+                    onTap: (){
+                      controller.actualizarGruposEnPrograma(context);
+                    },
+                    child: imageWidget(
+                        image: Strings.checkIcon,
+                        height: screenHeight * 0.08
+                    ),
                   ),
                 ),
+
               ],
             ),
-          ),
+          )
         ],
       ),
     );

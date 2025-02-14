@@ -139,13 +139,15 @@ class CreateClientPersonalData extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
-              ),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
+              Container(),
+              GestureDetector(
+                onTap: (){
+                  controller.collectData(context);
+                },
+                child: imageWidget(
+                    image: Strings.checkIcon,
+                    height: screenHeight * 0.08
+                ),
               ),
             ],
           )

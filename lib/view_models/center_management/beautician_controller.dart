@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/helper_methods.dart';
 import 'package:i_model/core/strings.dart';
+import 'package:i_model/db/db_helper.dart';
 import 'package:i_model/models/administrator_activity.dart';
 import 'package:i_model/models/client/client_points.dart';
 import 'package:i_model/models/client/clients.dart';
+import 'package:i_model/views/dialogs/sucess_dialog.dart';
+import 'package:i_model/views/overlays/alert_overlay.dart';
+import 'package:intl/intl.dart';
 
 class BeauticianController extends GetxController{
   /// Administrator list values
   final TextEditingController beauticianNameController = TextEditingController();
   List<String> statusOptions = [Strings.active, Strings.inactive, Strings.all];
-  RxString selectedStatus = Strings.active.obs;
+  RxString selectedStatus = Strings.all.obs;
   var isDropdownOpen = false.obs;
-  RxString selectedBeautician = ''.obs;
+  RxMap selectedBeautician = {}.obs;
 
   /// Personal data
   final TextEditingController perDataNameController = TextEditingController();
   final TextEditingController nickNameController = TextEditingController();
   final TextEditingController birthDateController = TextEditingController();
   final TextEditingController registrationDateController = TextEditingController();
+  final TextEditingController phoneController = TextEditingController();
   List<String> profileOptions = [Strings.administrator, Strings.beautician];
   List<String> genderOptions = [Strings.man, Strings.women];
   List<String> sessionControlOptions = [Strings.yes, Strings.no];
@@ -29,10 +35,10 @@ class BeauticianController extends GetxController{
   RxString selectedGender = ''.obs;
 
 
-  setInitialNickName(){
-    nickNameController.text = selectedBeautician.value.toUpperCase();
-    update();
-  }
+  // setInitialNickName(){
+  //   nickNameController.text = selectedBeautician.value.toUpperCase();
+  //   update();
+  // }
 
   pickBirthDate(BuildContext context) async {
     String? birthDate = await HelperMethods.selectDate(context);
@@ -83,18 +89,7 @@ class BeauticianController extends GetxController{
 
 
   /// Available points list
-  RxList<ClientPoints> consumedPoints = [
-    ClientPoints(date: '01/01/2025', quantity: 50, hour: '08:30'),
-    ClientPoints(date: '02/01/2025', quantity: 40, hour: '14:15'),
-    ClientPoints(date: '03/01/2025', quantity: 30, hour: '09:45'),
-    ClientPoints(date: '04/01/2025', quantity: 60, hour: '11:00'),
-    ClientPoints(date: '05/01/2025', quantity: 20, hour: '16:20'),
-    ClientPoints(date: '06/01/2025', quantity: 80, hour: '13:10'),
-    ClientPoints(date: '07/01/2025', quantity: 35, hour: '17:50'),
-    ClientPoints(date: '08/01/2025', quantity: 55, hour: '10:00'),
-    ClientPoints(date: '09/01/2025', quantity: 45, hour: '12:30'),
-    ClientPoints(date: '10/01/2025', quantity: 25, hour: '15:40'),
-  ].obs;
+  RxList<ClientPoints> consumedPoints = <ClientPoints>[].obs;
 
   /// Administrator activities
   RxList<AdministratorActivity> beauticiansActivity = [
@@ -119,5 +114,246 @@ class BeauticianController extends GetxController{
     registrationDateController.dispose();
     super.onClose();
   }
+
+  /// Fetch Beauticians / Esteticistas
+  RxList<Map<String, dynamic>> allEsteticista = <Map<String, dynamic>>[].obs; // Lista original de clientes
+  RxList<Map<String, dynamic>> filteredEsteticista = <Map<String, dynamic>>[].obs; // Lista filtrada
+
+  Future<void> fetchEsteticistas() async {
+
+    final dbHelper = DatabaseHelper();
+    try {
+      // Obtener los usuarios cuyo perfil es "Administrador" o "Ambos"
+      final beauticianData =
+      await dbHelper.getUsuariosPorTipoPerfil(Strings.beautician);
+      allEsteticista.value = beauticianData;
+
+      // final adminDataEntrenador =
+      // await dbHelper.getUsuariosPorTipoPerfil(Strings.beautician);
+
+      print('allEsteticista: $allEsteticista');
+      // print('BeauticianData: ${adminDataEntrenador.length}');
+      // // También podemos obtener usuarios con el tipo de perfil 'Ambos' si es necesario
+      // final adminDataAmbos = await dbHelper.getUsuariosPorTipoPerfil('Ambos');
+      //
+      // // Combina ambas listas
+      // final allAdminData = [
+      //   ...adminData,
+      //   ...adminDataAmbos,
+      //   ...adminDataEntrenador
+      // ];
+
+
+      //   allAdmins.value = allAdminData; // Asigna los usuarios filtrados
+      //   filteredAdmins = allAdmins; // Inicializa la lista filtrada
+      //
+      //
+      filterEsteticistas(); // Llama al filtro si es necesario
+    } catch (e) {
+      print('Error fetching clients: $e');
+    }
+  }
+
+  Future<void> filterEsteticistas() async {
+    String searchText = beauticianNameController.text.toLowerCase();
+    final dbHelper = DatabaseHelper();
+    try {
+      // Lista base para los filtros
+      List<Map<String, dynamic>> esteticistas;
+
+      // Si el filtro de tipo no es 'Ambos', consulta la base de datos
+      if (selectedStatus.value != Strings.all) {
+        esteticistas = await dbHelper.getUsuariosPorTipoPerfil(Strings.beautician);
+        print('Call - Not todo');
+      } else {
+        // Usa todos los administradores si no se filtra por tipo
+        esteticistas = List<Map<String, dynamic>>.from(allEsteticista);
+        print('Call - All todo');
+      }
+
+      print('Admin: $esteticistas');
+      // Filtra por nombre
+      esteticistas = esteticistas.where((esteticista) {
+        final matchesName = esteticista['name']!.toLowerCase().contains(searchText.toLowerCase());
+        final matchesStatus = selectedStatus.value == Strings.all ||
+            esteticista['status']!.toLowerCase() == selectedStatus.toLowerCase();
+        return matchesName && matchesStatus;
+      }).toList();
+
+      // Actualiza el estado con la lista filtrada
+
+      filteredEsteticista.value = esteticistas;
+      print('filteredAdmins: $filteredEsteticista');
+
+    } catch (e) {
+      print("Error al filtrar Esteticistas: $e");
+    }
+  }
+
+  /// Administrator file
+  /// Personal data --- Showing data from SQL
+  Future<void> refreshControllers() async {
+    DatabaseHelper dbHelper = DatabaseHelper();
+
+    int userId = selectedBeautician['id'];
+    // Obtener los datos del usuario desde la base de datos
+    Map<String, dynamic>? updatedEsteticistaData = await dbHelper.getUserById(userId);
+
+
+    if (updatedEsteticistaData != null) {
+      // Obtener el tipo de perfil asociado al usuario desde la base de datos
+      String? tipoPerfil = await dbHelper.getTipoPerfilByUserId(userId);
+
+
+      // Actualizar los campos del formulario con los datos del usuario
+      perDataNameController.text = updatedEsteticistaData['name'] ?? '';
+      nickNameController.text = updatedEsteticistaData['user'] ?? '';
+      // _emailController.text = updatedAdminData['email'] ?? '';
+      phoneController.text = updatedEsteticistaData['phone'].toString();
+      selectedGender.value = updatedEsteticistaData['gender'];
+      selectedProfile.value = tipoPerfil ?? ''; // Actualiza con el tipo de perfil obtenido
+      selectedTimeControl.value = updatedEsteticistaData['controltiempo'];
+      selectedSessionControl.value = updatedEsteticistaData['controlsesiones'];
+      selectedStatus.value = updatedEsteticistaData['status'];
+      birthDateController.text = updatedEsteticistaData['birthdate'];
+      registrationDateController.text = updatedEsteticistaData['altadate'];
+    }
+  }
+
+  /// Delete Beautician
+  Future<void> deleteEsteticista(BuildContext context) async {
+    DatabaseHelper dbHelper = DatabaseHelper();
+    await dbHelper.deleteUser(selectedBeautician['id']);
+
+    alertOverlay(
+        context,
+        heading: translation(context).alertCompleteForm,
+        isOneButtonNeeded: true,
+        description: 'Esteticista borrado correctamente'
+    );
+  }
+
+  void updateUserData(BuildContext context) async {
+    // Asegurarse de que todos los campos requeridos estén completos
+    if (perDataNameController.text.isEmpty ||
+        nickNameController.text.isEmpty ||
+        // _emailController.text.isEmpty ||
+        phoneController.text.isEmpty ||
+        selectedGender.value == Strings.nothing ||
+        selectedStatus.value == Strings.nothing ||
+        selectedSessionControl.value == Strings.nothing ||
+        selectedTimeControl.value == Strings.nothing ||
+        birthDateController.text.isEmpty ||
+        registrationDateController.text.isEmpty
+    // !_emailController.text.contains('@')
+    ) {
+      // Verificación de '@' en el correo
+      alertOverlay(
+          context,
+          heading: translation(context).alertCompleteForm,
+          isOneButtonNeeded: true,
+          description: 'Por favor, complete todos los campos correctamente'
+      );
+      return;
+    }
+
+    // Convertir la primera letra del nombre a mayúscula
+    String name = perDataNameController.text.trim();
+    if (name.isNotEmpty) {
+      name = name[0].toUpperCase() + name.substring(1).toLowerCase();
+    }
+
+    // Datos del usuario
+    final clientData = {
+      'name': name, // Nombre con la primera letra en mayúscula
+      'email': '',
+      'user': nickNameController.text,
+      'phone': phoneController.text,
+      'gender': selectedGender.value,
+      'altadate': registrationDateController.text,
+      'controlsesiones': selectedSessionControl.value,
+      'controltiempo': selectedTimeControl.value,
+      'status': selectedStatus.value,
+      'birthdate': birthDateController.text,
+    };
+
+    // Update in the database
+    DatabaseHelper dbHelper = DatabaseHelper();
+
+    // Actualizar el usuario en la base de datos
+    await dbHelper.updateUser(selectedBeautician['id'], clientData);
+
+    // Imprimir los datos actualizados del cliente
+    print('Datos del cliente actualizados: $clientData');
+
+    // Obtener el perfilId correspondiente al tipo de perfil seleccionado
+    int? perfilId = await dbHelper.getTipoPerfilId(selectedProfile.value);
+
+    // Si el perfilId no se encuentra, se crea uno nuevo
+    perfilId ??= await dbHelper.insertTipoPerfil(selectedProfile.value);
+
+    // Actualizar la relación entre el usuario y el tipo de perfil en la tabla usuario_perfil
+    await dbHelper.updateUsuarioPerfil(selectedBeautician['id'], perfilId);
+
+    // Refrescar los controladores con los datos actualizados
+    // await _refreshControllers();
+
+    // Mostrar un SnackBar de éxito
+    showSuccessDialog(context, title: 'Usuario actualizado correctamente');
+  }
+
+  /// Bonos
+  RxList<Map<String, String>> availableBonos = <Map<String, String>>[].obs; // Cambiar el tipo aquí
+  List<Map<String, String>> consumedBonos = [];
+  RxInt totalBonosAvailables = 0.obs; //
+
+  Future<void> loadAvailableBonos() async {
+    final dbHelper = DatabaseHelper();
+    int userId = selectedBeautician['id'];
+    final bonosUser = await dbHelper.getAvailableBonosByUserId(userId);
+
+    if (bonosUser.isEmpty) {
+      print('No se encontraron bonos disponibles para el cliente $userId');
+    }
+
+
+    availableBonos.value = bonosUser.where((bonoUser) {
+      return bonoUser['estado'] == 'Disponible';
+    }).map((bonoUser) {
+      return {
+        'date': bonoUser['fecha']?.toString() ?? '',
+        // Aseguramos que 'fecha' sea String
+        'quantity': bonoUser['cantidad']?.toString() ?? '',
+        // Aseguramos que 'cantidad' sea String
+      };
+    }).toList();
+
+    // Recalcular el total de bonos
+    totalBonosAvailables.value = _calculateTotalBonos(availableBonos);
+  }
+
+  int _calculateTotalBonos(List<Map<String, dynamic>> bonos) {
+    return bonos.fold(0, (sum, bono) {
+      return sum +
+          (int.tryParse(bono['quantity']) ??
+              0); // Garantizar que la cantidad sea int
+    });
+  }
+
+  Future<void> saveBonosUser(cantidadBonos) async {
+    int userId = selectedBeautician['id'];
+    final dbHelper = DatabaseHelper();
+    String formattedDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+    await dbHelper.insertBonoUsuario({
+      'usuario_id': userId,
+      'cantidad': cantidadBonos,
+      'estado': 'Disponible',
+      'fecha': formattedDate,
+    });
+
+    loadAvailableBonos();
+  }
+
 
 }

@@ -23,6 +23,7 @@ class AdministratorCard extends StatelessWidget {
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
     final AdministratorController controller = Get.put(AdministratorController());
+    controller.loadAvailableBonos();
 
     return  Obx(
           () => Column(
@@ -61,7 +62,9 @@ class AdministratorCard extends StatelessWidget {
                               context,
                               textEditingController: controller.pointsTextEditingController,
                               onAdd: (){
-                                controller.buyPoints();
+                                controller.saveBonosUser(
+                                  int.parse(controller.pointsTextEditingController.text)
+                                );
                               }
                           );
                         },
@@ -89,114 +92,117 @@ class AdministratorCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 /// Available points
-                SizedBox(
-                  width: screenWidth * 0.32,
-                  child: Column(
-                    children: [
-                      TextView.title(
-                        translation(context).availablePoints.toUpperCase(),
-                        color: AppColors.pinkColor,
-                        fontSize: 11.sp,
-                      ),
-                      SizedBox(height: screenHeight * 0.02,),
-                      Expanded(
-                        child: SizedBox(
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                /// Table headers
-                                Row(
+                Obx(() =>
+                    SizedBox(
+                      width: screenWidth * 0.32,
+                      child: Column(
+                        children: [
+                          TextView.title(
+                            translation(context).availablePoints.toUpperCase(),
+                            color: AppColors.pinkColor,
+                            fontSize: 11.sp,
+                          ),
+                          SizedBox(height: screenHeight * 0.02,),
+                          Expanded(
+                            child: SizedBox(
+                              child: SingleChildScrollView(
+                                child: Column(
                                   children: [
-                                    tableTextInfo(
-                                      title: translation(context).date,
-                                      fontSize: 10.sp,
-                                    ),
-                                    Expanded(
-                                      child: Row(
-                                        children: [
-                                          tableTextInfo(
-                                            title: translation(context).quantity,
-                                            fontSize: 10.sp,
+                                    /// Table headers
+                                    Row(
+                                      children: [
+                                        tableTextInfo(
+                                          title: translation(context).date,
+                                          fontSize: 10.sp,
+                                        ),
+                                        Expanded(
+                                          child: Row(
+                                            children: [
+                                              tableTextInfo(
+                                                title: translation(context).quantity,
+                                                fontSize: 10.sp,
+                                              ),
+                                              SizedBox(width: screenWidth * 0.02,),
+                                            ],
                                           ),
-                                          SizedBox(width: screenWidth * 0.02,),
-                                        ],
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: screenHeight * 0.005,),
+                                    CustomContainer(
+                                      height: screenHeight * 0.25,
+                                      width: double.infinity,
+                                      color: AppColors.greyColor,
+                                      widget: ListView.builder(
+                                        padding: EdgeInsets.zero,
+                                        itemCount: controller.availableBonos.length,
+                                        itemBuilder: (BuildContext context, int index) {
+                                          return  GestureDetector(
+                                            onTap: (){},
+                                            child: Column(
+                                              children: [
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01,
+                                                  ),
+                                                  child: RoundedContainer(
+                                                      width: double.infinity,
+                                                      borderColor: AppColors.transparentColor,
+                                                      borderRadius: screenWidth * 0.006,
+                                                      color: AppColors.pureWhiteColor,
+                                                      widget: Row(
+                                                        children: [
+                                                          /// Table cells info
+                                                          tableTextInfo(
+                                                            title: controller.availableBonos[index]['date'].toString(),
+                                                            color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                            fontSize: 10.sp,
+                                                          ),
+                                                          tableTextInfo(
+                                                            title: controller.availableBonos[index]['quantity'].toString(),
+                                                            color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                            fontSize: 10.sp,
+                                                          ),
+                                                        ],
+                                                      )
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: screenHeight * 0.005,),
-                                CustomContainer(
-                                  height: screenHeight * 0.25,
-                                  width: double.infinity,
-                                  color: AppColors.greyColor,
-                                  widget: ListView.builder(
-                                    padding: EdgeInsets.zero,
-                                    itemCount: controller.availablePoints.length,
-                                    itemBuilder: (BuildContext context, int index) {
-                                      return  GestureDetector(
-                                        onTap: (){},
-                                        child: Column(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01,
-                                              ),
-                                              child: RoundedContainer(
-                                                  width: double.infinity,
-                                                  borderColor: AppColors.transparentColor,
-                                                  borderRadius: screenWidth * 0.006,
-                                                  color: AppColors.pureWhiteColor,
-                                                  widget: Row(
-                                                    children: [
-                                                      /// Table cells info
-                                                      tableTextInfo(
-                                                        title: controller.availablePoints[index].date!,
-                                                        color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                        fontSize: 10.sp,
-                                                      ),
-                                                      tableTextInfo(
-                                                        title: controller.availablePoints[index].quantity.toString(),
-                                                        color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                        fontSize: 10.sp,
-                                                      ),
-                                                    ],
-                                                  )
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
-                        ),
+                          SizedBox(height: screenHeight * 0.005,),
+                          /// Available points total
+                          CustomContainer(
+                              height: screenHeight * 0.07,
+                              width: double.infinity,
+                              color: AppColors.greyColor,
+                              widget: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  TextView.title(
+                                      translation(context).total.toUpperCase(),
+                                      fontSize: 10.sp,
+                                      color: AppColors.blackColor.withValues(alpha: 0.8)
+                                  ),
+                                  TextView.title(
+                                      controller.totalBonosAvailables.value.toString(),
+                                      fontSize: 10.sp,
+                                      color: AppColors.pinkColor
+                                  ),
+                                ],
+                              ))
+                        ],
                       ),
-                      SizedBox(height: screenHeight * 0.005,),
-                      /// Available points total
-                      CustomContainer(
-                          height: screenHeight * 0.07,
-                          width: double.infinity,
-                          color: AppColors.greyColor,
-                          widget: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              TextView.title(
-                                  translation(context).total.toUpperCase(),
-                                  fontSize: 10.sp,
-                                  color: AppColors.blackColor.withValues(alpha: 0.8)
-                              ),
-                              TextView.title(
-                                  controller.totalAvailablePoints.toString(),
-                                  fontSize: 10.sp,
-                                  color: AppColors.pinkColor
-                              ),
-                            ],
-                          ))
-                    ],
-                  ),
+                    ),
                 ),
+
                 SizedBox(width: screenWidth * 0.018,),
 
                 /// Consumed points

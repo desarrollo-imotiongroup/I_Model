@@ -21,6 +21,7 @@ void beauticianListOverlay(BuildContext context) {
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
   final BeauticianController controller = Get.put(BeauticianController());
+  controller.fetchEsteticistas();
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(
@@ -60,6 +61,9 @@ void beauticianListOverlay(BuildContext context) {
                             child: TextFieldLabel(
                               label: translation(context).name,
                               textEditingController: controller.beauticianNameController,
+                              onChanged: (value){
+                                controller.filterEsteticistas();
+                              },
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.04,),
@@ -93,66 +97,69 @@ void beauticianListOverlay(BuildContext context) {
                                     ],
                                   ),
                                   SizedBox(height: screenHeight * 0.005,),
-                                  CustomContainer(
-                                    height: screenHeight * 0.5,
-                                    width: double.infinity,
-                                    color: AppColors.greyColor,
-                                    widget: ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      itemCount: 13,
-                                      itemBuilder: (BuildContext context, int index) {
-                                        return  GestureDetector(
-                                          onTap: (){
-                                            if (overlayEntry.mounted) {
-                                              overlayEntry.remove();
-                                            }
-                                            controller.selectedBeautician.value = controller.beauticiansList[index].name;
-                                            beauticianFileDialog(context);
-                                          },
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: screenHeight * 0.01,
-                                                ),
-                                                child: RoundedContainer(
-                                                    width: double.infinity,
-                                                    borderColor: AppColors.transparentColor,
-                                                    borderRadius: screenWidth * 0.006,
-                                                    color: AppColors.pureWhiteColor,
-                                                    widget: Row(
-                                                      children: [
-                                                        /// Table cells info
-                                                        tableTextInfo(
-                                                          title: '${index + 1}',
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                        tableTextInfo(
-                                                          title: controller.beauticiansList[index].name,
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                        tableTextInfo(
-                                                          title: controller.beauticiansList[index].phone.toUpperCase(),
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                        tableTextInfo(
-                                                          title: controller.beauticiansList[index].status.toUpperCase(),
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                      ],
-                                                    )
-                                                ),
+                                  Obx(() =>
+                                      CustomContainer(
+                                        height: screenHeight * 0.5,
+                                        width: double.infinity,
+                                        color: AppColors.greyColor,
+                                        widget: ListView.builder(
+                                          padding: EdgeInsets.zero,
+                                          itemCount: controller.filteredEsteticista.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return  GestureDetector(
+                                              onTap: (){
+                                                if (overlayEntry.mounted) {
+                                                  overlayEntry.remove();
+                                                }
+                                                controller.selectedBeautician.value = controller.filteredEsteticista[index];
+                                                beauticianFileDialog(context);
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.symmetric(
+                                                      vertical: screenHeight * 0.01,
+                                                    ),
+                                                    child: RoundedContainer(
+                                                        width: double.infinity,
+                                                        borderColor: AppColors.transparentColor,
+                                                        borderRadius: screenWidth * 0.006,
+                                                        color: AppColors.pureWhiteColor,
+                                                        widget: Row(
+                                                          children: [
+                                                            /// Table cells info
+                                                            tableTextInfo(
+                                                              title: '${index + 1}',
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                            tableTextInfo(
+                                                              title: controller.filteredEsteticista[index]['name'],
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                            tableTextInfo(
+                                                              title: controller.filteredEsteticista[index]['phone'].toUpperCase(),
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                            tableTextInfo(
+                                                              title: controller.filteredEsteticista[index]['status'].toUpperCase(),
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                          ],
+                                                        )
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                  )
+
                                 ],
                               ),
                             ),
@@ -223,6 +230,7 @@ void beauticianListOverlay(BuildContext context) {
                                         onTap: () {
                                           controller.selectedStatus.value = value;
                                           controller.isDropdownOpen.value = false;
+                                          controller.filterEsteticistas();
                                         },
                                       );
                                     }).toList(),

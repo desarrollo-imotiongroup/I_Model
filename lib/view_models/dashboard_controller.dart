@@ -6,6 +6,7 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/enum/program_status.dart';
 import 'package:i_model/core/strings.dart';
+import 'package:i_model/db/db_helper.dart';
 import 'package:i_model/models/client/clients.dart';
 import 'package:i_model/models/program.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -25,6 +26,8 @@ class DashboardController extends GetxController {
   RxString selectedProgramType = Strings.individual.obs;
   RxString selectedProgramName = Strings.cellulite.obs;
   RxString selectedProgramImage = Strings.celluliteIcon.obs;
+  List<Map<String, dynamic>> automaticProgramList = [];
+  List<Map<String, dynamic>> individualProgramList = [];
 
   RxBool isPantSelected = false.obs;
   RxBool isActive = false.obs;
@@ -115,10 +118,90 @@ class DashboardController extends GetxController {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     int initialMinutes = sharedPreferences.getInt(Strings.maxTimeSP) ?? 25;
     remainingSeconds.value = initialMinutes * 60;
+
+    automaticProgramList = await fetchAutoPrograms();
+    individualProgramList = await fetchIndividualPrograms();
     super.onInit();
   }
 
+  /// Fetching individual programs from SQL
+  Future<List<Map<String, dynamic>>> fetchIndividualPrograms() async {
+    List<Map<String, dynamic>> individualPrograms = [];
+    final db = await DatabaseHelper().database;
+    try {
+      individualPrograms = await DatabaseHelper().obtenerProgramasPredeterminadosPorTipoIndividual(db);
 
+    } catch (e) {
+      print('❌ Error fetching programs: $e');
+      return [];
+    }
+    return individualPrograms;
+  }
+
+  /// Fetching automatic programs from SQL
+  Future<List<Map<String, dynamic>>> fetchAutoPrograms() async {
+    // List<Map<String, dynamic>> allAutomaticPrograms = [];
+    List<Map<String, dynamic>> autoProgramData = [];
+    var db = await DatabaseHelper().database; // Obtener la instancia de la base de datos
+    try {
+      // Llamamos a la función que obtiene los programas automáticos y sus subprogramas
+      autoProgramData = await DatabaseHelper().obtenerProgramasAutomaticosConSubprogramas(db);
+
+      // print('✅ Programas automáticos obtenidos:');
+      // for (var program in autoProgramData) {
+      //   print('📌 Programa: ${program['nombre']} (ID: ${program['id_programa_automatico']})');
+      //   print('   📷 Imagen: ${program['imagen']}');
+      //   print('   📝 Descripción: ${program['descripcion']}');
+      //   print('   ⏳ Duración: ${program['duracionTotal']}');
+      //   print('   🔧 Tipo de equipamiento: ${program['tipo_equipamiento']}');
+      //
+      //
+      //
+      //   List<Map<String, dynamic>> subprogramas = program['subprogramas'] ?? [];
+      //   if (subprogramas.isNotEmpty) {
+      //     print('   🔽 Subprogramas:');
+      //     for (var subprogram in subprogramas) {
+      //       print('      - ${subprogram['nombre']} (ID: ${subprogram['id_programa_relacionado']})');
+      //     }
+      //   } else {
+      //     // print('   ❌ No hay subprogramas.');
+      //   }
+      // }
+
+
+      // Agrupamos los subprogramas por programa automático
+      // List<Map<String, dynamic>> groupedPrograms = _groupProgramsWithSubprograms(autoProgramData);
+      // allAutomaticPrograms = groupedPrograms;
+
+    } catch (e) {
+      print('❌ Error fetching programs: $e');
+    }
+    return autoProgramData;
+  }
+
+
+  List<Map<String, dynamic>> _groupProgramsWithSubprograms(List<Map<String, dynamic>> autoProgramData) {
+    List<Map<String, dynamic>> groupedPrograms = [];
+
+    for (var autoProgram in autoProgramData) {
+      List<Map<String, dynamic>> subprogramas =
+          autoProgram['subprogramas'] ?? [];
+
+      Map<String, dynamic> groupedProgram = {
+        'id_programa_automatico': autoProgram['id_programa_automatico'],
+        'nombre_programa_automatico': autoProgram['nombre'],
+        'imagen': autoProgram['imagen'],
+        'descripcion_programa_automatico': autoProgram['descripcion'],
+        'duracionTotal': autoProgram['duracionTotal'],
+        'tipo_equipamiento': autoProgram['tipo_equipamiento'],
+        'subprogramas': subprogramas,
+      };
+
+      groupedPrograms.add(groupedProgram);
+    }
+
+    return groupedPrograms;
+  }
 
   String formatTime(int totalSeconds) {
     minutes.value = totalSeconds ~/ 60;

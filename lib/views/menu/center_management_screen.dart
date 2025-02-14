@@ -96,7 +96,7 @@ class CenterManagementScreen extends StatelessWidget {
 
                               /// Beauticians list
                               MenuWidget(
-                                title: translation(context).beauticiansList.toUpperCase(),
+                                title: Strings.beauticians.toUpperCase(),
                                 onTap: () {
                                   beauticianListOverlay(context);
                                 },

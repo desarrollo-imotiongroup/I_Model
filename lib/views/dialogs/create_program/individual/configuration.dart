@@ -10,6 +10,7 @@ import 'package:i_model/widgets/text_field_image.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 
 class Configuration extends StatelessWidget {
+
   const Configuration({super.key});
 
   @override
@@ -129,13 +130,11 @@ class Configuration extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            imageWidget(
-                image: Strings.removeIcon,
-                height: screenHeight * 0.08
-            ),
+           Container(),
             GestureDetector(
               onTap: (){
                 controller.setCronaxiaTextFieldsValues();
+                controller.createProgramAndSave(context);
               },
               child: imageWidget(
                   image: Strings.checkIcon,

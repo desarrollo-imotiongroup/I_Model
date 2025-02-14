@@ -1,17 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/strings.dart';
+import 'package:i_model/view_models/client/create_new_client_controller.dart';
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_active_groups.dart';
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_card.dart';
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_personal_data.dart';
 import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/tab_header.dart';
+import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/top_title_button.dart';
 
 void createNewClientDialog(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
+
+
+  Widget noEntryToOtherTab({required String title}){
+    return Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: screenWidth * 0.15
+      ),
+      child: Center(
+        child: TextView.title(
+            title.toUpperCase(),
+            fontSize: 10.sp,
+            lines: 2,
+            textAlign: TextAlign.center,
+            color: AppColors.blackColor.withValues(alpha: 0.8)
+        ),
+      ),
+    );
+  }
 
   showDialog(
     barrierDismissible: false,
@@ -49,21 +72,23 @@ void createNewClientDialog(BuildContext context) {
                           Tab(text: translation(context).cards.toUpperCase()),
                           Tab(text: translation(context).activeGroups.toUpperCase()),
                         ],),
-                        SizedBox(
-                          height: screenHeight * 0.7,
-                          child: TabBarView(
-                            children: [
-                              /// Personal Data content
-                              CreateClientPersonalData(),
+                            SizedBox(
+                              height: screenHeight * 0.7,
+                              child: TabBarView(
+                                children: [
+                                  /// Personal Data content
+                                  CreateClientPersonalData(),
 
-                              /// Cards/bonos content
-                              CreateClientCard(),
+                                  /// Cards/bonos content
+                                   CreateClientCard(),
 
-                              /// Content for Grupos Activos
-                              CreateClientActiveGroups(),
-                            ],
-                          ),
-                        ),
+                                  /// Content for Grupos Activos
+                                 CreateClientActiveGroups()
+                                ],
+                              ),
+                            ),
+
+
                       ],
                     ),
                   ),

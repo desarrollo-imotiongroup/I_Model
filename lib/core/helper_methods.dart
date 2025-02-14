@@ -40,7 +40,7 @@ class HelperMethods{
   }
 
   /// show snackBar
-  static void showSnackBar(BuildContext context, {required String title}){
+  static void showSnackBar(BuildContext context, {required String title, Color? color}){
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: Duration(seconds: 2),
@@ -49,7 +49,7 @@ class HelperMethods{
               fontSize: 12.sp,
               color: AppColors.pureWhiteColor
           ),
-          backgroundColor: AppColors.darkRedColor,
+          backgroundColor: color ?? AppColors.darkRedColor,
         )
     );
   }

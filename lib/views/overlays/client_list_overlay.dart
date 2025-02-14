@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/views/dialogs/client/client_file/client_file_dialog.dart';
 import 'package:i_model/widgets/box_decoration.dart';
@@ -20,6 +21,7 @@ void clientListOverlay(BuildContext context) {
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
   final ClientController controller = Get.put(ClientController());
+  controller.onInit();
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(
@@ -60,6 +62,9 @@ void clientListOverlay(BuildContext context) {
                               label: translation(context).name,
                               textEditingController: controller.nameController,
                               fontSize: 11.sp,
+                              onChanged: (value){
+                                controller.filterClients();
+                              },
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.04,),
@@ -93,23 +98,24 @@ void clientListOverlay(BuildContext context) {
                                     ],
                                   ),
                                   SizedBox(height: screenHeight * 0.005,),
-                                  CustomContainer(
+                                  Obx(() =>    CustomContainer(
                                     height: screenHeight * 0.5,
                                     width: double.infinity,
                                     color: AppColors.greyColor,
                                     widget: ListView.builder(
                                       padding: EdgeInsets.zero,
-                                      itemCount: 13,
+                                      itemCount: controller.filteredClients.length,
                                       itemBuilder: (BuildContext context, int index) {
                                         return  GestureDetector(
                                           onTap: (){
                                             if (overlayEntry.mounted) {
                                               overlayEntry.remove();
                                             }
-                                            controller.selectedClient.value = controller.clientsListDetail[index].name;
+                                            controller.selectedClient.value = controller.filteredClients[index];
                                             clientFileDialog(context);
                                           },
-                                          child: Column(
+                                          child:
+                                          Column(
                                             children: [
                                               Padding(
                                                 padding: EdgeInsets.symmetric(
@@ -124,22 +130,22 @@ void clientListOverlay(BuildContext context) {
                                                       children: [
                                                         /// Table cells info
                                                         tableTextInfo(
-                                                          title: '${index + 1}',
+                                                          title: controller.filteredClients[index]['id'].toString(),
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),
                                                         tableTextInfo(
-                                                          title: controller.clientsListDetail[index].name,
+                                                          title: controller.filteredClients[index]['name'].toUpperCase(),
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),
                                                         tableTextInfo(
-                                                          title: controller.clientsListDetail[index].phone.toUpperCase(),
+                                                          title: controller.filteredClients[index]['phone'].toString(),
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),
                                                         tableTextInfo(
-                                                          title: controller.clientsListDetail[index].status.toUpperCase(),
+                                                          title: controller.filteredClients[index]['status'].toUpperCase(),
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),
@@ -149,10 +155,13 @@ void clientListOverlay(BuildContext context) {
                                               ),
                                             ],
                                           ),
+
                                         );
                                       },
                                     ),
                                   ),
+                                  )
+
                                 ],
                               ),
                             ),
@@ -223,6 +232,7 @@ void clientListOverlay(BuildContext context) {
                                         onTap: () {
                                           controller.selectedStatus.value = value;
                                           controller.isDropdownOpen.value = false;
+                                          controller.filterClients();
                                         },
                                       );
                                     }).toList(),

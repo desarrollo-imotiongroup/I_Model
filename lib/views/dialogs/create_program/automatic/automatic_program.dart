@@ -42,10 +42,10 @@ class AutomaticProgram extends StatelessWidget {
               // Client status drop down
               DropDownLabelWidget(
                 label: translation(context).equipment,
-                selectedValue: controller.selectedEquipment.value,
+                selectedValue: controller.selectedAutoEquipment.value,
                 dropDownList: controller.equipmentOptions,
                 onChanged: (value) {
-                  controller.selectedEquipment.value = value;
+                  controller.selectedAutoEquipment.value = value;
                 },
               )
             ],
@@ -170,7 +170,11 @@ class AutomaticProgram extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               imageWidget(image: Strings.removeIcon, height: screenHeight * 0.08),
-              imageWidget(image: Strings.checkIcon, height: screenHeight * 0.08),
+              GestureDetector(
+                  onTap: (){
+                    controller.crearProgramaAutomatico(context);
+                  },
+                  child: imageWidget(image: Strings.checkIcon, height: screenHeight * 0.08)),
             ],
           ),
           SizedBox(height: screenHeight * 0.02),

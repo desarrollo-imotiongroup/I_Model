@@ -21,7 +21,7 @@ void beauticianFileDialog(BuildContext context,) {
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
-      controller.setInitialNickName();
+      // controller.setInitialNickName();
 
       return Dialog(
         shape: RoundedRectangleBorder(

@@ -23,6 +23,7 @@ class BeauticianCard extends StatelessWidget {
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
     final BeauticianController controller = Get.put(BeauticianController());
+    controller.loadAvailableBonos();
 
     return Obx(
           () => Column(
@@ -61,7 +62,9 @@ class BeauticianCard extends StatelessWidget {
                               context,
                               textEditingController: controller.pointsTextEditingController,
                               onAdd: (){
-                                controller.buyPoints();
+                                controller.saveBonosUser(
+                                    int.parse(controller.pointsTextEditingController.text)
+                                );
                               }
                           );
                         },
@@ -131,7 +134,7 @@ class BeauticianCard extends StatelessWidget {
                                   color: AppColors.greyColor,
                                   widget: ListView.builder(
                                     padding: EdgeInsets.zero,
-                                    itemCount: controller.availablePoints.length,
+                                    itemCount: controller.availableBonos.length,
                                     itemBuilder: (BuildContext context, int index) {
                                       return  GestureDetector(
                                         onTap: (){},
@@ -149,12 +152,12 @@ class BeauticianCard extends StatelessWidget {
                                                     children: [
                                                       /// Table cells info
                                                       tableTextInfo(
-                                                        title: controller.availablePoints[index].date!,
+                                                        title:  controller.availableBonos[index]['date'].toString(),
                                                         color: AppColors.blackColor.withValues(alpha: 0.8),
                                                         fontSize: 10.sp,
                                                       ),
                                                       tableTextInfo(
-                                                        title: controller.availablePoints[index].quantity.toString(),
+                                                        title: controller.availableBonos[index]['quantity'].toString(),
                                                         color: AppColors.blackColor.withValues(alpha: 0.8),
                                                         fontSize: 10.sp,
                                                       ),
@@ -188,7 +191,7 @@ class BeauticianCard extends StatelessWidget {
                                   color: AppColors.blackColor.withValues(alpha: 0.8)
                               ),
                               TextView.title(
-                                  controller.totalAvailablePoints.toString(),
+                                  controller.totalBonosAvailables.value.toString(),
                                   fontSize: 10.sp,
                                   color: AppColors.pinkColor
                               ),

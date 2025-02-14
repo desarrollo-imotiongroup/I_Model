@@ -12,9 +12,14 @@ import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textfield.dart';
 import 'package:i_model/widgets/textview.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   final LoginController controller = Get.put(LoginController());
 
   @override
@@ -23,13 +28,23 @@ class LoginScreen extends StatelessWidget {
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if(controller.isLoggedIn.value == true){
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          Strings.menuScreen,
+              (route) => false,
+        );
+      }
+    });
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) {
         alertOverlay(context,
             heading: translation(context).closeApplication,
             buttonText: translation(context).closeApplicationButton,
-            onTap: () {
+            onPress: () {
           SystemNavigator.pop();});
       },
       child: Scaffold(
@@ -95,6 +110,7 @@ class LoginScreen extends StatelessWidget {
                                   height: screenHeight * 0.01,
                                 ),
                                 TextFieldWidget(
+                                  textEditingController: controller.usernameEditingController,
                                   bgColor: AppColors.greyColor,
                                   width: screenWidth * 0.3,
                                   height: screenHeight * 0.07,
@@ -111,6 +127,7 @@ class LoginScreen extends StatelessWidget {
                                 ),
                                 Obx(() =>
                                     TextFieldWidget(
+                                      textEditingController: controller.passwordEditingController,
                                       bgColor: AppColors.greyColor,
                                       width: screenWidth * 0.3,
                                       height: screenHeight * 0.07,
@@ -143,6 +160,7 @@ class LoginScreen extends StatelessWidget {
                             )
                           ],
                         ),
+
                         Spacer(),
 
                         /// Enter button
@@ -150,7 +168,7 @@ class LoginScreen extends StatelessWidget {
                           alignment: Alignment.bottomRight,
                           child: Button(
                             onTap: () {
-                              Navigator.pushNamed(context, Strings.menuScreen);
+                              controller.validateLogin(context);
                             },
                             text: translation(context).enter,
                             textColor: AppColors.lightBlack.withValues(alpha: 0.8),

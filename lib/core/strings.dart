@@ -26,8 +26,8 @@ class Strings{
   static const String beautician = 'Esteticista';
   static const String yes = 'Si';
   static const String no = 'No';
-  static const String bioJacket = 'Bio-Jacket';
-  static const String pant = 'Pantalón';
+  static const String bioJacket = 'BIO-JACKET';
+  static const String bioShape = 'BIO-SHAPE';
   static const String upperBack = 'Espalda alta';
   static const String middleBack = 'Espalda media';
   static const String lowerBack = 'Lumbares';
@@ -40,6 +40,9 @@ class Strings{
   static const String arms = 'Brazos';
   static const String calves = 'Pantorrillas';
   static const String extra = 'Extra';
+  static const String beauticians = 'Esteticistas';
+  static const String emptyConfigurationError = 'Por favor, introduzca un nombre y el tipo de equipamiento al programa';
+
 
   // static const String fatFreeHydration = 'Hidratación sin grasa';
   // static const String waterBalance = 'Equilibrio hidrico';
@@ -191,6 +194,21 @@ class Strings{
   static const reloadMCI18000 = 'RECARGAR MCI 18000';
   static const searchMybodypro = 'BUSCAR MYBODYPRO';
   static const timeTo100 = 'TIEMPO A 100';
+  static const success = 'Éxito!';
+  static const successMsg = 'Tus datos han sido enviados correctamente';
+  static const inCorrectCredentials = 'Usuario o contraseña incorrectos';
+  static const noEntryToCronaxia = 'Por favor, guarde los datos de configuración antes de continuar a la pestaña de Cronaxia.';
+  static const noEntryToActiveGroups = 'Por favor, guarde los datos de configuración antes de continuar a la pestaña de Grupos Acitvos.';
+  static const noEntryToBonos = 'Por favor, guarde los datos de configuración antes de continuar a la pestaña de Bonos.';
+  static const delete = 'Confirmar borrado!';
+  static const cancel = 'Cancelar';
+  static const yesSure = '¡Sí, estoy seguro!';
+  static const confirmDeleteClient = '¿Estás seguro que quieres borrar este cliente?';
+  static const confirmDeleteAdmin = '¿Estás seguro que quieres borrar este administrador?';
+  static const confirmDeleteBeautician = '¿Estás seguro que quieres borrar este Esteticista?';
+  static const backToLogin = '¿Estás seguro de iniciar sesión de nuevo?';
+  static const areYouSure = 'Estas seguro?';
+  static const resetPassTo0000 = '¿Reestablecer Contrasena a 0000?';
 
 
   /// Shared Preferences
@@ -250,7 +268,7 @@ class Strings{
   static const String contractionIcon = 'assets/icons/contraction.png';
   static const String rampIcon = 'assets/icons/ramp.png';
   static const String calvesIcon = 'assets/icons/calves.png';
-  static const String selectProgram = 'assets/icons/select_programme.png';
+  static const String selectProgramIcon = 'assets/icons/select_programme.png';
 
 
   /// Body icons - Grupos Activos - Active groups
@@ -266,6 +284,17 @@ class Strings{
   static const String pechoIcon = 'assets/body/pecho.png';
   static const String espaldaAlta = 'assets/body/trapecios.png';
   static const String extraIcon = 'assets/body/calves.png';
+
+  ///  Body icon - Body shape - Active groups
+  static const abdomenBioShapeIcon = 'assets/body/bio_shape/abdomen.png';
+  static const armsBioShapeIcon = 'assets/body/bio_shape/arms.png';
+  static const avatarBackBioShapeIcon = 'assets/body/bio_shape/avatar-back.png';
+  static const avatarFrontBioShapeIcon = 'assets/body/bio_shape/AVATAR-front.png';
+  static const buttocksBioShapeIcon = 'assets/body/bio_shape/buttocks.png';
+  static const calvesBioShapeIcon = 'assets/body/bio_shape/calves.png';
+  static const hamstringsBioShapeIcon = 'assets/body/bio_shape/hamstrings.png';
+  static const legsBioShapeIcon = 'assets/body/bio_shape/legs.png';
+
 
   ///Automatic program
   // static const String buttocks = 'Buttocks';

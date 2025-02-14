@@ -5,6 +5,7 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/beautician_controller.dart';
+import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/views/overlays/reset_password_overlay.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
@@ -21,6 +22,7 @@ class BeauticianPersonalData extends StatelessWidget {
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
     final BeauticianController controller = Get.put(BeauticianController());
+    controller.refreshControllers();
 
     return  Obx(
           () => Column(
@@ -82,19 +84,14 @@ class BeauticianPersonalData extends StatelessWidget {
                   ),
 
                   SizedBox(height: screenHeight * 0.02,),
-                  /// Birth date text field
-                  GestureDetector(
-                    onTap: () async {
-                      controller.pickBirthDate(context);
-                    },
-                    child: AbsorbPointer(
-                      child: TextFieldLabel(
-                        width: screenWidth * 0.2,
-                        label: translation(context).birthDate,
-                        textEditingController: controller.birthDateController,
-                        fontSize: 11.sp,
-                      ),
-                    ),
+
+                  /// Phone text field
+                  TextFieldLabel(
+                    width: screenWidth * 0.2,
+                    label: translation(context).phone,
+                    textEditingController: controller.phoneController,
+                    fontSize: 11.sp,
+                    isAllowNumberOnly: true,
                   ),
 
                 ],
@@ -158,6 +155,20 @@ class BeauticianPersonalData extends StatelessWidget {
                       ),
                     ),
                   ),
+                  /// Birth date text field
+                  GestureDetector(
+                    onTap: () async {
+                      controller.pickBirthDate(context);
+                    },
+                    child: AbsorbPointer(
+                      child: TextFieldLabel(
+                        width: screenWidth * 0.2,
+                        label: translation(context).birthDate,
+                        textEditingController: controller.birthDateController,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ),
 
                   SizedBox(height: screenHeight * 0.035,),
                   /// Registration date
@@ -185,13 +196,32 @@ class BeauticianPersonalData extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
+              GestureDetector(
+                onTap: (){
+                  alertOverlay(context,
+                      heading: Strings.delete,
+                      description: Strings.confirmDeleteBeautician,
+                      buttonText: Strings.yesSure,
+                      onPress: (){
+                        controller.deleteEsteticista(context);
+                        Navigator.pop(context);
+
+                      }
+                  );
+                },
+                child: imageWidget(
+                    image: Strings.removeIcon,
+                    height: screenHeight * 0.08
+                ),
               ),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
+              GestureDetector(
+                onTap: (){
+                  controller.updateUserData(context);
+                },
+                child: imageWidget(
+                    image: Strings.checkIcon,
+                    height: screenHeight * 0.08
+                ),
               ),
             ],
           )

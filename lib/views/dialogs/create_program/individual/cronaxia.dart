@@ -78,7 +78,9 @@ class Cronaxia extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       /// TextFields 1st column
-                      Column(
+                      controller.selectedEquipment.value == Strings.bioShape
+                          ? Container()
+                          :  Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           /// Upper back text field
@@ -88,7 +90,7 @@ class Cronaxia extends StatelessWidget {
                           ),
                           SizedBox(height: screenHeight * 0.01,),
 
-                          /// Pulse text field
+                          /// Middle back text field
                           cronaxiaTextField(
                             label: Strings.middleBack,
                             textEditingController: controller.middleBackController,
@@ -127,7 +129,9 @@ class Cronaxia extends StatelessWidget {
                           SizedBox(height: screenHeight * 0.01,),
 
                           /// Chest text field / Pecho
-                          cronaxiaTextField(
+                          controller.selectedEquipment.value == Strings.bioShape
+                              ? Container()
+                              : cronaxiaTextField(
                             label: Strings.chest,
                             textEditingController: controller.chestController,
                           ),
@@ -184,13 +188,15 @@ class Cronaxia extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                imageWidget(
-                    image: Strings.removeIcon,
-                    height: screenHeight * 0.08
-                ),
-                imageWidget(
-                    image: Strings.checkIcon,
-                    height: screenHeight * 0.08
+                Container(),
+                GestureDetector(
+                  onTap: (){
+                    controller.actualizarCronaxias(context);
+                  },
+                  child: imageWidget(
+                      image: Strings.checkIcon,
+                      height: screenHeight * 0.08
+                  ),
                 ),
               ],
             ),

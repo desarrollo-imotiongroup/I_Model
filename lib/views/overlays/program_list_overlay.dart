@@ -12,7 +12,7 @@ import 'package:i_model/widgets/textview.dart';
 
 void programListOverlay(
     BuildContext context,{
-      required List<Program> programList,
+      required List<dynamic> programList,
     }) {
   final overlayState = Overlay.of(context);
   late OverlayEntry overlayEntry;
@@ -60,8 +60,8 @@ void programListOverlay(
                     return GestureDetector(
                       onTap: (){
                         controller.setProgramDetails(
-                            name: programList[index].name,
-                            image: programList[index].image!
+                            name: programList[index]['nombre'],
+                            image: programList[index]['imagen']
                         );
                         controller.contractionSeconds.value = 10;
                         controller.pauseSeconds.value = 8;
@@ -73,13 +73,13 @@ void programListOverlay(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextView.title(
-                            programList[index].name.toUpperCase(),
+                            programList[index]['nombre'].toUpperCase(),
                             fontSize: 13.sp,
                             color: AppColors.blackColor.withValues(alpha: 0.8),
                           ),
                           SizedBox(height: screenHeight * 0.01),
                           imageWidget(
-                            image: programList[index].image,
+                            image: programList[index]['imagen'],
                             height: screenHeight * 0.15,
                           ),
                         ],

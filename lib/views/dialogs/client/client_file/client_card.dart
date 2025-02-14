@@ -23,6 +23,9 @@ class ClientCard extends StatelessWidget {
     double screenHeight = mediaQuery.size.height;
     double screenWidth = mediaQuery.size.width;
     final ClientController controller = Get.put(ClientController());
+    if(controller.selectedClient != null && controller.selectedClient.isNotEmpty){
+      controller.loadAvailableBonos();
+    }
 
     return Obx(
           () => Column(
@@ -61,7 +64,7 @@ class ClientCard extends StatelessWidget {
                               context,
                               textEditingController: controller.pointsTextEditingController,
                               onAdd: (){
-                                controller.buyPoints();
+                                controller.saveBonos(int.parse(controller.pointsTextEditingController.text,),);
                               }
                           );
                         },
@@ -130,7 +133,7 @@ class ClientCard extends StatelessWidget {
                                   color: AppColors.greyColor,
                                   widget: ListView.builder(
                                     padding: EdgeInsets.zero,
-                                    itemCount: controller.availablePoints.length,
+                                    itemCount: controller.availableBonos.length,
                                     itemBuilder: (BuildContext context, int index) {
                                       return  GestureDetector(
                                         onTap: (){},
@@ -148,12 +151,12 @@ class ClientCard extends StatelessWidget {
                                                     children: [
                                                       /// Table cells info
                                                       tableTextInfo(
-                                                        title: controller.availablePoints[index].date!,
+                                                        title: controller.availableBonos[index]['date']!,
                                                         color: AppColors.blackColor.withValues(alpha: 0.8),
                                                         fontSize: 10.sp,
                                                       ),
                                                       tableTextInfo(
-                                                        title: controller.availablePoints[index].quantity.toString(),
+                                                        title: controller.availableBonos[index]['quantity'].toString(),
                                                         color: AppColors.blackColor.withValues(alpha: 0.8),
                                                         fontSize: 10.sp,
                                                       ),
@@ -187,7 +190,7 @@ class ClientCard extends StatelessWidget {
                                   color: AppColors.blackColor.withValues(alpha: 0.8)
                               ),
                               TextView.title(
-                                  controller.totalAvailablePoints.toString(),
+                                  controller.totalBonosAvailables.toString(),
                                   fontSize: 10.sp,
                                   color: AppColors.pinkColor
                               ),

@@ -20,6 +20,7 @@ void administratorListOverlay(BuildContext context) {
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
   final AdministratorController controller = Get.put(AdministratorController());
+  controller.fetchAdmins();
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(
@@ -59,6 +60,9 @@ void administratorListOverlay(BuildContext context) {
                             child: TextFieldLabel(
                               label: translation(context).name,
                               textEditingController: controller.administratorNameController,
+                              onChanged: (value){
+                                controller.filterAdmins();
+                              },
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.04,),
@@ -92,66 +96,69 @@ void administratorListOverlay(BuildContext context) {
                                     ],
                                   ),
                                   SizedBox(height: screenHeight * 0.005,),
-                                  CustomContainer(
-                                    height: screenHeight * 0.5,
-                                    width: double.infinity,
-                                    color: AppColors.greyColor,
-                                    widget: ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      itemCount: 13,
-                                      itemBuilder: (BuildContext context, int index) {
-                                        return  GestureDetector(
-                                          onTap: (){
-                                            if (overlayEntry.mounted) {
-                                              overlayEntry.remove();
-                                            }
-                                            controller.selectedAdministrator.value = controller.administratorsList[index].name;
-                                            administratorFileDialog(context);
-                                          },
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: screenHeight * 0.01,
-                                                ),
-                                                child: RoundedContainer(
-                                                    width: double.infinity,
-                                                    borderColor: AppColors.transparentColor,
-                                                    borderRadius: screenWidth * 0.006,
-                                                    color: AppColors.pureWhiteColor,
-                                                    widget: Row(
-                                                      children: [
-                                                        /// Table cells info
-                                                        tableTextInfo(
-                                                          title: '${index + 1}',
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                        tableTextInfo(
-                                                          title: controller.administratorsList[index].name,
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                        tableTextInfo(
-                                                          title: controller.administratorsList[index].phone.toUpperCase(),
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                        tableTextInfo(
-                                                          title: controller.administratorsList[index].status.toUpperCase(),
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                      ],
-                                                    )
-                                                ),
+                                  Obx(() =>
+                                      CustomContainer(
+                                        height: screenHeight * 0.5,
+                                        width: double.infinity,
+                                        color: AppColors.greyColor,
+                                        widget: ListView.builder(
+                                          padding: EdgeInsets.zero,
+                                          itemCount: controller.filteredAdmins.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return  GestureDetector(
+                                              onTap: (){
+                                                if (overlayEntry.mounted) {
+                                                  overlayEntry.remove();
+                                                }
+                                                controller.selectedAdministrator.value = controller.filteredAdmins[index];
+                                                administratorFileDialog(context);
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.symmetric(
+                                                      vertical: screenHeight * 0.01,
+                                                    ),
+                                                    child: RoundedContainer(
+                                                        width: double.infinity,
+                                                        borderColor: AppColors.transparentColor,
+                                                        borderRadius: screenWidth * 0.006,
+                                                        color: AppColors.pureWhiteColor,
+                                                        widget: Row(
+                                                          children: [
+                                                            /// Table cells info
+                                                            tableTextInfo(
+                                                              title: '${index + 1}',
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                            tableTextInfo(
+                                                              title: controller.filteredAdmins[index]['name'],
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                            tableTextInfo(
+                                                              title: controller.filteredAdmins[index]['phone'].toString().toUpperCase(),
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                            tableTextInfo(
+                                                              title: controller.filteredAdmins[index]['status'].toUpperCase(),
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                          ],
+                                                        )
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                  )
+
                                 ],
                               ),
                             ),
@@ -222,6 +229,7 @@ void administratorListOverlay(BuildContext context) {
                                         onTap: () {
                                           controller.selectedStatus.value = value;
                                           controller.isDropdownOpen.value = false;
+                                          controller.filterAdmins();
                                         },
                                       );
                                     }).toList(),

@@ -23,6 +23,7 @@ class CreateClientCard extends StatelessWidget {
     double screenHeight = mediaQuery.size.height;
     double screenWidth = mediaQuery.size.width;
     final CreateNewClientController controller = Get.put(CreateNewClientController());
+    controller.loadMostRecentClient();
 
     return Obx(
           () => Column(
@@ -38,6 +39,7 @@ class CreateClientCard extends StatelessWidget {
                     label: translation(context).name,
                     textEditingController: controller.clientNameController,
                     fontSize: 11.sp,
+                    isReadOnly: true,
                   ),
                 ),
 
@@ -45,6 +47,7 @@ class CreateClientCard extends StatelessWidget {
                   children: [
                     /// Client status drop down
                     DropDownWidget(
+                      isEnable: false,
                       selectedValue: controller.selectedStatus.value,
                       dropDownList: controller.clientStatusList,
                       onChanged: (value){
@@ -59,7 +62,10 @@ class CreateClientCard extends StatelessWidget {
                               context,
                               textEditingController: controller.pointsTextEditingController,
                               onAdd: (){
-                                controller.buyPoints();
+                                controller.saveBonos(
+                                    controller.lastClientId!,
+                                    int.parse(controller.pointsTextEditingController.text,
+                                    ));
                               }
                           );
                         },
@@ -128,7 +134,7 @@ class CreateClientCard extends StatelessWidget {
                                   color: AppColors.greyColor,
                                   widget: ListView.builder(
                                     padding: EdgeInsets.zero,
-                                    itemCount: controller.availablePoints.length,
+                                    itemCount: controller.availableBonos.length,
                                     itemBuilder: (BuildContext context, int index) {
                                       return  GestureDetector(
                                         onTap: (){},
@@ -146,12 +152,12 @@ class CreateClientCard extends StatelessWidget {
                                                     children: [
                                                       /// Table cells info
                                                       tableTextInfo(
-                                                        title: controller.availablePoints[index].date!,
+                                                        title: controller.availableBonos[index]['date']!,
                                                         color: AppColors.blackColor.withValues(alpha: 0.8),
                                                         fontSize: 10.sp,
                                                       ),
                                                       tableTextInfo(
-                                                        title: controller.availablePoints[index].quantity.toString(),
+                                                        title: controller.availableBonos[index]['quantity'].toString(),
                                                         color: AppColors.blackColor.withValues(alpha: 0.8),
                                                         fontSize: 10.sp,
                                                       ),
@@ -185,7 +191,7 @@ class CreateClientCard extends StatelessWidget {
                                   color: AppColors.blackColor.withValues(alpha: 0.8)
                               ),
                               TextView.title(
-                                  controller.totalAvailablePoints.toString(),
+                                  controller.totalBonosAvailables.toString(),
                                   fontSize: 10.sp,
                                   color: AppColors.pinkColor
                               ),

@@ -5,6 +5,7 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/administrator_controller.dart';
+import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/views/overlays/reset_password_overlay.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
@@ -21,6 +22,7 @@ class AdministratorPersonalData extends StatelessWidget {
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
     final AdministratorController controller = Get.put(AdministratorController());
+    controller.refreshControllers();
 
     return Obx(
           () => Column(
@@ -82,21 +84,15 @@ class AdministratorPersonalData extends StatelessWidget {
                   ),
 
                   SizedBox(height: screenHeight * 0.02,),
-                  /// Birth date text field
-                  GestureDetector(
-                    onTap: () async {
-                      controller.pickBirthDate(context);
-                    },
-                    child: AbsorbPointer(
-                      child: TextFieldLabel(
-                        width: screenWidth * 0.2,
-                        label: translation(context).birthDate,
-                        textEditingController: controller.birthDateController,
-                        fontSize: 11.sp,
-                      ),
-                    ),
-                  ),
 
+                  /// Phone text field
+                  TextFieldLabel(
+                    width: screenWidth * 0.2,
+                    label: translation(context).phone,
+                    textEditingController: controller.phoneController,
+                    fontSize: 11.sp,
+                    isAllowNumberOnly: true,
+                  ),
                 ],
               ),
 
@@ -158,12 +154,33 @@ class AdministratorPersonalData extends StatelessWidget {
                       ),
                     ),
                   ),
+                  /// Birth date text field
+                  GestureDetector(
+                    onTap: () async {
+                      controller.pickBirthDate(context);
+                    },
+                    child: AbsorbPointer(
+                      child: TextFieldLabel(
+                        width: screenWidth * 0.2,
+                        label: translation(context).birthDate,
+                        textEditingController: controller.birthDateController,
+                        fontSize: 11.sp,
+                      ),
+                    ),
+                  ),
 
                   SizedBox(height: screenHeight * 0.035,),
                   /// Registration date
                   RoundedContainer(
                       onTap: (){
-                        resetPasswordOverlay(context);
+                        alertOverlay(context,
+                            heading: translation(context).resetPassword,
+                            buttonText: translation(context).yesDelete,
+                            description: Strings.resetPassTo0000,
+                            onPress: () {
+                          controller.updatePassword(context);
+                          Navigator.pop(context);
+                        });
                       },
                       borderRadius: screenHeight * 0.01,
                       width: screenWidth * 0.2,
@@ -185,13 +202,32 @@ class AdministratorPersonalData extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
+              GestureDetector(
+                onTap: (){
+                  alertOverlay(context,
+                      heading: Strings.delete,
+                      description: Strings.confirmDeleteAdmin,
+                      buttonText: Strings.yesSure,
+                      onPress: (){
+                        controller.deleteAdmin(context);
+                        Navigator.pop(context);
+
+                      }
+                  );
+                },
+                child: imageWidget(
+                    image: Strings.removeIcon,
+                    height: screenHeight * 0.08
+                ),
               ),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
+              GestureDetector(
+                onTap: (){
+                  controller.updateUserData(context);
+                },
+                child: imageWidget(
+                    image: Strings.checkIcon,
+                    height: screenHeight * 0.08
+                ),
               ),
             ],
           )

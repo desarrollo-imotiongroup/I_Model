@@ -10,15 +10,27 @@ import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 
-class ClientActiveGroups extends StatelessWidget {
+class ClientActiveGroups extends StatefulWidget {
   const ClientActiveGroups({super.key});
+
+  @override
+  State<ClientActiveGroups> createState() => _ClientActiveGroupsState();
+}
+
+class _ClientActiveGroupsState extends State<ClientActiveGroups> {
+  final ClientController controller = Get.put(ClientController());
+
+  @override
+  void initState() {
+    controller.loadMuscleGroups();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenHeight = mediaQuery.size.height;
     double screenWidth = mediaQuery.size.width;
-    final ClientController controller = Get.put(ClientController());
 
     return Obx(
           () => Column(
@@ -222,13 +234,15 @@ class ClientActiveGroups extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
-              ),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
+              Container(),
+              GestureDetector(
+                onTap: (){
+                  controller.updateClientGroups(context);
+                },
+                child: imageWidget(
+                    image: Strings.checkIcon,
+                    height: screenHeight * 0.08
+                ),
               ),
             ],
           ),

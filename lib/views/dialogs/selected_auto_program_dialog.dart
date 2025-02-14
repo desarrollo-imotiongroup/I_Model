@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
+import 'package:i_model/models/programs/automatic/automatic_program.dart';
+import 'package:i_model/models/programs/automatic/sub_program.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/views/overlays/automatic_program_overlay.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
@@ -16,12 +18,12 @@ import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
 
 
-
-void selectedAutomaticProgramDialog(BuildContext context,) {
+void selectedAutomaticProgramDialog(BuildContext context, {required AutomaticProgramModel selectedProgramData}) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
   final ProgramsController controller = Get.put(ProgramsController());
+  List<Subprogram> subProgramList = selectedProgramData.subprograms;
 
   showDialog(
     barrierDismissible: false,
@@ -56,7 +58,8 @@ void selectedAutomaticProgramDialog(BuildContext context,) {
                         children: [
                           /// Selected program image
                           imageWidget(
-                              image: controller.selectedProgramImage.value,
+                              // image: controller.selectedProgramImage.value,
+                              image: selectedProgramData.image,
                               height: screenHeight * 0.15
                           ),
                           SizedBox(width: screenWidth * 0.02,),
@@ -65,7 +68,7 @@ void selectedAutomaticProgramDialog(BuildContext context,) {
                             children: [
                               /// Selected program name
                               TextView.title(
-                                  '${controller.selectedProgramName.value} - 25 min'.toUpperCase(),
+                                  '${selectedProgramData.name} - ${selectedProgramData.totalDuration}'.toUpperCase(),
                                   color: AppColors.pinkColor,
                                   fontSize: 12.sp
                               ),
@@ -74,7 +77,7 @@ void selectedAutomaticProgramDialog(BuildContext context,) {
                               SizedBox(
                                 width: screenWidth * 0.35,
                                 child: TextView.title(
-                                    translation(context).selectedProgramDescription,
+                                    selectedProgramData.description,
                                     color: AppColors.blackColor.withValues(alpha: 0.8),
                                     fontSize: 10.sp,
                                     lines: 2
@@ -88,7 +91,7 @@ void selectedAutomaticProgramDialog(BuildContext context,) {
                         onTap: (){
                           Navigator.pop(context);
                           automaticProgramOverlay(context, programList:
-                          controller.automaticProgramsList(context),
+                          controller.automaticProgramsList,
                           );
                         },
                         child: Image(
@@ -125,12 +128,13 @@ void selectedAutomaticProgramDialog(BuildContext context,) {
                   ),
                   SizedBox(height: screenHeight * 0.005,),
                   CustomContainer(
+                    // automaticProgramsList[0]['subprogramas'][0]['nombre']
                     height: screenHeight * 0.48,
                     width: double.infinity,
                     color: AppColors.greyColor,
                     widget: ListView.builder(
                       padding: EdgeInsets.zero,
-                      itemCount: controller.selectedProgramDetails.length,
+                      itemCount: subProgramList.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Padding(
                           padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
@@ -143,22 +147,22 @@ void selectedAutomaticProgramDialog(BuildContext context,) {
                                 children: [
                                   /// Table cells info
                                   tableTextInfo(
-                                    title: controller.selectedProgramDetails[index].order.toString(),
+                                    title:subProgramList[index].order.toString(),
                                     color: AppColors.blackColor.withValues(alpha: 0.8),
                                     fontSize: 10.sp,
                                   ),
                                   tableTextInfo(
-                                    title: controller.selectedProgramDetails[index].name,
+                                    title: subProgramList[index].name,
                                     color: AppColors.pinkColor,
                                     fontSize: 11.sp,
                                   ),
                                   tableTextInfo(
-                                    title: controller.selectedProgramDetails[index].duration.toString(),
+                                    title: subProgramList[index].duration.toString(),
                                     color: AppColors.blackColor.withValues(alpha: 0.8),
                                     fontSize: 10.sp,
                                   ),
                                   tableTextInfo(
-                                    title: controller.selectedProgramDetails[index].adjustment.toString(),
+                                    title: subProgramList[index].adjustment.toString(),
                                     color: AppColors.blackColor.withValues(alpha: 0.8),
                                     fontSize: 10.sp,
                                   ),

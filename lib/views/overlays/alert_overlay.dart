@@ -14,7 +14,7 @@ void alertOverlay(
   String description = '',
   Color? headingColor,
   bool isOneButtonNeeded = false,
-  Function()? onTap,
+  Function()? onPress,
 }) {
   final overlayState = Overlay.of(context);
   late OverlayEntry overlayEntry;
@@ -99,7 +99,12 @@ void alertOverlay(
                               color: AppColors.pinkColor),
                         ),
                         UnboundedContainer(
-                          onTap: onTap,
+                          onTap: (){
+                            onPress!();
+                            if (overlayEntry.mounted) {
+                              overlayEntry.remove();
+                            }
+                          },
                           color: AppColors.darkRedColor,
                           widget: TextView.title(buttonText.toUpperCase(),
                               fontSize: 11.sp,

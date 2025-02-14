@@ -41,7 +41,12 @@ void clientFileDialog(BuildContext context) {
                   Padding(
                     padding:
                         EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title: translation(context).clientFile),
+                    child: TopTitleButton(title: translation(context).clientFile,
+                      isCancelNeeded: true,
+                      onCancel: (){
+                      Navigator.pop(context);
+                      controller.resetEverything();
+                    },),
                   ),
                   Divider(color: AppColors.pinkColor),
 
