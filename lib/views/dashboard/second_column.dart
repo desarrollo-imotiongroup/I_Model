@@ -29,7 +29,7 @@ class DashboardSecondColumn extends StatelessWidget {
         SizedBox(height: screenHeight * 0.03,),
         TextView.title(
             controller.isProgramSelected.value
-                ? controller.selectedProgramName.value.toUpperCase()
+                ? controller.selectedMainProgramName.value.toUpperCase()
                 : Strings.nothing,
             fontSize: 12.sp,
             color: AppColors.pinkColor
@@ -83,7 +83,7 @@ class DashboardSecondColumn extends StatelessWidget {
         SizedBox(height: screenHeight * 0.015,),
 
         /// Frequency and pulse widget
-        FrequencyWidget(frequency: 43, pulse: 450),
+        FrequencyWidget(frequency: controller.frequency.value, pulse: controller.pulse.value),
         SizedBox(height: screenHeight * 0.02,),
 
         /// Time Counter and Up down arrow
@@ -104,7 +104,12 @@ class DashboardSecondColumn extends StatelessWidget {
             if (controller.isProgramSelected.value) {
               if (controller.isTimerPaused.value && controller.minutes.value > 0) {
                 controller.startTimer();
-                controller.startContractionTimeCycle();
+                if(controller.selectedProgramType.value == Strings.individual) {
+                  controller.startContractionTimeCycle();
+                }
+                else{
+                  controller.startContractionForMultiplePrograms();
+                }
               }
               else {
                 controller.pauseTimer();

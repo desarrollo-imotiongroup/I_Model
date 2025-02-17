@@ -3,7 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/view_models/dashboard_controller.dart';
+import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
@@ -12,13 +12,17 @@ import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/top_title_button.dart';
 
-void selectClientOverlay(BuildContext context) {
+void selectClientOverlay(
+    BuildContext context, {
+    bool isBioimpedancia = false,
+    Function(dynamic)? onClientSelected
+    }) {
   final overlayState = Overlay.of(context);
   late OverlayEntry overlayEntry;
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
-  final DashboardController controller = Get.put(DashboardController());
+  final ClientController controller = Get.put(ClientController());
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(
@@ -59,6 +63,9 @@ void selectClientOverlay(BuildContext context) {
                               label: translation(context).name,
                               textEditingController: controller.nameController,
                               fontSize: 11.sp,
+                              onChanged: (value){
+                                controller.filterClients();
+                              },
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.04,),
@@ -92,66 +99,83 @@ void selectClientOverlay(BuildContext context) {
                                     ],
                                   ),
                                   SizedBox(height: screenHeight * 0.005,),
-                                  CustomContainer(
-                                    height: screenHeight * 0.5,
-                                    width: double.infinity,
-                                    color: AppColors.greyColor,
-                                    widget: ListView.builder(
-                                      padding: EdgeInsets.zero,
-                                      itemCount: 13,
-                                      itemBuilder: (BuildContext context, int index) {
-                                        return  GestureDetector(
-                                          onTap: (){
-                                            controller.selectedClient.value = controller.clientsListDetail[index].name;
-                                            if (overlayEntry.mounted) {
-                                              overlayEntry.remove();
-                                            }
+                                  Obx(() =>
+                                      CustomContainer(
+                                        height: screenHeight * 0.5,
+                                        width: double.infinity,
+                                        color: AppColors.greyColor,
+                                        widget: ListView.builder(
+                                          padding: EdgeInsets.zero,
+                                          itemCount: controller.filteredClients.length,
+                                          itemBuilder: (BuildContext context, int index) {
+                                            return  GestureDetector(
+                                              onTap: (){
+                                                if(isBioimpedancia){
+                                                  Map<String, dynamic> selectedClient;
+                                                  selectedClient = {
+                                                    'name': controller.filteredClients[index]['name'],
+                                                    'gender': controller.filteredClients[index]['gender'],
+                                                    'height': controller.filteredClients[index]['height'],
+                                                    'weight': controller.filteredClients[index]['weight'],
+                                                    'email': controller.filteredClients[index]['email'],
+                                                  };
+                                                  // Send the selected client data back
+                                                  onClientSelected!(selectedClient);
+                                                }
+                                                else {
+                                                  controller.selectedClientName.value = controller.filteredClients[index]['name'];
+                                                }
 
-                                          },
-                                          child: Column(
-                                            children: [
-                                              Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: screenHeight * 0.01,
-                                                ),
-                                                child: RoundedContainer(
-                                                    width: double.infinity,
-                                                    borderColor: AppColors.transparentColor,
-                                                    borderRadius: screenWidth * 0.006,
-                                                    color: AppColors.pureWhiteColor,
-                                                    widget: Row(
-                                                      children: [
-                                                        /// Table cells info
-                                                        tableTextInfo(
-                                                          title: '${index + 1}',
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                        tableTextInfo(
-                                                          title: controller.clientsListDetail[index].name,
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                        tableTextInfo(
-                                                          title: controller.clientsListDetail[index].phone.toUpperCase(),
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                        tableTextInfo(
-                                                          title: controller.clientsListDetail[index].status.toUpperCase(),
-                                                          color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                          fontSize: 10.sp,
-                                                        ),
-                                                      ],
-                                                    )
-                                                ),
+
+                                                if (overlayEntry.mounted) {
+                                                  overlayEntry.remove();
+                                                }
+                                              },
+                                              child: Column(
+                                                children: [
+                                                  Padding(
+                                                    padding: EdgeInsets.symmetric(
+                                                      vertical: screenHeight * 0.01,
+                                                    ),
+                                                    child: RoundedContainer(
+                                                        width: double.infinity,
+                                                        borderColor: AppColors.transparentColor,
+                                                        borderRadius: screenWidth * 0.006,
+                                                        color: AppColors.pureWhiteColor,
+                                                        widget: Row(
+                                                          children: [
+                                                            /// Table cells info
+                                                            tableTextInfo(
+                                                              title: '${index + 1}',
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                            tableTextInfo(
+                                                              title: controller.filteredClients[index]['name'].toUpperCase(),
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                            tableTextInfo(
+                                                              title: controller.filteredClients[index]['phone'].toString(),
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                            tableTextInfo(
+                                                              title: controller.filteredClients[index]['status'].toUpperCase(),
+                                                              color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                              fontSize: 10.sp,
+                                                            ),
+                                                          ],
+                                                        )
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                  )
                                 ],
                               ),
                             ),
@@ -222,6 +246,7 @@ void selectClientOverlay(BuildContext context) {
                                         onTap: () {
                                           controller.selectedStatus.value = value;
                                           controller.isDropdownOpen.value = false;
+                                          controller.filterClients();
                                         },
                                       );
                                     }).toList(),

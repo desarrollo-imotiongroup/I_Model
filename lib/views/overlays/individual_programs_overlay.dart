@@ -37,6 +37,7 @@ void individualProgramsOverlay(BuildContext context) {
                 child: TopTitleButton(
                   title: translation(context).individuals,
                   onCancel: (){
+                    controller.individualProgramsList.clear();
                     if (overlayEntry.mounted) {
                       overlayEntry.remove();
                     }
@@ -48,153 +49,158 @@ void individualProgramsOverlay(BuildContext context) {
               SizedBox(height: screenHeight * 0.02,),
 
               /// Table data
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: screenWidth * 0.02,
-                    vertical: screenHeight * 0.02
-                  ),
-                  child: SizedBox(
-                    width: screenWidth * 0.8,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          /// Table headers
-                          Row(
-                            children: [
-                              Expanded(child: Container()),
-                              tableTextInfo(
-                                title: translation(context).programName,
-                                fontSize: 10.sp,
-                                lines: 2
-                              ),
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    SizedBox(width: screenWidth * 0.01,),
-                                    tableTextInfo(
-                                      title: translation(context).frequency,
-                                      fontSize: 10.sp,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              tableTextInfo(
-                                title: translation(context).pulse,
-                                fontSize: 10.sp,
-                                lines: 2
-                              ),
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    tableTextInfo(
-                                      title: translation(context).ramp,
-                                      fontSize: 10.sp,
-                                    ),
-                                    SizedBox(width: screenWidth * 0.01,)
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    tableTextInfo(
-                                      title: translation(context).contraction,
-                                      fontSize: 10.sp,
-                                    ),
-                                    SizedBox(width: screenWidth * 0.01,)
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Row(
-                                  children: [
-                                    tableTextInfo(
-                                      title: translation(context).pause,
-                                      fontSize: 10.sp,
-                                    ),
-                                    SizedBox(width: screenWidth * 0.03,)
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: screenHeight * 0.005,),
-                          CustomContainer(
-                            height: screenHeight * 0.8,
-                            width: double.infinity,
-                            color: AppColors.greyColor,
-                            widget: ListView.builder(
-                              padding: EdgeInsets.zero,
-                              itemCount: controller.individualProgramsList.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return  GestureDetector(
-                                  onTap: (){},
-                                  child: Column(
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01,
+             Obx(() =>
+             controller.isFetchIndividualProgramsLoading.value
+                 ? Center(
+               child: CircularProgressIndicator(
+                 color: AppColors.blackColor,
+               ),
+             )
+                 : Expanded(
+               child: Padding(
+                 padding: EdgeInsets.symmetric(
+                     horizontal: screenWidth * 0.02,
+                     vertical: screenHeight * 0.02
+                 ),
+                 child: SizedBox(
+                   width: screenWidth * 0.8,
+                   child: SingleChildScrollView(
+                     child: Column(
+                       children: [
+                         /// Table headers
+                         Row(
+                           children: [
+                             Expanded(child: Container()),
+                             tableTextInfo(
+                                 title: translation(context).programName,
+                                 fontSize: 10.sp,
+                                 lines: 2
+                             ),
+                             Expanded(
+                               child: Row(
+                                 children: [
+                                   SizedBox(width: screenWidth * 0.01,),
+                                   tableTextInfo(
+                                     title: translation(context).frequency,
+                                     fontSize: 10.sp,
+                                   ),
+                                 ],
+                               ),
+                             ),
+                             tableTextInfo(
+                                 title: translation(context).pulse,
+                                 fontSize: 10.sp,
+                                 lines: 2
+                             ),
+                             Expanded(
+                               child: Row(
+                                 children: [
+                                   tableTextInfo(
+                                     title: translation(context).ramp,
+                                     fontSize: 10.sp,
+                                   ),
+                                   SizedBox(width: screenWidth * 0.01,)
+                                 ],
+                               ),
+                             ),
+                             Expanded(
+                               child: Row(
+                                 children: [
+                                   tableTextInfo(
+                                     title: translation(context).contraction,
+                                     fontSize: 10.sp,
+                                   ),
+                                   SizedBox(width: screenWidth * 0.01,)
+                                 ],
+                               ),
+                             ),
+                             Expanded(
+                               child: Row(
+                                 children: [
+                                   tableTextInfo(
+                                     title: translation(context).pause,
+                                     fontSize: 10.sp,
+                                   ),
+                                   SizedBox(width: screenWidth * 0.03,)
+                                 ],
+                               ),
+                             ),
+                           ],
+                         ),
+                         SizedBox(height: screenHeight * 0.005,),
+                         CustomContainer(
+                           height: screenHeight * 0.8,
+                           width: double.infinity,
+                           color: AppColors.greyColor,
+                           widget: ListView.builder(
+                             padding: EdgeInsets.zero,
+                             itemCount: controller.individualProgramsList.length + 1,  // Increase itemCount by 1
+                             itemBuilder: (BuildContext context, int index) {
+                              return index != controller.individualProgramsList.length
+                                  ? GestureDetector(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: screenHeight * 0.01),
+                                  child: RoundedContainer(
+                                    width: double.infinity,
+                                    borderColor: AppColors.transparentColor,
+                                    borderRadius: screenWidth * 0.006,
+                                    color: AppColors.greyColor,
+                                    widget: Row(
+                                      children: [
+                                        /// Table cells info
+                                        imageWidget(
+                                          image: controller.individualProgramsList[index].image,
+                                          height: screenHeight * 0.1,
                                         ),
-                                        child: RoundedContainer(
-                                            width: double.infinity,
-                                            borderColor: AppColors.transparentColor,
-                                            borderRadius: screenWidth * 0.006,
-                                            color: AppColors.greyColor,
-                                            widget: Row(
-                                              children: [
-                                                /// Table cells info
-                                                imageWidget(
-                                                  image: controller.individualProgramsList[index].image,
-                                                  height: screenHeight * 0.1,
-                                                ),
-                                                tableTextInfo(
-                                                  title: controller.individualProgramsList[index].name,
-                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                  fontSize: 10.sp,
-                                                ),
-                                                tableTextInfo(
-                                                  title: controller.individualProgramsList[index].frequency.toString(),
-                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                  fontSize: 10.sp,
-                                                ),
-                                                tableTextInfo(
-                                                  title: controller.individualProgramsList[index].pulse.toString(),
-                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                  fontSize: 10.sp,
-                                                ),
-                                                tableTextInfo(
-                                                  title: controller.individualProgramsList[index].ramp.toString(),
-                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                  fontSize: 10.sp,
-                                                ),
-                                                tableTextInfo(
-                                                  title: controller.individualProgramsList[index].contraction.toString(),
-                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                  fontSize: 10.sp,
-                                                ),
-                                                tableTextInfo(
-                                                  title: controller.individualProgramsList[index].pause.toString(),
-                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                  fontSize: 10.sp,
-                                                ),
-                                              ],
-                                            )
+                                        tableTextInfo(
+                                          title: controller.individualProgramsList[index].name,
+                                          color: AppColors.blackColor.withValues(alpha: 0.8),
+                                          fontSize: 10.sp,
                                         ),
-                                      ),
-                                    ],
+                                        tableTextInfo(
+                                          title: controller.individualProgramsList[index].frequency.toString(),
+                                          color: AppColors.blackColor.withValues(alpha: 0.8),
+                                          fontSize: 10.sp,
+                                        ),
+                                        tableTextInfo(
+                                          title: controller.individualProgramsList[index].pulse.toString(),
+                                          color: AppColors.blackColor.withValues(alpha: 0.8),
+                                          fontSize: 10.sp,
+                                        ),
+                                        tableTextInfo(
+                                          title: controller.individualProgramsList[index].ramp.toString(),
+                                          color: AppColors.blackColor.withValues(alpha: 0.8),
+                                          fontSize: 10.sp,
+                                        ),
+                                        tableTextInfo(
+                                          title: controller.individualProgramsList[index].contraction.toString(),
+                                          color: AppColors.blackColor.withValues(alpha: 0.8),
+                                          fontSize: 10.sp,
+                                        ),
+                                        tableTextInfo(
+                                          title: controller.individualProgramsList[index].pause.toString(),
+                                          color: AppColors.blackColor.withValues(alpha: 0.8),
+                                          fontSize: 10.sp,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                );
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-
+                                ),
+                              )
+                                  : SizedBox(
+                                height: screenHeight * 0.15,
+                                width: double.infinity,
+                              );
+                             },
+                           ),
+                         ),
+                 ],
+                     ),
+                   ),
+                 ),
+               ),
+             ),
+             )
             ],
           ),
         ),

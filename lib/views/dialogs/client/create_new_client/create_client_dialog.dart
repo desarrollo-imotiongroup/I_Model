@@ -17,6 +17,7 @@ void createNewClientDialog(BuildContext context) {
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
+  CreateNewClientController controller = Get.put(CreateNewClientController());
 
 
   Widget noEntryToOtherTab({required String title}){
@@ -41,6 +42,7 @@ void createNewClientDialog(BuildContext context) {
     context: context,
     builder: (BuildContext context) {
 
+
       return Dialog(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
@@ -58,7 +60,10 @@ void createNewClientDialog(BuildContext context) {
                   Padding(
                     padding:
                     EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title: translation(context).createNewClient),
+                    child: TopTitleButton(title: translation(context).createNewClient, onCancel: (){
+                      controller.resetEverything();
+                      Navigator.pop(context);
+                    },),
                   ),
                   Divider(color: AppColors.pinkColor),
 
@@ -72,21 +77,28 @@ void createNewClientDialog(BuildContext context) {
                           Tab(text: translation(context).cards.toUpperCase()),
                           Tab(text: translation(context).activeGroups.toUpperCase()),
                         ],),
-                            SizedBox(
-                              height: screenHeight * 0.7,
-                              child: TabBarView(
-                                children: [
-                                  /// Personal Data content
-                                  CreateClientPersonalData(),
+                           Obx(() =>
+                               SizedBox(
+                                 height: screenHeight * 0.7,
+                                 child: TabBarView(
+                                   children: [
+                                     /// Personal Data content
+                                     CreateClientPersonalData(),
 
-                                  /// Cards/bonos content
-                                   CreateClientCard(),
+                                     /// Cards/bonos content
+                                     controller.isDataSaved.value
+                                     ? CreateClientCard()
+                                     : noEntryToOtherTab(title: Strings.noEntryToBonos),
 
-                                  /// Content for Grupos Activos
-                                 CreateClientActiveGroups()
-                                ],
-                              ),
-                            ),
+                                     /// Content for Grupos Activos
+                                     controller.isDataSaved.value
+                                     ? CreateClientActiveGroups()
+                                     : noEntryToOtherTab(title: Strings.noEntryToActiveGroups)
+                                   ],
+                                 ),
+                               ),
+                           )
+
 
 
                       ],

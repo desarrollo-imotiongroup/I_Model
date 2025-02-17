@@ -5,7 +5,11 @@ import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/textview.dart';
 
-void showSuccessDialog(BuildContext context, {String? title}) {
+void showSuccessDialog(BuildContext context, {String? title, bool isCloseDialog = false} ) {
+  MediaQueryData mediaQuery = MediaQuery.of(context);
+  double screenWidth = mediaQuery.size.width;
+  double screenHeight = mediaQuery.size.height;
+
   showDialog(
     context: context,
     barrierDismissible: false,  // Prevents dialog from closing when tapped outside
@@ -15,11 +19,14 @@ void showSuccessDialog(BuildContext context, {String? title}) {
           borderRadius: BorderRadius.circular(20),  // Rounded corners
         ),
         backgroundColor: Colors.green[100],  // Soft green background for success
-        title: Center(
-          child: Icon(
-            Icons.check_circle,  // Success icon
-            color: Colors.green,
-            size: 60,
+        title: SizedBox(
+          width: screenWidth * 0.3,
+          child: Center(
+            child: Icon(
+              Icons.check_circle,  // Success icon
+              color: Colors.green,
+              size: 60,
+            ),
           ),
         ),
         content: Column(
@@ -44,8 +51,13 @@ void showSuccessDialog(BuildContext context, {String? title}) {
         ),
         actions: <Widget>[
           TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();  // Close the dialog
+            onPressed: isCloseDialog
+                ? (){
+              Navigator.of(context).pop();
+              Navigator.of(context).pop();
+            }
+                : () {
+              Navigator.of(context).pop();
             },
             child: TextView.title(
               fontSize: 12.sp,

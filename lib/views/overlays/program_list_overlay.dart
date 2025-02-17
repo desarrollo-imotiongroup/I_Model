@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/program.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/widgets/image_widget.dart';
@@ -59,12 +60,48 @@ void programListOverlay(
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: (){
+                        print('programList[index]: ${programList[index]}');
                         controller.setProgramDetails(
-                            name: programList[index]['nombre'],
-                            image: programList[index]['imagen']
+                            programName: programList[index]['nombre'],
+                            image: programList[index]['imagen'],
+                            mainProgramName: programList[index]['nombre']
                         );
-                        controller.contractionSeconds.value = 10;
-                        controller.pauseSeconds.value = 8;
+
+                        // print('programList: ${programList[index]}');
+                        if(controller.selectedProgramType.value == Strings.individual){
+                          controller.contractionSeconds.value =  (programList[index]['contraccion']).toInt();
+                          controller.pauseSeconds.value = programList[index]['pausa'].toInt();
+                          controller.frequency.value = programList[index]['frecuencia'].toInt();
+                          if(programList[index]['pulso'] == 'CX'){
+                            controller.pulse.value = 0;
+                          }
+                          else{
+                            controller.pulse.value = programList[index]['pulso'].toInt();
+                          }
+                        }
+                        else{
+                          for(int i=0; i<programList[index]['subprogramas'].length; i++){
+                            controller.automaticProgramValues.add(
+                              {
+                              'subProgramName' : programList[index]['subprogramas'][i]['nombre'],
+                              'duration' : programList[index]['subprogramas'][i]['duracion'],
+                              'image' : programList[index]['subprogramas'][i]['imagen'],
+                              'frequency' : programList[index]['subprogramas'][i]['frecuencia'],
+                              'pulse' : programList[index]['subprogramas'][i]['pulso'] == 'CX'
+                                ? 0
+                                : programList[index]['subprogramas'][i]['pulso'],
+                              'contraction' : programList[index]['subprogramas'][i]['contraccion'],
+                              'pause' : programList[index]['subprogramas'][i]['pausa'],
+                              }
+                            );
+                          }
+                          controller.contractionSeconds.value =  programList[index]['subprogramas'][0]['contraccion'].toInt();
+                          controller.pauseSeconds.value = (programList[index]['subprogramas'][0]['pausa']).toInt();
+                          controller.frequency.value =  programList[index]['subprogramas'][0]['frecuencia'].toInt();
+                          controller.pauseSeconds.value = (programList[index]['subprogramas'][0]['pulso']).toInt();
+                          // print('controller.automaticProgramValues: ${controller.automaticProgramValues}');
+                        }
+
                         if (overlayEntry.mounted) {
                           overlayEntry.remove();
                         }

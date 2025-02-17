@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
+import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/views/dashboard/first_column.dart';
 import 'package:i_model/views/dashboard/fourth_column.dart';
@@ -13,11 +14,12 @@ import 'package:i_model/widgets/mci_widget.dart';
 class DashboardScreen extends StatelessWidget
 {DashboardScreen({super.key});
 
- final DashboardController controller = Get.put(DashboardController());
+ final DashboardController dashboardController = Get.put(DashboardController());
+ final ClientController clientController = Get.put(ClientController());
 
   @override
   Widget build(BuildContext context) {
-    controller.onInit();
+    dashboardController.onInit();
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
@@ -25,7 +27,7 @@ class DashboardScreen extends StatelessWidget
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (bool didPop, Object? result) {
-        controller.resetEverything();
+        dashboardController.resetEverything();
       },
       child: Scaffold(
         body: Container(
@@ -53,9 +55,9 @@ class DashboardScreen extends StatelessWidget
                             Row(
                               children: [
                                 MciWidget(
-                                  mciName: controller.selectedClient.value == ''
+                                  mciName: clientController.selectedClientName.value == ''
                                       ? Strings.mciNames[0]
-                                      : controller.selectedClient.value,
+                                      : clientController.selectedClientName.value,
                                   mciId: Strings.mciIDs[0],
                                 ),
                                 MciWidget(
@@ -73,7 +75,7 @@ class DashboardScreen extends StatelessWidget
 
                         GestureDetector(
                           onTap: () {
-                            controller.resetEverything();
+                            dashboardController.resetEverything();
                             Navigator.pop(context);
                           },
                           child: Image(

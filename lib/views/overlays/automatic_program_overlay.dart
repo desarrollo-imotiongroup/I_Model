@@ -12,10 +12,8 @@ import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/top_title_button.dart';
 
-void automaticProgramOverlay(
-    BuildContext context,{
-      required List<AutomaticProgramModel> programList,
-    }) {
+Future<void> automaticProgramOverlay(
+    BuildContext context) async {
   final overlayState = Overlay.of(context);
   late OverlayEntry overlayEntry;
   MediaQueryData mediaQuery = MediaQuery.of(context);
@@ -40,6 +38,7 @@ void automaticProgramOverlay(
                 child: TopTitleButton(
                   title: translation(context).selectProgram,
                   onCancel: (){
+                    controller.automaticProgramsList.clear();
                     if (overlayEntry.mounted) {
                       overlayEntry.remove();
                     }
@@ -49,55 +48,64 @@ void automaticProgramOverlay(
 
               Divider(color: AppColors.pinkColor),
 
-              Expanded(
-                child: GridView.builder(
-                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
-                  itemCount: programList.length,
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 4,
-                    crossAxisSpacing: 2.0,
-                    mainAxisSpacing: 1.4,
-                    childAspectRatio: 1.3,
-                  ),
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: (){
-                        controller.setProgramDetails(
-                            name: programList[index].name,
-                            image: programList[index].image
-                        );
-                        // automaticProgramsList[0]['subprogramas'][0]['nombre']
-
-                        print('SubPrograms: ${controller.automaticProgramsList[index]}');
-
-                        selectedAutomaticProgramDialog(context,
-                            selectedProgramData: controller.automaticProgramsList[index]
-                        );
-
-                        if (overlayEntry.mounted) {
-                          overlayEntry.remove();
-                        }
-
-                      },
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          TextView.title(
-                            programList[index].name.toUpperCase(),
-                            fontSize: 13.sp,
-                            color: AppColors.blackColor.withValues(alpha: 0.8),
-                          ),
-                          SizedBox(height: screenHeight * 0.01),
-                          imageWidget(
-                            image: programList[index].image,
-                            height: screenHeight * 0.15,
-                          ),
-                        ],
+              Obx(() =>
+                  controller.isFetchAutoProgramsLoading.value
+                  ? Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.blackColor,
+                    ),
+                  )
+                 :   Expanded(
+                    child: GridView.builder(
+                      padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
+                      itemCount: controller.automaticProgramsList.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 4,
+                        crossAxisSpacing: 2.0,
+                        mainAxisSpacing: 1.4,
+                        childAspectRatio: 1.3,
                       ),
-                    );
-                  },
-                ),
-              ),
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          onTap: (){
+                            controller.setProgramDetails(
+                                name: controller.automaticProgramsList[index].name,
+                                image: controller.automaticProgramsList[index].image
+                            );
+                            // automaticProgramsList[0]['subprogramas'][0]['nombre']
+
+                            print('SubPrograms: ${controller.automaticProgramsList[index]}');
+
+                            selectedAutomaticProgramDialog(context,
+                                selectedProgramData: controller.automaticProgramsList[index]
+                            );
+
+                            if (overlayEntry.mounted) {
+                              overlayEntry.remove();
+                            }
+
+                          },
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextView.title(
+                                controller.automaticProgramsList[index].name.toUpperCase(),
+                                fontSize: 13.sp,
+                                color: AppColors.blackColor.withValues(alpha: 0.8),
+                              ),
+                              SizedBox(height: screenHeight * 0.01),
+                              imageWidget(
+                                image: controller.automaticProgramsList[index].image,
+                                height: screenHeight * 0.15,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+              )
+
 
             ],
           ),

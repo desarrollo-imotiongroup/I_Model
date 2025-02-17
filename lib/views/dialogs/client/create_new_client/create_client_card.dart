@@ -66,6 +66,7 @@ class CreateClientCard extends StatelessWidget {
                                     controller.lastClientId!,
                                     int.parse(controller.pointsTextEditingController.text,
                                     ));
+                                controller.pointsTextEditingController.clear();
                               }
                           );
                         },

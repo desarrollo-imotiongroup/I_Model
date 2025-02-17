@@ -24,7 +24,10 @@ class DashboardController extends GetxController {
   RxInt hamStringsPercentage = 0.obs;
   RxInt calvesPercentage = 0.obs;
   RxString selectedProgramType = Strings.individual.obs;
-  RxString selectedProgramName = Strings.cellulite.obs;
+  RxInt frequency = 0.obs;
+  RxInt pulse = 0.obs;
+  RxString selectedProgramName = Strings.nothing.obs;
+  RxString selectedMainProgramName = Strings.nothing.obs;
   RxString selectedProgramImage = Strings.celluliteIcon.obs;
   List<Map<String, dynamic>> automaticProgramList = [];
   List<Map<String, dynamic>> individualProgramList = [];
@@ -246,6 +249,7 @@ class DashboardController extends GetxController {
   RxBool isContractionPauseCycleActive = false.obs;
   RxDouble remainingContractionSeconds = 0.0.obs;
   RxDouble remainingPauseSeconds = 0.0.obs;
+  RxList<Map<String, dynamic>> automaticProgramValues = <Map<String, dynamic>>[].obs;
 
   /// Contraction time cycle
   Future<void> startContractionTimeCycle() async {
@@ -287,6 +291,114 @@ class DashboardController extends GetxController {
       }
     });
   }
+
+
+  /// Auto
+  Future<void> startContractionForMultiplePrograms() async {
+    if (automaticProgramValues.isEmpty) {
+      print("No programs to process.");
+      return;
+    }
+
+    for (int i = 0; i < automaticProgramValues.length; i++) {
+      var program = automaticProgramValues[i]; // Get current program
+
+      int durationInSeconds = program['duration'].toInt();
+      int minutes = durationInSeconds ~/ 60;
+      int remainingSeconds = durationInSeconds % 60;
+
+      // Start the contraction cycle
+      print("Starting contraction for ${program['subProgramName']} Contraction: ${program['contraction']} for $minutes minutes and $remainingSeconds seconds");
+
+      // Set the selected program values for UI
+      selectedProgramImage.value = program['image'];
+      selectedProgramName.value = program['subProgramName'];
+      frequency.value = program['frequency'].toInt();
+      pulse.value = program['pulse'].toInt();
+
+      // Start pulse cycle
+      await startPulseCycle(program);
+
+      // Set the contraction duration
+      contractionSeconds.value = program['contraction'].toInt();
+      contractionProgress.value = 1.0;
+      double decrementAmount = 1.0 / (contractionSeconds.value * 10);
+
+      // Run the contraction cycle timer
+      await runContractionCycle(program, decrementAmount);
+
+      // Start the pause cycle after contraction cycle
+      await startAutoPauseTimeCycle(program);
+    }
+
+    print("All programs completed.");
+  }
+
+  Future<void> startPulseCycle(var program) async {
+    print("Starting pulse for ${program['subProgramName']} with frequency: ${program['frequency']} Hz and pulse: ${program['pulse']}");
+
+    // Pulse logic here, you can implement your pulse method depending on the requirement
+    await Future.delayed(Duration(seconds: 1)); // Simulate pulse cycle delay for now
+  }
+
+  Future<void> runContractionCycle(var program, double decrementAmount) async {
+    contractionProgress.value = 1.0;
+    int totalDurationInSeconds = contractionSeconds.value;
+    Timer? contractionCycleTimer;
+
+    // Run contraction cycle until it's complete
+    bool cycleCompleted = false;
+    contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (contractionProgress.value > 0) {
+        remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
+        contractionProgress.value -= decrementAmount;
+      } else {
+        contractionProgress.value = 0;
+        contractionCycleTimer!.cancel();
+        cycleCompleted = true;
+      }
+    });
+
+    // Wait until the contraction cycle is finished
+    while (!cycleCompleted) {
+      await Future.delayed(Duration(milliseconds: 100)); // Wait for the contraction cycle to complete
+    }
+
+    print("Contraction cycle for ${program['subProgramName']} completed.");
+  }
+
+  Future<void> startAutoPauseTimeCycle(var program) async {
+    pauseSeconds.value = program['pause'].toInt(); // Use the pause time from program data
+    pauseProgress.value = 1.0;
+    double decrementAmount = 1.0 / (pauseSeconds.value * 10);
+
+    int totalDurationInSeconds = pauseSeconds.value;
+    bool cycleCompleted = false;
+
+    // Start pause cycle
+    pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (pauseProgress.value > 0) {
+        remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
+        pauseProgress.value -= decrementAmount;
+      } else {
+        pauseProgress.value = 0;
+        pauseCycleTimer!.cancel();
+        cycleCompleted = true;
+      }
+    });
+
+    // Wait for the pause cycle to finish
+    while (!cycleCompleted) {
+      await Future.delayed(Duration(milliseconds: 100)); // Wait for the pause cycle to complete
+    }
+
+    print("Pause cycle for ${program['subProgramName']} completed.");
+  }
+
+
+
+
+
 
   cancelTimersOnTimeUp(){
     contractionCycleTimer?.cancel();
@@ -341,9 +453,10 @@ class DashboardController extends GetxController {
     update();
   }
 
-  setProgramDetails({required String name, required String image}){
-    selectedProgramName.value = name;
+  setProgramDetails({required String programName, required String image, required String mainProgramName}){
+    selectedProgramName.value = programName;
     selectedProgramImage.value = image;
+    selectedMainProgramName.value = mainProgramName;
     isProgramSelected.value = true;
     update();
   }

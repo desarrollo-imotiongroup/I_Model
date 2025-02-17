@@ -20,7 +20,7 @@ import '../models/programs/automatic/automatic_program.dart';
 class ProgramsController extends GetxController{
   final TextEditingController individualProgramNameController = TextEditingController();
   final TextEditingController automaticProgramNameController = TextEditingController();
-  List<AutomaticProgramModel> automaticProgramsList = [];
+  RxList<AutomaticProgramModel> automaticProgramsList = <AutomaticProgramModel>[].obs;
   List<IndividualProgramModel> individualProgramsList = [];
   List<Map<String, dynamic>> individualDropDownPrograms = [];
   RxBool isConfigurationSubmitted = false.obs;
@@ -38,6 +38,10 @@ class ProgramsController extends GetxController{
   List<String> equipmentOptions = [Strings.bioJacket, Strings.bioShape];
   RxString selectedEquipment = Strings.nothing.obs;
   RxString selectedAutoEquipment = Strings.nothing.obs;
+  FocusNode pulseFocusNode = FocusNode();
+  FocusNode rampFocusNode = FocusNode();
+  FocusNode contractionFocusNode = FocusNode();
+  FocusNode pauseFocusNode = FocusNode();
 
   List<Map<String, dynamic>> gruposBioJacket = [];
   List<Map<String, dynamic>> gruposBioShape = [];
@@ -52,18 +56,84 @@ class ProgramsController extends GetxController{
   Map<String, int> groupShapeIds = {};
 
 
-
   @override
   Future<void> onInit() async {
-    automaticProgramsList = await fetchAutoPrograms();
+    print('onInit called');
+    automaticProgramsList.value = await fetchAutoPrograms();
     individualProgramsList = await fetchIndividualPrograms();
+    for(var program in individualProgramsList){
+      print('IndProgram: ${program.name}');
+    }
     fetchCronaxias();
     fetchGruposMusculares();
     super.onInit();
   }
 
+  moveFocusTo(BuildContext context, FocusNode focusNode){
+    FocusScope.of(context).requestFocus(focusNode);
+  }
+
+  unFocus(){
+    pulseFocusNode.unfocus();
+    rampFocusNode.unfocus();
+    contractionFocusNode.unfocus();
+    pauseFocusNode.unfocus();
+  }
+
+  resetEverything() {
+    individualProgramNameController.clear();
+    automaticProgramNameController.clear();
+    frequencyController.clear();
+    pulseController.clear();
+    rampController.clear();
+    contractionController.clear();
+    pauseController.clear();
+    upperBackController.clear();
+    middleBackController.clear();
+    lowerBackController.clear();
+    glutesController.clear();
+    hamstringsController.clear();
+    chestController.clear();
+    abdomenController.clear();
+    legsController.clear();
+    armsController.clear();
+    extraController.clear();
+    orderController.clear();
+    durationController.clear();
+    adjustmentController.clear();
+
+    // Reset selection values
+    selectedEquipment.value = Strings.nothing;
+    selectedAutoEquipment.value = Strings.nothing;
+    selectedProgram.value = Strings.nothing;
+    selectedProgramName.value = Strings.nothing;
+    selectedProgramImage.value = Strings.nothing;
+    individualProgramSequenceList.clear();
+    secuencias.clear();
+
+    // Reset the checkboxes for active groups
+    isUpperBackChecked.value = true;
+    isMiddleBackChecked.value = true;
+    isLowerBackChecked.value = true;
+    isGlutesChecked.value = true;
+    isHamstringsChecked.value = true;
+    isChestChecked.value = true;
+    isAbdominalChecked.value = true;
+    isLegsChecked.value = true;
+    isArmsChecked.value = true;
+    isExtraChecked.value = true;
+    isCalvesChecked.value = true;
+
+    // Reset configuration submission status
+    isConfigurationSubmitted.value = false;
+    isConfigurationSaved.value = false;
+  }
+
+
   /// Fetching individual programs
+  RxBool isFetchIndividualProgramsLoading = false.obs;
   Future<List<IndividualProgramModel>> fetchIndividualPrograms() async {
+    isFetchIndividualProgramsLoading.value = true;
     List<IndividualProgramModel> individualPrograms = [];
     final db = await DatabaseHelper().database;
 
@@ -129,11 +199,14 @@ class ProgramsController extends GetxController{
       return [];
     }
 
+    isFetchIndividualProgramsLoading.value = false;
     return individualPrograms;
   }
 
   /// Fetching automatic programs from SQL and mapping them to models
+  RxBool isFetchAutoProgramsLoading = false.obs;
   Future<List<AutomaticProgramModel>> fetchAutoPrograms() async {
+    isFetchAutoProgramsLoading.value = true;
     List<AutomaticProgramModel> autoPrograms = [];
     var db = await DatabaseHelper().database;
     try {
@@ -170,6 +243,8 @@ class ProgramsController extends GetxController{
     }
 
     print('AutoProgramFromModel: ${autoPrograms.length}');
+    isFetchAutoProgramsLoading.value = false;
+    update();
     return autoPrograms;
   }
 
@@ -372,7 +447,7 @@ class ProgramsController extends GetxController{
       } else {
         print('No se encontraron programas en la base de datos');
       }
-      showSuccessDialog(context);
+      showSuccessDialog(context, isCloseDialog: true);
     }catch(e){
       print(e);
     }
@@ -451,6 +526,7 @@ class ProgramsController extends GetxController{
 
       isConfigurationSaved.value = true;
       showSuccessDialog(context);
+      unFocus();
       update();
     }
     catch(e){
@@ -664,7 +740,6 @@ class ProgramsController extends GetxController{
     } else {
       print("Error al insertar el programa automático.");
     }
-
   }
 
   /// Create sequence
@@ -705,6 +780,13 @@ class ProgramsController extends GetxController{
     } catch (e) {
       print('Error fetching programs: $e');
     }
+  }
+
+  clearSequenceTextFields(){
+    orderController.clear();
+    durationController.clear();
+    adjustmentController.clear();
+    selectedProgram.value = Strings.nothing;
   }
 
   createSequence(BuildContext context) {

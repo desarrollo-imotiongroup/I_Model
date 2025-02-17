@@ -26,6 +26,7 @@ class _ClientPersonalDataState extends State<ClientPersonalData> {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
@@ -50,10 +51,10 @@ class _ClientPersonalDataState extends State<ClientPersonalData> {
 
                 /// Client status drop down
                 DropDownWidget(
-                  selectedValue: controller.selectedStatus.value,
-                  dropDownList: controller.clientStatusList,
+                  selectedValue: controller.fetchedStatus.value,
+                  dropDownList: controller.statusList,
                   onChanged: (value){
-                    controller.selectedStatus.value = value;
+                    controller.fetchedStatus.value = value;
                   },
                 )
               ],
@@ -105,6 +106,9 @@ class _ClientPersonalDataState extends State<ClientPersonalData> {
                     textEditingController: controller.clientPhoneController,
                     isAllowNumberOnly: true,
                     fontSize: 11.sp,
+                    onNext: (){
+                      FocusScope.of(context).requestFocus(controller.heightFocusNode);
+                    },
                   )
                 ],
               ),
@@ -118,6 +122,10 @@ class _ClientPersonalDataState extends State<ClientPersonalData> {
                     textEditingController: controller.clientHeightController,
                     isAllowNumberOnly: true,
                     fontSize: 11.sp,
+                    focusNode: controller.heightFocusNode,
+                    onNext: (){
+                      FocusScope.of(context).requestFocus(controller.weightFocusNode);
+                    },
                   ),
 
                   SizedBox(height: screenHeight * 0.01,),
@@ -128,6 +136,10 @@ class _ClientPersonalDataState extends State<ClientPersonalData> {
                     textEditingController: controller.clientWeightController,
                     isAllowNumberOnly: true,
                     fontSize: 11.sp,
+                    focusNode: controller.weightFocusNode,
+                    onNext: (){
+                      FocusScope.of(context).requestFocus(controller.emailFocusNode);
+                    },
                   ),
 
                   SizedBox(height: screenHeight * 0.01,),
@@ -138,6 +150,7 @@ class _ClientPersonalDataState extends State<ClientPersonalData> {
                     textEditingController: controller.clientEmailController,
                     textInputAction: TextInputAction.done,
                     fontSize: 11.sp,
+                    focusNode: controller.emailFocusNode,
                   )
                 ],
               )

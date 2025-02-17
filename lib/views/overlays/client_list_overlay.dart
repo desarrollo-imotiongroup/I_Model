@@ -130,7 +130,7 @@ void clientListOverlay(BuildContext context) {
                                                       children: [
                                                         /// Table cells info
                                                         tableTextInfo(
-                                                          title: controller.filteredClients[index]['id'].toString(),
+                                                          title: '${index + 1}',
                                                           color: AppColors.blackColor.withValues(alpha: 0.8),
                                                           fontSize: 10.sp,
                                                         ),

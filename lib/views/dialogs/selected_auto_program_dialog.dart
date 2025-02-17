@@ -90,9 +90,7 @@ void selectedAutomaticProgramDialog(BuildContext context, {required AutomaticPro
                       GestureDetector(
                         onTap: (){
                           Navigator.pop(context);
-                          automaticProgramOverlay(context, programList:
-                          controller.automaticProgramsList,
-                          );
+                          automaticProgramOverlay(context);
                         },
                         child: Image(
                           image: AssetImage(

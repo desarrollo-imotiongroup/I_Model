@@ -147,6 +147,7 @@ class AutomaticProgram extends StatelessWidget {
                 // Create sequence button
                 CustomContainer(
                   onTap: (){
+                    controller.clearSequenceTextFields();
                     createSequenceDialog(context);
                   },
                   height: screenHeight * 0.08,

@@ -16,7 +16,7 @@ class CreateNewClientController extends GetxController {
   List<String> genderList = [Strings.man, Strings.women];
   RxString selectedStatus = Strings.active.obs;
   RxInt recentClientId = 0.obs;
-  // RxBool isConfigurationSaved = false.obs;
+  RxBool isDataSaved = false.obs;
 
 
   /// Client Personal data values
@@ -27,6 +27,8 @@ class CreateNewClientController extends GetxController {
   final TextEditingController clientWeightController = TextEditingController();
   final TextEditingController clientEmailController = TextEditingController();
   FocusNode weightFocusNode = FocusNode();
+  FocusNode heightFocusNode = FocusNode();
+  FocusNode emailFocusNode = FocusNode();
   RxString clientSelectedGender = Strings.nothing.obs;
   final DatabaseHelper dbHelper = DatabaseHelper();
 
@@ -42,6 +44,7 @@ class CreateNewClientController extends GetxController {
 
   @override
   void onClose() {
+    print('Client onClose');
     clientNameController.dispose();
     clientDobController.dispose();
     clientPhoneController.dispose();
@@ -49,6 +52,57 @@ class CreateNewClientController extends GetxController {
     clientWeightController.dispose();
     clientEmailController.dispose();
     super.onClose();
+  }
+
+  moveFocusTo(BuildContext context, FocusNode focusNode){
+    FocusScope.of(context).requestFocus(focusNode);
+  }
+
+  unFocus(){
+    weightFocusNode.unfocus();
+    heightFocusNode.unfocus();
+    emailFocusNode.unfocus();
+    weightFocusNode.unfocus();
+  }
+
+
+  resetEverything() {
+    // Resetting personal data fields
+    clientNameController.clear();
+    clientDobController.clear();
+    clientPhoneController.clear();
+    clientHeightController.clear();
+    clientWeightController.clear();
+    clientEmailController.clear();
+    clientSelectedGender.value = Strings.nothing;
+    selectedStatus.value = Strings.active;
+
+    // Resetting checkboxes for muscle groups
+    isUpperBackChecked.value = true;
+    isMiddleBackChecked.value = true;
+    isLowerBackChecked.value = true;
+    isGlutesChecked.value = true;
+    isHamstringsChecked.value = true;
+    isChestChecked.value = true;
+    isAbdominalChecked.value = true;
+    isLegsChecked.value = true;
+    isArmsChecked.value = true;
+    isExtraChecked.value = true;
+
+    // Resetting selected groups
+    checkedPrograms.clear();
+
+    // Resetting other reactive variables
+    recentClientId.value = 0;
+    isDataSaved.value = false;
+
+    // Resetting client bonos/points
+    consumedPoints.clear();
+    availableBonos.clear();
+    totalBonosAvailables = 0;
+
+    // Resetting groupIds and other database-related values
+    groupIds.clear();
   }
 
 
@@ -216,6 +270,8 @@ class CreateNewClientController extends GetxController {
       // isConfigurationSaved.value = true;
       showSuccessDialog(context, title: 'Cliente añadido correctamente');
 
+      unFocus();
+      isDataSaved.value = true;
       print('HERE');
       // print( isConfigurationSaved.value);
     }catch(e){
@@ -355,12 +411,7 @@ class CreateNewClientController extends GetxController {
 
     // Mostrar el SnackBar solo una vez, dependiendo del resultado final
     if (allSuccess) {
-      alertOverlay(
-          context,
-          heading: translation(context).alertCompleteForm,
-          isOneButtonNeeded: true,
-          description: 'Grupos añadidos correctamente'
-      );
+      showSuccessDialog(context, title: 'Grupos Musculares añadidos correctamente');
 
     } else {
       alertOverlay(

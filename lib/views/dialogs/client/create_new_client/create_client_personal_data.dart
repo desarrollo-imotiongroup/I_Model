@@ -91,6 +91,10 @@ class CreateClientPersonalData extends StatelessWidget {
                     textEditingController: controller.clientPhoneController,
                     isAllowNumberOnly: true,
                     fontSize: 11.sp,
+                    onNext: () {
+                      controller.moveFocusTo(context, controller.heightFocusNode);
+                    },
+
                   )
                 ],
               ),
@@ -104,6 +108,7 @@ class CreateClientPersonalData extends StatelessWidget {
                     textEditingController: controller.clientHeightController,
                     isAllowNumberOnly: true,
                     fontSize: 11.sp,
+                    focusNode: controller.heightFocusNode,
                     onNext: (){
                       FocusScope.of(context).requestFocus(controller.weightFocusNode);
                     },
@@ -117,6 +122,9 @@ class CreateClientPersonalData extends StatelessWidget {
                     textEditingController: controller.clientWeightController,
                     isAllowNumberOnly: true,
                     fontSize: 11.sp,
+                    onNext: () {
+                      controller.moveFocusTo(context, controller.emailFocusNode);
+                    },
                     focusNode: controller.weightFocusNode,
                   ),
 
@@ -128,6 +136,7 @@ class CreateClientPersonalData extends StatelessWidget {
                     textEditingController: controller.clientEmailController,
                     textInputAction: TextInputAction.done,
                     fontSize: 11.sp,
+                    focusNode: controller.emailFocusNode,
                   )
                 ],
               )

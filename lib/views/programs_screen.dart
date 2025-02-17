@@ -97,7 +97,6 @@ class ProgramsScreen extends StatelessWidget {
                                 onTap: (){
                                   automaticProgramOverlay(
                                       context,
-                                      programList: programsController.automaticProgramsList
                                   );
                                 },
                               ),

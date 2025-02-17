@@ -61,7 +61,11 @@ void createProgramDialog(BuildContext context,) {
                   Padding(
                     padding:
                     EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title:  translation(context).createProgram),
+                    child: TopTitleButton(
+                      title:  translation(context).createProgram, onCancel: (){
+                      controller.resetEverything();
+                      Navigator.pop(context);
+                    },),
                   ),
                   Divider(color: AppColors.pinkColor),
 

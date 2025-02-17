@@ -25,13 +25,15 @@ void withDeviceBiompedancia(BuildContext context) {
       child: Center(
         child: Container(
           width: screenWidth * 0.7,
-          height: screenHeight * 0.95, // Ensure overlays height remains fixed
+          height: screenHeight * 0.95,
+          // Ensure overlays height remains fixed
           decoration: BoxDecoration(
             color: AppColors.pureWhiteColor,
             borderRadius: BorderRadius.circular(screenHeight * 0.02),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withValues(alpha: 0.3), // Fixed shadow issue
+                color: Colors.grey.withValues(alpha: 0.3),
+                // Fixed shadow issue
                 spreadRadius: 3,
                 blurRadius: 2,
                 offset: Offset(0, 3),
@@ -76,13 +78,11 @@ void withDeviceBiompedancia(BuildContext context) {
                   ),
                 ),
                 Divider(color: AppColors.pinkColor),
-
                 Padding(
                   padding: EdgeInsets.only(
-                    left: screenWidth * 0.05,
-                    right: screenWidth * 0.04,
-                    top: screenHeight * 0.03
-                  ),
+                      left: screenWidth * 0.05,
+                      right: screenWidth * 0.04,
+                      top: screenHeight * 0.03),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,62 +90,84 @@ void withDeviceBiompedancia(BuildContext context) {
                       Column(
                         children: [
                           RoundedContainer(
-                            onTap: (){
-                              selectClientOverlay(context);
-                            },
-                            borderRadius: screenHeight * 0.01,
-                            width: screenWidth * 0.2,
+                              onTap: () {
+                                selectClientOverlay(context,
+                                    isBioimpedancia: true,
+                                    onClientSelected: (clientData) {
+                                  if (clientData != null) {
+                                    controller.setTextFieldsData(clientData);
+                                  }
+                                });
+                              },
+                              borderRadius: screenHeight * 0.01,
+                              width: screenWidth * 0.2,
                               widget: TextView.title(
                                 translation(context).selectClient.toUpperCase(),
                                 color: AppColors.blackColor,
                                 fontSize: 14.sp,
-                              )
+                              )),
+                          SizedBox(
+                            height: screenHeight * 0.02,
                           ),
-                          SizedBox(height: screenHeight * 0.02,),
+
                           /// Name - TextField
                           TextFieldLabel(
-                              label: translation(context).name,
-                              textEditingController: controller.nameEditingController,
-                              isReadOnly: true,
+                            label: translation(context).name,
+                            textEditingController:
+                                controller.nameEditingController,
+                            isReadOnly: true,
+                            fontSize: 12.sp,
                           ),
 
                           /// Gender - TextField
                           TextFieldLabel(
                             label: translation(context).gender,
-                            textEditingController: controller.genderEditingController,
+                            textEditingController:
+                                controller.genderEditingController,
                             isReadOnly: true,
+                            fontSize: 12.sp,
                           ),
 
                           /// Height - TextField
                           TextFieldLabel(
                             label: translation(context).height,
-                            textEditingController: controller.heightEditingController,
+                            textEditingController:
+                                controller.heightEditingController,
                             isReadOnly: true,
+                            fontSize: 12.sp,
                           ),
 
                           /// Weight - TextField
                           TextFieldLabel(
                             label: translation(context).weight,
-                            textEditingController: controller.weightEditingController,
+                            textEditingController:
+                                controller.weightEditingController,
                             isReadOnly: true,
+                            fontSize: 12.sp,
                           ),
 
                           /// Email - TextField
                           TextFieldLabel(
                             label: translation(context).email,
-                            textEditingController: controller.emailEditingController,
+                            textEditingController:
+                                controller.emailEditingController,
                             isReadOnly: true,
+                            fontSize: 12.sp,
                           ),
                         ],
                       ),
                       SizedBox(
                         height: screenHeight * 0.8,
                         child: VerticalDivider(
-                          color: AppColors.pinkColor,    // Color of the divider
-                          thickness: 1,           // Thickness of the divider
-                          width: 1,              // Width of the space the divider occupies
-                          indent: 2,             // Space above the divider
-                          endIndent: 0,          // Space below the divider
+                          color: AppColors.pinkColor,
+                          // Color of the divider
+                          thickness: 1,
+                          // Thickness of the divider
+                          width: 1,
+                          // Width of the space the divider occupies
+                          indent: 2,
+                          // Space above the divider
+                          endIndent: 0, // Space below the divider
                         ),
                       ),
                       SizedBox(
@@ -157,25 +179,27 @@ void withDeviceBiompedancia(BuildContext context) {
                                 borderRadius: screenHeight * 0.01,
                                 width: screenWidth * 0.2,
                                 widget: TextView.title(
-                                  translation(context).takeNewMeasurement.toUpperCase(),
+                                  translation(context)
+                                      .takeNewMeasurement
+                                      .toUpperCase(),
                                   color: AppColors.blackColor,
                                   fontSize: 14.sp,
-                                )
-                            ),
+                                )),
                             Column(
                               children: [
                                 TextView.title(
-                                  translation(context).howToTakeMeasurement.toUpperCase(),
+                                  translation(context)
+                                      .howToTakeMeasurement
+                                      .toUpperCase(),
                                   color: AppColors.pinkColor,
                                   fontSize: 13.sp,
                                 ),
-                                SizedBox(height: screenHeight * 0.02,),
-                                imageWidget(
-                                    image: Strings.newMeasurementIcon
-                                )
+                                SizedBox(
+                                  height: screenHeight * 0.02,
+                                ),
+                                imageWidget(image: Strings.newMeasurementIcon)
                               ],
                             ),
-
                           ],
                         ),
                       )
@@ -191,4 +215,3 @@ void withDeviceBiompedancia(BuildContext context) {
   );
   overlayState.insert(overlayEntry);
 }
-

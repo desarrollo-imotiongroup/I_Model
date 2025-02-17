@@ -10,6 +10,7 @@ import 'package:i_model/models/client/bioimedancia.dart';
 import 'package:i_model/models/client/client_points.dart';
 import 'package:i_model/models/client/client_activity.dart';
 import 'package:i_model/models/client/clients.dart';
+import 'package:i_model/views/dialogs/sucess_dialog.dart';
 import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,8 @@ class ClientController extends GetxController {
   List<String> genderList = [Strings.man, Strings.women];
   // RxString selectedClient = ''.obs;
   RxMap selectedClient = {}.obs;
+  RxString selectedClientName = Strings.nothing.obs;
+  RxBool isShowTabs = false.obs;
 
   /// Client screen values
   final TextEditingController nameController = TextEditingController();
@@ -30,18 +33,10 @@ class ClientController extends GetxController {
   final DatabaseHelper dbHelper = DatabaseHelper();
 
 
-
-
   @override
   Future<void> onInit() async {
   _fetchClients();
-
     super.onInit();
-  }
-
-  setClientName(){
-    clientNameController.text = selectedClient['name'];
-    update();
   }
 
   /// Client Personal data values
@@ -51,7 +46,12 @@ class ClientController extends GetxController {
   final TextEditingController clientHeightController = TextEditingController();
   final TextEditingController clientWeightController = TextEditingController();
   final TextEditingController clientEmailController = TextEditingController();
+  FocusNode weightFocusNode = FocusNode();
+  FocusNode heightFocusNode = FocusNode();
+  FocusNode emailFocusNode = FocusNode();
   RxString clientSelectedGender = Strings.nothing.obs;
+  List<String> statusList = [Strings.active, Strings.inactive];
+  RxString fetchedStatus = Strings.active.obs;
 
   resetEverything(){
     isUpperBackChecked.value = false;
@@ -64,6 +64,7 @@ class ClientController extends GetxController {
     isLegsChecked.value = false;
     isArmsChecked.value = false;
     isExtraChecked.value = false;
+    selectedStatus.value = Strings.all;
   }
 
   @override
@@ -75,7 +76,17 @@ class ClientController extends GetxController {
     clientHeightController.dispose();
     clientWeightController.dispose();
     clientEmailController.dispose();
+    weightFocusNode.dispose();
+    heightFocusNode.dispose();
+    emailFocusNode.dispose();
     super.onClose();
+  }
+
+  unFocus(){
+    weightFocusNode.unfocus();
+    heightFocusNode.unfocus();
+    emailFocusNode.unfocus();
+    weightFocusNode.unfocus();
   }
 
 
@@ -424,9 +435,9 @@ class ClientController extends GetxController {
         clientPhoneController.text = updatedClientData['phone'].toString() ?? '';
         clientWeightController.text = updatedClientData['weight']?.toString() ?? '';
         clientSelectedGender.value = updatedClientData['gender'];
-        selectedStatus.value = updatedClientData['status'];
+        fetchedStatus.value = updatedClientData['status'];
         clientDobController.text = updatedClientData['birthdate'];
-
+        print('fetchedStatus: $fetchedStatus');
     }
   }
 
@@ -480,7 +491,7 @@ class ClientController extends GetxController {
       'height': int.tryParse(clientHeightController.text), // Convert to int
       'weight': int.tryParse(clientWeightController.text), // Convert to int
       'gender': clientSelectedGender.value,
-      'status': selectedStatus.value,
+      'status': fetchedStatus.value,
       'birthdate': clientDobController.text,
     };
 
@@ -494,26 +505,16 @@ class ClientController extends GetxController {
     // Refresh the text controllers with the updated data
     // await _refreshControllers();
 
-    // Show success Snackbar
-    alertOverlay(
-        context,
-        heading: translation(context).alertCompleteForm,
-        isOneButtonNeeded: true,
-        description: 'Cliente actualizado correctamente'
-    );
-
+    unFocus();
+    showSuccessDialog(context, title: 'Cliente actualizado correctamente');
   }
 
   /// Delete client
   deleteClient(BuildContext context) async {
     DatabaseHelper dbHelper = DatabaseHelper();
     await dbHelper.deleteClient(selectedClient['id']); // Borrar cliente
-    alertOverlay(
-        context,
-        heading: translation(context).alertCompleteForm,
-        isOneButtonNeeded: true,
-        description: 'Cliente borrado correctamente'
-    );
+    showSuccessDialog(context, title: 'Cliente borrado correctamente');
+    resetEverything();
   }
 
   RxList<Map<String, String>> availableBonos = <Map<String, String>>[].obs; // Cambiar el tipo aquí
@@ -657,95 +658,8 @@ class ClientController extends GetxController {
     selectedGroupIds.forEach((groupId) {
      print(groupId);
     });
+    showSuccessDialog(context, title: 'Grupos actualizados correctamente');
 
-    alertOverlay(
-        context,
-        heading: translation(context).alertCompleteForm,
-        isOneButtonNeeded: true,
-        description: 'Grupos actualizados correctamente'
-    );
   }
-
-  // Future<void> loadMuscleGroups() async {
-  //   final db = await openDatabase('my_database.db');
-  //
-  //   // 1. Obtener todos los grupos musculares disponibles
-  //   final List<Map<String, dynamic>> result =
-  //   await db.query('grupos_musculares');
-  //
-  //   // 2. Obtener los grupos musculares asociados a este cliente
-  //   final List<Map<String, dynamic>> clientGroupsResult = await db.rawQuery('''
-  //   SELECT g.id, g.nombre
-  //   FROM grupos_musculares g
-  //   INNER JOIN clientes_grupos_musculares cg ON g.id = cg.grupo_muscular_id
-  //   WHERE cg.cliente_id = ?
-  // ''', [clientId]);
-  //
-  //   // Actualizar el estado de los grupos y sus colores
-  //   setState(() {
-  //     selectedGroups = {for (var row in result) row['nombre']: false};
-  //     hintColors = {for (var row in result) row['nombre']: Colors.white};
-  //     groupIds = {for (var row in result) row['nombre']: row['id']};
-  //     imagePaths = {for (var row in result) row['nombre']: row['imagen']};
-  //
-  //     // Marcar los grupos asociados al cliente como seleccionados
-  //     for (var group in clientGroupsResult) {
-  //       final groupName = group['nombre'];
-  //       if (groupName != null) {
-  //         selectedGroups[groupName] = true;
-  //         hintColors[groupName] =
-  //         const Color(0xFF2be4f3); // Color para los grupos seleccionados
-  //       }
-  //     }
-  //   });
-  //
-  //   // Imprimir los grupos asociados al cliente (clientGroupsResult)
-  //   print("Grupos musculares asociados al cliente $clientId:");
-  //   clientGroupsResult.forEach((group) {
-  //     print("- ${group['nombre']} (ID: ${group['id']})");
-  //   });
-  // }
-
-// Método para cargar un cliente por ID desde la base de datos
-//   Future<void> _loadClientById() async {
-//     // Primero, obtenemos el clientId desde el _indexController
-//     final clientIdText = _indexController.text;
-//
-//     if (clientIdText.isEmpty) {
-//       // Si el campo está vacío, mostramos un mensaje de error
-//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//         content: Text('Por favor ingresa un ID de cliente'),
-//       ));
-//       return;
-//     }
-//
-//     // Convertir el texto del TextEditingController en un entero (clientId)
-//     final int? clientId = int.tryParse(clientIdText);
-//
-//     if (clientId == null) {
-//       // Si el clientId no es un número válido, mostramos un mensaje de error
-//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//         content: Text('ID de cliente no válido'),
-//       ));
-//       return;
-//     }
-//
-//     // Buscar el cliente con el clientId
-//     final client = await dbHelper.getClientById(clientId);
-//
-//     if (client != null) {
-//       setState(() {
-//         selectedClient = client;
-//         _indexController.text = client['id'].toString();
-//         _nameController.text = client['name'] ?? '';
-//         selectedOption = client['status'];
-//       });
-//     } else {
-//       // Si no se encuentra el cliente en la base de datos, mostrar mensaje
-//       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-//         content: Text('Cliente no encontrado'),
-//       ));
-//     }
-//   }
 
 }

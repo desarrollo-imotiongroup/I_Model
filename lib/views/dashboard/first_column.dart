@@ -4,6 +4,7 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/enum/program_status.dart';
 import 'package:i_model/core/strings.dart';
+import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/views/overlays/select_client_overlay.dart';
 import 'package:i_model/widgets/dashboard_body_program.dart';
@@ -12,7 +13,7 @@ import 'package:i_model/widgets/image_widget.dart';
 class DashboardFirstColumn extends StatelessWidget {
   DashboardFirstColumn({super.key});
 
-  final DashboardController controller = Get.put(DashboardController());
+  final DashboardController dashboardController = Get.put(DashboardController());
 
   @override
   Widget build(BuildContext context) {
@@ -45,10 +46,10 @@ class DashboardFirstColumn extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    controller.changeSuitSelection();
+                    dashboardController.changeSuitSelection();
                   },
                   child: imageWidget(
-                    image: controller.isPantSelected.value
+                    image: dashboardController.isPantSelected.value
                         ? Strings.selectedPantIcon
                         : Strings.completeSuitSelected,
                     height: screenHeight * 0.08,
@@ -58,12 +59,12 @@ class DashboardFirstColumn extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: controller.isPantSelected.value ? screenHeight * 0.03 : 0,
+            height: dashboardController.isPantSelected.value ? screenHeight * 0.03 : 0,
           ),
           AnimatedSize(
             duration: Duration(milliseconds: 300),
             curve: Curves.easeInOut,
-            child: controller.isPantSelected.value
+            child: dashboardController.isPantSelected.value
                 ? Column(
                     key: ValueKey('pantSelectedBodyParts'),
                     children: [
@@ -72,30 +73,30 @@ class DashboardFirstColumn extends StatelessWidget {
                         title: translation(context).arms,
                         image: Strings.armsIcon,
                         onIncrease: () {
-                          controller.changeArmsPercentage(isIncrease: true);
+                          dashboardController.changeArmsPercentage(isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeArmsPercentage(isDecrease: true);
+                          dashboardController.changeArmsPercentage(isDecrease: true);
                         },
-                        percentage: controller.armsPercentage.value,
-                        intensityColor: controller.armsIntensityColor,
-                        programStatus: controller.programsStatus[1].status!.value,
+                        percentage: dashboardController.armsPercentage.value,
+                        intensityColor: dashboardController.armsIntensityColor,
+                        programStatus: dashboardController.programsStatus[1].status!.value,
                         onPress: (){
-                          if(controller.programsStatus[1].status!.value != ProgramStatus.inactive) {
-                            controller.updateProgramStatus(
+                          if(dashboardController.programsStatus[1].status!.value != ProgramStatus.inactive) {
+                            dashboardController.updateProgramStatus(
                               Strings.arms,
-                              controller.programsStatus[1].status!.value == ProgramStatus.active
+                              dashboardController.programsStatus[1].status!.value == ProgramStatus.active
                                   ? ProgramStatus.blocked
                                   : ProgramStatus.active,
                             );
                           }
                         },
                         onLongPress: (){
-                          controller.armsPercentage.value = 0;
-                          controller.armsIntensityColor = AppColors.lowIntensityColor;
-                          controller.updateProgramStatus(
+                          dashboardController.armsPercentage.value = 0;
+                          dashboardController.armsIntensityColor = AppColors.lowIntensityColor;
+                          dashboardController.updateProgramStatus(
                             Strings.arms,
-                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[1].status!.value)
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(dashboardController.programsStatus[1].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
                           );
@@ -107,30 +108,30 @@ class DashboardFirstColumn extends StatelessWidget {
                         title: translation(context).abdomen,
                         image: Strings.abdomenIcon,
                         onIncrease: () {
-                          controller.changeAbdomenPercentage(isIncrease: true);
+                          dashboardController.changeAbdomenPercentage(isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeAbdomenPercentage(isDecrease: true);
+                          dashboardController.changeAbdomenPercentage(isDecrease: true);
                         },
-                        percentage: controller.abdomenPercentage.value,
-                        intensityColor: controller.abdomenIntensityColor,
-                        programStatus: controller.programsStatus[2].status!.value,
+                        percentage: dashboardController.abdomenPercentage.value,
+                        intensityColor: dashboardController.abdomenIntensityColor,
+                        programStatus: dashboardController.programsStatus[2].status!.value,
                         onPress: (){
-                          if(controller.programsStatus[2].status!.value != ProgramStatus.inactive) {
-                            controller.updateProgramStatus(
+                          if(dashboardController.programsStatus[2].status!.value != ProgramStatus.inactive) {
+                            dashboardController.updateProgramStatus(
                               Strings.abdomen,
-                              controller.programsStatus[2].status!.value == ProgramStatus.active
+                              dashboardController.programsStatus[2].status!.value == ProgramStatus.active
                                   ? ProgramStatus.blocked
                                   : ProgramStatus.active,
                             );
                           }
                         },
                         onLongPress: (){
-                          controller.abdomenPercentage.value = 0;
-                          controller.abdomenIntensityColor = AppColors.lowIntensityColor;
-                          controller.updateProgramStatus(
+                          dashboardController.abdomenPercentage.value = 0;
+                          dashboardController.abdomenIntensityColor = AppColors.lowIntensityColor;
+                          dashboardController.updateProgramStatus(
                             Strings.abdomen,
-                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[2].status!.value)
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(dashboardController.programsStatus[2].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
                           );
@@ -142,30 +143,30 @@ class DashboardFirstColumn extends StatelessWidget {
                         title: translation(context).legs,
                         image: Strings.legsIcon,
                         onIncrease: () {
-                          controller.changeLegsPercentage(isIncrease: true);
+                          dashboardController.changeLegsPercentage(isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeLegsPercentage(isDecrease: true);
+                          dashboardController.changeLegsPercentage(isDecrease: true);
                         },
-                        percentage: controller.legsPercentage.value,
-                        intensityColor: controller.legsIntensityColor,
-                        programStatus: controller.programsStatus[3].status!.value,
+                        percentage: dashboardController.legsPercentage.value,
+                        intensityColor: dashboardController.legsIntensityColor,
+                        programStatus: dashboardController.programsStatus[3].status!.value,
                         onPress: (){
-                          if(controller.programsStatus[3].status!.value != ProgramStatus.inactive) {
-                            controller.updateProgramStatus(
+                          if(dashboardController.programsStatus[3].status!.value != ProgramStatus.inactive) {
+                            dashboardController.updateProgramStatus(
                               Strings.legs,
-                              controller.programsStatus[3].status!.value == ProgramStatus.active
+                              dashboardController.programsStatus[3].status!.value == ProgramStatus.active
                                   ? ProgramStatus.blocked
                                   : ProgramStatus.active,
                             );
                           }
                         },
                         onLongPress: (){
-                          controller.legsPercentage.value = 0;
-                          controller.legsIntensityColor = AppColors.lowIntensityColor;
-                          controller.updateProgramStatus(
+                          dashboardController.legsPercentage.value = 0;
+                          dashboardController.legsIntensityColor = AppColors.lowIntensityColor;
+                          dashboardController.updateProgramStatus(
                             Strings.legs,
-                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[3].status!.value)
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(dashboardController.programsStatus[3].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
                           );
@@ -181,30 +182,30 @@ class DashboardFirstColumn extends StatelessWidget {
                         title: translation(context).chest,
                         image: Strings.chestIcon,
                         onIncrease: () {
-                          controller.changeChestPercentage(isIncrease: true);
+                          dashboardController.changeChestPercentage(isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeChestPercentage(isDecrease: true);
+                          dashboardController.changeChestPercentage(isDecrease: true);
                         },
-                        percentage: controller.chestPercentage.value,
-                        intensityColor: controller.chestIntensityColor,
-                        programStatus: controller.programsStatus[0].status!.value,
+                        percentage: dashboardController.chestPercentage.value,
+                        intensityColor: dashboardController.chestIntensityColor,
+                        programStatus: dashboardController.programsStatus[0].status!.value,
                         onPress: (){
-                          if(controller.programsStatus[0].status!.value != ProgramStatus.inactive) {
-                            controller.updateProgramStatus(
+                          if(dashboardController.programsStatus[0].status!.value != ProgramStatus.inactive) {
+                            dashboardController.updateProgramStatus(
                             Strings.chest,
-                            controller.programsStatus[0].status!.value == ProgramStatus.active
+                            dashboardController.programsStatus[0].status!.value == ProgramStatus.active
                                 ? ProgramStatus.blocked
                                 : ProgramStatus.active,
                           );
                           }
                         },
                         onLongPress: (){
-                          controller.chestPercentage.value = 0;
-                          controller.chestIntensityColor = AppColors.lowIntensityColor;
-                          controller.updateProgramStatus(
+                          dashboardController.chestPercentage.value = 0;
+                          dashboardController.chestIntensityColor = AppColors.lowIntensityColor;
+                          dashboardController.updateProgramStatus(
                             Strings.chest,
-                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[0].status!.value)
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(dashboardController.programsStatus[0].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
                           );
@@ -216,30 +217,30 @@ class DashboardFirstColumn extends StatelessWidget {
                         title: translation(context).arms,
                         image: Strings.armsIcon,
                         onIncrease: () {
-                          controller.changeArmsPercentage(isIncrease: true);
+                          dashboardController.changeArmsPercentage(isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeArmsPercentage(isDecrease: true);
+                          dashboardController.changeArmsPercentage(isDecrease: true);
                         },
-                        percentage: controller.armsPercentage.value,
-                        intensityColor: controller.armsIntensityColor,
-                        programStatus: controller.programsStatus[1].status!.value,
+                        percentage: dashboardController.armsPercentage.value,
+                        intensityColor: dashboardController.armsIntensityColor,
+                        programStatus: dashboardController.programsStatus[1].status!.value,
                         onPress: (){
-                          if(controller.programsStatus[1].status!.value != ProgramStatus.inactive) {
-                            controller.updateProgramStatus(
+                          if(dashboardController.programsStatus[1].status!.value != ProgramStatus.inactive) {
+                            dashboardController.updateProgramStatus(
                               Strings.arms,
-                              controller.programsStatus[1].status!.value == ProgramStatus.active
+                              dashboardController.programsStatus[1].status!.value == ProgramStatus.active
                                   ? ProgramStatus.blocked
                                   : ProgramStatus.active,
                             );
                           }
                         },
                         onLongPress: (){
-                          controller.armsPercentage.value = 0;
-                          controller.armsIntensityColor = AppColors.lowIntensityColor;
-                          controller.updateProgramStatus(
+                          dashboardController.armsPercentage.value = 0;
+                          dashboardController.armsIntensityColor = AppColors.lowIntensityColor;
+                          dashboardController.updateProgramStatus(
                             Strings.arms,
-                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[1].status!.value)
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(dashboardController.programsStatus[1].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
                           );
@@ -251,30 +252,30 @@ class DashboardFirstColumn extends StatelessWidget {
                         title: translation(context).abdomen,
                         image: Strings.abdomenIcon,
                         onIncrease: () {
-                          controller.changeAbdomenPercentage(isIncrease: true);
+                          dashboardController.changeAbdomenPercentage(isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeAbdomenPercentage(isDecrease: true);
+                          dashboardController.changeAbdomenPercentage(isDecrease: true);
                         },
-                        percentage: controller.abdomenPercentage.value,
-                        intensityColor: controller.abdomenIntensityColor,
-                        programStatus: controller.programsStatus[2].status!.value,
+                        percentage: dashboardController.abdomenPercentage.value,
+                        intensityColor: dashboardController.abdomenIntensityColor,
+                        programStatus: dashboardController.programsStatus[2].status!.value,
                         onPress: (){
-                          if(controller.programsStatus[2].status!.value != ProgramStatus.inactive) {
-                            controller.updateProgramStatus(
+                          if(dashboardController.programsStatus[2].status!.value != ProgramStatus.inactive) {
+                            dashboardController.updateProgramStatus(
                               Strings.abdomen,
-                              controller.programsStatus[2].status!.value == ProgramStatus.active
+                              dashboardController.programsStatus[2].status!.value == ProgramStatus.active
                                   ? ProgramStatus.blocked
                                   : ProgramStatus.active,
                             );
                           }
                         },
                         onLongPress: (){
-                          controller.abdomenPercentage.value = 0;
-                          controller.abdomenIntensityColor = AppColors.lowIntensityColor;
-                          controller.updateProgramStatus(
+                          dashboardController.abdomenPercentage.value = 0;
+                          dashboardController.abdomenIntensityColor = AppColors.lowIntensityColor;
+                          dashboardController.updateProgramStatus(
                             Strings.abdomen,
-                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[2].status!.value)
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(dashboardController.programsStatus[2].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
                           );
@@ -286,30 +287,30 @@ class DashboardFirstColumn extends StatelessWidget {
                         title: translation(context).legs,
                         image: Strings.legsIcon,
                         onIncrease: () {
-                          controller.changeLegsPercentage(isIncrease: true);
+                          dashboardController.changeLegsPercentage(isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeLegsPercentage(isDecrease: true);
+                          dashboardController.changeLegsPercentage(isDecrease: true);
                         },
-                        percentage: controller.legsPercentage.value,
-                        intensityColor: controller.legsIntensityColor,
-                        programStatus: controller.programsStatus[3].status!.value,
+                        percentage: dashboardController.legsPercentage.value,
+                        intensityColor: dashboardController.legsIntensityColor,
+                        programStatus: dashboardController.programsStatus[3].status!.value,
                         onPress: (){
-                          if(controller.programsStatus[3].status!.value != ProgramStatus.inactive) {
-                            controller.updateProgramStatus(
+                          if(dashboardController.programsStatus[3].status!.value != ProgramStatus.inactive) {
+                            dashboardController.updateProgramStatus(
                               Strings.legs,
-                              controller.programsStatus[3].status!.value == ProgramStatus.active
+                              dashboardController.programsStatus[3].status!.value == ProgramStatus.active
                                   ? ProgramStatus.blocked
                                   : ProgramStatus.active,
                             );
                           }
                         },
                         onLongPress: (){
-                          controller.legsPercentage.value = 0;
-                          controller.legsIntensityColor = AppColors.lowIntensityColor;
-                          controller.updateProgramStatus(
+                          dashboardController.legsPercentage.value = 0;
+                          dashboardController.legsIntensityColor = AppColors.lowIntensityColor;
+                          dashboardController.updateProgramStatus(
                             Strings.legs,
-                            [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[3].status!.value)
+                            [ProgramStatus.active, ProgramStatus.blocked].contains(dashboardController.programsStatus[3].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
                           );

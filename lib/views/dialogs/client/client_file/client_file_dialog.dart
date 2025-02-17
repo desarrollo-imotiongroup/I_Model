@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/views/dialogs/client/client_file/client_active_groups.dart';
 import 'package:i_model/views/dialogs/client/client_file/client_activities.dart';
@@ -22,7 +23,6 @@ void clientFileDialog(BuildContext context) {
     barrierDismissible: false,
     context: context,
     builder: (BuildContext context) {
-      controller.setClientName();
 
       return Dialog(
         shape: RoundedRectangleBorder(
@@ -38,16 +38,12 @@ void clientFileDialog(BuildContext context) {
               child: Column(
                 children: [
                   SizedBox(height: screenWidth * 0.015),
-                  Padding(
-                    padding:
-                        EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title: translation(context).clientFile,
-                      isCancelNeeded: true,
-                      onCancel: (){
-                      Navigator.pop(context);
-                      controller.resetEverything();
-                    },),
-                  ),
+                  TopTitleButton(title: translation(context).clientFile,
+                    isCancelNeeded: true,
+                    onCancel: (){
+                    Navigator.pop(context);
+                    controller.resetEverything();
+                  },),
                   Divider(color: AppColors.pinkColor),
 
                   // Tab Bar Implementation

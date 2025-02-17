@@ -71,6 +71,9 @@ class Configuration extends StatelessWidget {
                       isAllowNumberOnly: true,
                       fontSize: 11.sp,
                       unit: ' (Hz)',
+                      onNext: () {
+                        controller.moveFocusTo(context, controller.pulseFocusNode);
+                      },
                     ),
                     SizedBox(height: screenHeight * 0.01,),
 
@@ -82,6 +85,10 @@ class Configuration extends StatelessWidget {
                       textEditingController: controller.pulseController,
                       isAllowNumberOnly: true,
                       fontSize: 11.sp,
+                      onNext: () {
+                        controller.moveFocusTo(context, controller.rampFocusNode);
+                      },
+                      focusNode: controller.pulseFocusNode,
                     )
                   ],
                 ),
@@ -94,7 +101,11 @@ class Configuration extends StatelessWidget {
                         icon: Strings.rampIcon,
                         label: translation(context).ramp,
                         unit: ' (sx10)',
-                        textEditingController: controller.rampController
+                        textEditingController: controller.rampController,
+                      onNext: () {
+                        controller.moveFocusTo(context, controller.contractionFocusNode);
+                      },
+                      focusNode: controller.rampFocusNode,
                     ),
 
                     /// Contraction text field
@@ -104,6 +115,10 @@ class Configuration extends StatelessWidget {
                       unit: ' (s.)',
                       textEditingController: controller.contractionController,
                       textInputAction: TextInputAction.done,
+                      onNext: () {
+                        controller.moveFocusTo(context, controller.pauseFocusNode);
+                      },
+                      focusNode: controller.contractionFocusNode,
                     ),
                   ],
                 ),
@@ -117,6 +132,8 @@ class Configuration extends StatelessWidget {
                       label: translation(context).pause,
                       unit: ' (s.)',
                       textEditingController: controller.pauseController,
+                      focusNode: controller.pauseFocusNode,
+                      textInputAction: TextInputAction.done,
                     ),
                   ],
                 )

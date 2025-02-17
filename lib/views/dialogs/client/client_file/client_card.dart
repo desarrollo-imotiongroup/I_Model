@@ -65,6 +65,7 @@ class ClientCard extends StatelessWidget {
                               textEditingController: controller.pointsTextEditingController,
                               onAdd: (){
                                 controller.saveBonos(int.parse(controller.pointsTextEditingController.text,),);
+                                controller.pointsTextEditingController.clear();
                               }
                           );
                         },
@@ -83,7 +84,7 @@ class ClientCard extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: screenHeight * 0.02,),
+          SizedBox(height: screenHeight * 0.04,),
 
           SizedBox(
             height: screenHeight * 0.42,
@@ -315,21 +316,20 @@ class ClientCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: screenHeight * 0.01,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
-              ),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
-              ),
-            ],
-          ),
-          SizedBox(height: screenHeight * 0.03,)
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     imageWidget(
+          //         image: Strings.removeIcon,
+          //         height: screenHeight * 0.08
+          //     ),
+          //     imageWidget(
+          //         image: Strings.checkIcon,
+          //         height: screenHeight * 0.08
+          //     ),
+          //   ],
+          // ),
+          SizedBox(height: screenHeight * 0.02,)
         ],
       ),
     );

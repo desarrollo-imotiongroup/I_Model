@@ -9,6 +9,8 @@ class TextFieldImage extends StatelessWidget {
   final TextEditingController textEditingController;
   final TextInputAction? textInputAction;
   final String? unit;
+  final FocusNode? focusNode;
+  final Function()? onNext;
 
   const TextFieldImage({
       required this.icon,
@@ -16,6 +18,8 @@ class TextFieldImage extends StatelessWidget {
       required this.textEditingController,
       this.textInputAction,
       this.unit,
+      this.focusNode,
+      this.onNext,
       super.key});
 
   @override
@@ -33,6 +37,8 @@ class TextFieldImage extends StatelessWidget {
         ),
         SizedBox(width: screenWidth * 0.005,),
         TextFieldLabel(
+          focusNode: focusNode,
+          onNext: onNext,
           width: screenWidth * 0.15,
           label: label,
           unit: unit,

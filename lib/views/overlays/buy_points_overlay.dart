@@ -21,7 +21,6 @@ void buyPointsOverlay(
   MediaQueryData mediaQuery = MediaQuery.of(context);
   double screenWidth = mediaQuery.size.width;
   double screenHeight = mediaQuery.size.height;
-  CreateNewClientController controller = Get.put(CreateNewClientController());
 
   overlayEntry = OverlayEntry(
     builder: (context) => Material(

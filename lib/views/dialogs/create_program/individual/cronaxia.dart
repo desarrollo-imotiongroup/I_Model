@@ -31,7 +31,9 @@ class Cronaxia extends StatelessWidget {
         fontSize: 11.sp,
         unit: ' (ms)',
         textInputAction: !isDone ? TextInputAction.next : TextInputAction.done,
-        isReadOnly: controller.pulseController.text == '' ? false : true,
+        isReadOnly: (controller.pulseController.text == Strings.nothing || int.parse(controller.pulseController.text) == 0)
+            ? false
+            : true,
       );
     }
 
@@ -130,7 +132,12 @@ class Cronaxia extends StatelessWidget {
 
                           /// Chest text field / Pecho
                           controller.selectedEquipment.value == Strings.bioShape
-                              ? Container()
+                              ?
+                          /// Arms text field / Brazos
+                          cronaxiaTextField(
+                            label: Strings.arms,
+                            textEditingController: controller.armsController,
+                          )
                               : cronaxiaTextField(
                             label: Strings.chest,
                             textEditingController: controller.chestController,
@@ -161,15 +168,24 @@ class Cronaxia extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          /// Arms text field / Brazos
+                          controller.selectedEquipment.value == Strings.bioShape
+                              ? /// Extra text field
                           cronaxiaTextField(
+                              label: Strings.extra,
+                              textEditingController: controller.extraController,
+                              isDone: true
+                          )
+                          /// Arms text field / Brazos
+                           : cronaxiaTextField(
                             label: Strings.arms,
                             textEditingController: controller.armsController,
                           ),
                           SizedBox(height: screenHeight * 0.01,),
 
-                          /// Extra text field
-                          cronaxiaTextField(
+                          controller.selectedEquipment.value == Strings.bioShape
+                          ? Container()
+                             ///  Extra text field
+                          : cronaxiaTextField(
                               label: Strings.extra,
                               textEditingController: controller.extraController,
                               isDone: true

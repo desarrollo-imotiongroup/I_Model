@@ -440,10 +440,7 @@ class ClientBioimpedancia extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            imageWidget(
-                image: Strings.removeIcon,
-                height: screenHeight * 0.08
-            ),
+            Container(),
             imageWidget(
                 image: Strings.checkIcon,
                 height: screenHeight * 0.08
