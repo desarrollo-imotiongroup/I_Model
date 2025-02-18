@@ -16,6 +16,7 @@ void main() {
       statusBarIconBrightness: Brightness.dark, // For white icons
     ),
   );
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,

@@ -839,7 +839,7 @@ class ProgramsController extends GetxController{
         context,
         heading: translation(context).alertCompleteForm,
         isOneButtonNeeded: true,
-        description: Strings.emptySequenceError,
+        description: translation(context).emptySequenceError,
       );
     }
   }

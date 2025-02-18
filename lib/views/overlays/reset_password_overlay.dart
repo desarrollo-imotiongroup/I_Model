@@ -10,7 +10,7 @@ import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/top_title_button.dart';
 
-void resetPasswordOverlay(BuildContext context, {Function()? onTap}) {
+void resetPasswordOverlay(BuildContext context, {required int userId}) {
   final overlayState = Overlay.of(context);
   late OverlayEntry overlayEntry;
 
@@ -109,7 +109,9 @@ void resetPasswordOverlay(BuildContext context, {Function()? onTap}) {
                               padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.02),
                               child: UnboundedContainer(
                                 borderColor: AppColors.pinkColor,
-                                onTap: onTap,
+                                onTap: (){
+                                  controller.updatePassword(context, userId, overlayEntry);
+                                },
                                 widget: TextView.title(
                                   translation(context).logIn.toUpperCase(),
                                   fontSize: 11.sp,

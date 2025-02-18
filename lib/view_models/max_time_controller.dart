@@ -25,12 +25,12 @@ class MaxTimeSelectionController extends GetxController{
 
       dismissOverlayFunc();
 
-      HelperMethods.showSnackBar(context, title: Strings.maxTimeSnackBarConfirmation);
+      HelperMethods.showSnackBar(context, title: translation(context).maxTimeSnackBarConfirmation);
     }
     else{
       alertOverlay(context,
           heading: translation(context).alertCompleteForm,
-          description: Strings.notSelectedMaxTimeError,
+          description: translation(context).notSelectedMaxTimeError,
           isOneButtonNeeded: true
       );
     }

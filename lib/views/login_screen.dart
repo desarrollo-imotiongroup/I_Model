@@ -42,8 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) {
         alertOverlay(context,
-            heading: Strings.areYouSure,
-            description: Strings.closeApp,
+            heading: translation(context).areYouSure,
+            description: translation(context).closeApp,
             buttonText: translation(context).yesDelete,
             onPress: () {
           SystemNavigator.pop();

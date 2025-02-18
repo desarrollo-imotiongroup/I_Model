@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:i_model/config/language_constants.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/textview.dart';
 
 void showSuccessDialog(BuildContext context, {String? title, bool isCloseDialog = false} ) {
@@ -31,7 +30,7 @@ void showSuccessDialog(BuildContext context, {String? title, bool isCloseDialog 
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              Strings.success.toUpperCase(),
+              translation(context).success.toUpperCase(),
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -40,7 +39,7 @@ void showSuccessDialog(BuildContext context, {String? title, bool isCloseDialog 
             ),
             SizedBox(height: 10),
             TextView.title(
-              title?.toUpperCase() ?? Strings.successMsg.toUpperCase(),
+              title?.toUpperCase() ?? translation(context).successMsg.toUpperCase(),
               fontSize: 10.sp,
               color: Colors.green[700],
               textAlign: TextAlign.center,

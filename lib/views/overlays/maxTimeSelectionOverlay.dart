@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/max_time_controller.dart';
 import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
@@ -33,7 +33,7 @@ void maxTimeSelectionOverlay(BuildContext context) {
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
                 child: TopTitleButton(
-                  title: Strings.maxTime,
+                  title: translation(context).maxTime,
                   onCancel: () {
                     if (overlayEntry.mounted) {
                       overlayEntry.remove();
@@ -68,7 +68,7 @@ void maxTimeSelectionOverlay(BuildContext context) {
 
                         /// Display the selected value (minutes)
                         TextView.title(
-                            '${controller.maxTimeValue.value} ${Strings.minutes.toUpperCase()}',
+                            '${controller.maxTimeValue.value} ${translation(context).minutes.toUpperCase()}',
                             fontSize: 12.sp),
 
                         SizedBox(
@@ -86,7 +86,7 @@ void maxTimeSelectionOverlay(BuildContext context) {
                             },
                             width: screenWidth * 0.2,
                             widget: TextView.title(
-                                Strings.confirm.toUpperCase(),
+                              translation(context).confirm.toUpperCase(),
                                 fontSize: 12.sp,
                                 color: AppColors.blackColor.withValues(alpha: 0.8),
                             ),

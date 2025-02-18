@@ -165,9 +165,9 @@ class _ClientPersonalDataState extends State<ClientPersonalData> {
               GestureDetector(
                 onTap: (){
                   alertOverlay(context,
-                      heading: Strings.delete,
-                      description: Strings.confirmDeleteClient,
-                      buttonText: Strings.yesSure,
+                      heading: translation(context).delete,
+                      description: translation(context).confirmDeleteClient,
+                      buttonText: translation(context).yesSure,
                       onPress: (){
                               controller.deleteClient(context);
                               Navigator.pop(context);

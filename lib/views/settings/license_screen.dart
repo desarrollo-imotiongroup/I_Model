@@ -13,10 +13,43 @@ import 'package:i_model/widgets/table_text_info.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 
-class LicenseScreen extends StatelessWidget {
+class LicenseScreen extends StatefulWidget {
   LicenseScreen({super.key});
 
+  @override
+  State<LicenseScreen> createState() => _LicenseScreenState();
+}
+
+class _LicenseScreenState extends State<LicenseScreen> {
   final LicenseController controller = Get.put(LicenseController());
+
+  @override
+  void dispose() {
+    print('license dispose');
+    // Dispose of all FocusNodes using the controller
+    controller.nameFocusNode.dispose();
+    controller.directionFocusNode.dispose();
+    controller.cityFocusNode.dispose();
+    controller.provinceFocusNode.dispose();
+    controller.countryFocusNode.dispose();
+    controller.phoneFocusNode.dispose();
+    controller.emailFocusNode.dispose();
+
+    // Dispose of all TextEditingControllers using the controller
+    controller.licenseNumberController.dispose();
+    controller.nameController.dispose();
+    controller.directionController.dispose();
+    controller.cityController.dispose();
+    controller.provinceController.dispose();
+    controller.countryController.dispose();
+    controller.phoneController.dispose();
+    controller.emailController.dispose();
+
+    controller.disposeController();
+
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +89,7 @@ class LicenseScreen extends StatelessWidget {
                           color: AppColors.pinkColor,
                         ),
                         GestureDetector(
-                          onTap: () {
+                          onTap: () async {
                             Navigator.pop(context);
                           },
                           child: Image(
@@ -121,7 +154,7 @@ class LicenseScreen extends StatelessWidget {
                                           /// Direction/address textField
                                           TextFieldLabel(
                                             label: translation(context).address.toUpperCase(),
-                                            textEditingController: controller.addressController,
+                                            textEditingController: controller.directionController,
                                             fontSize: 12.sp,
                                             focusNode: controller.directionFocusNode,
                                             onNext: () {
@@ -192,17 +225,33 @@ class LicenseScreen extends StatelessWidget {
 
                                   SizedBox(height: screenHeight * 0.06,),
 
-                                  RoundedContainer(
-                                      onTap: () {
-                                        controller.validateLicense();
-                                      },
-                                      borderRadius: screenHeight * 0.01,
-                                      width: screenWidth * 0.2,
-                                      widget: TextView.title(
-                                        translation(context).validateLicense.toUpperCase(),
-                                        color: AppColors.blackColor,
-                                        fontSize: 14.sp,
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      RoundedContainer(
+                                          onTap: () {
+                                            controller.validarLicencia(context);
+                                          },
+                                          borderRadius: screenHeight * 0.01,
+                                          width: screenWidth * 0.2,
+                                          widget: TextView.title(
+                                            translation(context).validateLicense.toUpperCase(),
+                                            color: AppColors.blackColor,
+                                            fontSize: 14.sp,
+                                          )
+                                      ),
+                                      Obx(() =>
+                                      controller.mcis.isNotEmpty
+                                          ? Padding(padding: EdgeInsets.only(left: screenWidth * 0.02),
+                                        child: TextView.title(
+                                            translation(context).validLicense.toUpperCase(),
+                                            color: Colors.green,
+                                            fontSize: 12.sp
+                                        ),
                                       )
+                                          : SizedBox()
+                                      )
+                                    ],
                                   ),
                                 ],
                               ),
@@ -245,61 +294,65 @@ class LicenseScreen extends StatelessWidget {
                                           ),
                                         ),
 
-                                        CustomContainer(
-                                            color: AppColors.greyColor,
-                                            width: screenWidth * 0.3,
-                                            height: screenHeight * 0.6,
-                                            widget: ListView.builder(
-                                              padding: EdgeInsets.zero,
-                                              itemCount: controller.mciLicenseList.length,
-                                              itemBuilder: (BuildContext context, int index) {
-                                                return  GestureDetector(
-                                                  onTap: () async {
-                                                    controller.selectedStatus.value =
-                                                        controller.mciLicenseList[index].status.value;
+                                        Obx(() =>
+                                            CustomContainer(
+                                                color: AppColors.greyColor,
+                                                width: screenWidth * 0.3,
+                                                height: screenHeight * 0.6,
+                                                widget: ListView.builder(
+                                                  padding: EdgeInsets.zero,
+                                                  itemCount: controller.mcis.length,
+                                                  itemBuilder: (BuildContext context, int index) {
+                                                    return  GestureDetector(
+                                                      onTap: () async {
+                                                        controller.selectedStatus.value =
+                                                            controller.mciLicenseList[index].status.value;
 
-                                                    licenseDetailDialog(
-                                                      context,
-                                                      index: index,
+                                                        licenseDetailDialog(
+                                                          context,
+                                                          index: index,
+                                                        );
+                                                      },
+                                                      child: Column(
+                                                        children: [
+                                                          Padding(
+                                                            padding: EdgeInsets.symmetric(
+                                                              vertical: screenHeight * 0.01,
+                                                            ),
+                                                            child: RoundedContainer(
+                                                                width: screenWidth * 0.3,
+                                                                borderColor: AppColors.transparentColor,
+                                                                borderRadius: screenWidth * 0.006,
+                                                                color: AppColors.pureWhiteColor,
+                                                                widget: Row(
+                                                                  children: [
+                                                                    /// Table cells info
+                                                                    tableTextInfo(
+                                                                      title: controller.mcis[index]['mac'],
+                                                                      color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                                      fontSize: 9.sp,
+                                                                    ),
+                                                                    tableTextInfo(
+                                                                      title: controller.mcis[index]['macBle'] == true
+                                                                      ? 'BLE'
+                                                                      : 'BT',
+                                                                      color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                                      fontSize: 10.sp,
+                                                                    ),
+                                                                    tableTextInfo(
+                                                                      title: controller.licenseStatus.value,
+                                                                      color: AppColors.blackColor.withValues(alpha: 0.8),
+                                                                      fontSize: 10.sp,
+                                                                    ),
+                                                                  ],
+                                                                )
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     );
                                                   },
-                                                  child: Column(
-                                                    children: [
-                                                      Padding(
-                                                        padding: EdgeInsets.symmetric(
-                                                          vertical: screenHeight * 0.01,
-                                                        ),
-                                                        child: RoundedContainer(
-                                                            width: screenWidth * 0.3,
-                                                            borderColor: AppColors.transparentColor,
-                                                            borderRadius: screenWidth * 0.006,
-                                                            color: AppColors.pureWhiteColor,
-                                                            widget: Row(
-                                                              children: [
-                                                                /// Table cells info
-                                                                tableTextInfo(
-                                                                  title: controller.mciLicenseList[index].mci,
-                                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                                  fontSize: 10.sp,
-                                                                ),
-                                                                tableTextInfo(
-                                                                  title: controller.mciLicenseList[index].type.toUpperCase(),
-                                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                                  fontSize: 10.sp,
-                                                                ),
-                                                                tableTextInfo(
-                                                                  title: controller.mciLicenseList[index].status.value.toUpperCase(),
-                                                                  color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                                  fontSize: 10.sp,
-                                                                ),
-                                                              ],
-                                                            )
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
+                                                )
                                             )
                                         )
 

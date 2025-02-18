@@ -168,9 +168,7 @@ class LoginController extends GetxController{
 
       // Si la contraseña es "0000", navega a cambiar la contraseña
       if (password == "0000") {
-        resetPasswordOverlay(context, onTap: (){
-          _updatePassword(context, userId);
-        });
+        resetPasswordOverlay(context, userId: userId);
       } else {
         // Retraso antes de navegar al menú principal
         await Future.delayed(
@@ -183,7 +181,7 @@ class LoginController extends GetxController{
     } else {
       // Si las credenciales son incorrectas, mostrar el mensaje de error
 
-        errorMessage.value = Strings.inCorrectCredentials;// Mostrar error
+        errorMessage.value = translation(context).inCorrectCredentials;// Mostrar error
         HelperMethods.showSnackBar(context, title: errorMessage.value);
     }
   }
@@ -192,7 +190,7 @@ class LoginController extends GetxController{
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController repeatPasswordController = TextEditingController();
 
-  Future<void> _updatePassword(BuildContext context, int? userId) async {
+  Future<void> updatePassword(BuildContext context, int? userId, OverlayEntry overlayEntry) async {
     if (userId == null) {
       print('UserId no disponible.');
       return;
@@ -229,7 +227,7 @@ class LoginController extends GetxController{
 
       // Actualizar el usuario en la base de datos
       DatabaseHelper dbHelper = DatabaseHelper();
-      await dbHelper.updateUser(userId!, clientData);
+      await dbHelper.updateUser(userId, clientData);
       print(
           'Contraseña actualizada correctamente para el usuario con ID $userId.');
 
@@ -263,6 +261,13 @@ class LoginController extends GetxController{
           description: 'Contraseña actualizada con éxito',
       );
 
+      clearTextFields();
+      // Remove the overlay once password is updated
+      if (overlayEntry.mounted) {
+        overlayEntry.remove();
+      }
+
+      /// Here i want to remove the overlay - CHAT GPT DO SOMETHING HERE
       // Navegar al menú principal
 
     } catch (e) {
@@ -277,6 +282,12 @@ class LoginController extends GetxController{
     }
   }
 
+  clearTextFields(){
+    usernameEditingController.clear();
+    passwordEditingController.clear();
+    newPasswordController.clear();
+    repeatPasswordController.clear();
+  }
 
   Future<bool> checkUserLoginStatus() async {
     // Obtener el userId desde SharedPreferences

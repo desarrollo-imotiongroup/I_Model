@@ -21,8 +21,8 @@ class DashboardScreen extends StatelessWidget
 
  void closePanel(BuildContext context){
    alertOverlay(context,
-       heading: Strings.warning,
-       description: Strings.exitFromPanel,
+       heading: translation(context).warning,
+       description: translation(context).exitFromPanel,
        buttonText: translation(context).yesDelete,
        onPress: () {
          dashboardController.resetEverything();
@@ -56,7 +56,7 @@ class DashboardScreen extends StatelessWidget
             padding: EdgeInsets.only(
               top: screenHeight * 0.035,
               left: screenWidth * 0.03,
-              right: screenWidth * 0.02,
+              right: screenWidth * 0.015,
             ),
             child: SingleChildScrollView(
               child: Column(
@@ -112,7 +112,7 @@ class DashboardScreen extends StatelessWidget
 
                       /// Second column - timer
                       DashboardSecondColumn(),
-                      SizedBox(width: screenWidth * 0.03,),
+                      SizedBox(width: screenWidth * 0.027,),
 
                       /// Muscle group 2 - third column
                       DashboardThirdColumn(),

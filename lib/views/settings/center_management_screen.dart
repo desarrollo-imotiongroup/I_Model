@@ -7,7 +7,6 @@ import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/administrator_controller.dart';
 import 'package:i_model/view_models/center_management/beautician_controller.dart';
 import 'package:i_model/view_models/center_management/create_profile_controller.dart';
-import 'package:i_model/view_models/menu/center_management_controller.dart';
 import 'package:i_model/views/dialogs/create_file/create_file_dialog.dart';
 import 'package:i_model/views/overlays/administrator_list_overlay.dart';
 import 'package:i_model/views/overlays/beautician_list_overlay.dart';

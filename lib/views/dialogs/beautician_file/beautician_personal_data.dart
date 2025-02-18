@@ -6,10 +6,9 @@ import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/beautician_controller.dart';
 import 'package:i_model/views/overlays/alert_overlay.dart';
-import 'package:i_model/views/overlays/reset_password_overlay.dart';
+import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/image_widget.dart';
-import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 
@@ -189,7 +188,7 @@ class _BeauticianPersonalDataState extends State<BeauticianPersonalData> {
                         alertOverlay(context,
                             heading: translation(context).resetPassword,
                             buttonText: translation(context).yesDelete,
-                            description: Strings.resetPassTo0000,
+                            description: translation(context).resetPassTo0000,
                             onPress: () {
                               controller.updatePassword(context);
                               Navigator.pop(context);
@@ -218,9 +217,9 @@ class _BeauticianPersonalDataState extends State<BeauticianPersonalData> {
               GestureDetector(
                 onTap: (){
                   alertOverlay(context,
-                      heading: Strings.delete,
-                      description: Strings.confirmDeleteBeautician,
-                      buttonText: Strings.yesSure,
+                      heading: translation(context).delete,
+                      description: translation(context).confirmDeleteBeautician,
+                      buttonText: translation(context).yesSure,
                       onPress: (){
                         controller.deleteEsteticista(context);
                         Navigator.pop(context);

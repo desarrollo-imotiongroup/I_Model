@@ -26,8 +26,8 @@ class MenuScreen extends StatelessWidget {
 
     void closeSession(){
       alertOverlay(context,
-          heading: Strings.areYouSure,
-          description: Strings.backToLogin,
+          heading: translation(context).areYouSure,
+          description: translation(context).backToLogin,
           buttonText: translation(context).yesDelete,
           onPress: () async {
             SharedPreferences prefs = await SharedPreferences.getInstance();

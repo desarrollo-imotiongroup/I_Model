@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/setting_controller.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/containers/unbounded_container.dart';
@@ -52,7 +52,7 @@ class SecurityVerification extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(left: screenWidth * 0.01),
                       child: TextView.title(
-                        Strings.securityVerification,
+                        translation(context).securityVerification,
                         isUnderLine: true,
                         color: AppColors.pinkColor,
                         fontSize: 14.sp,
@@ -86,7 +86,7 @@ class SecurityVerification extends StatelessWidget {
           SizedBox(
             height: screenHeight * 0.02,
           ),
-          TextView.title(Strings.solvePrompt.toUpperCase(),
+          TextView.title(translation(context).solvePrompt.toUpperCase(),
               fontSize: 12.sp,
               color: AppColors.blackColor.withValues(alpha: 0.8)),
           SizedBox(
@@ -104,14 +104,14 @@ class SecurityVerification extends StatelessWidget {
                   children: [
                     TextView.title(
                         controller.randomNumbers.isEmpty
-                        ? Strings.loading
+                        ? translation(context).loading
                         : controller.randomNumbers.join(' '),
                         color: AppColors.blackColor.withValues(alpha: 0.8),
                         fontSize: 12.sp,
                     ),
                     SizedBox(height: screenHeight * 0.01,),
                     TextFieldLabel(
-                        label: Strings.enterSum,
+                        label: translation(context).enterSum,
                         textEditingController: controller.textEditingController,
                         width: double.infinity,
                         isAllowNumberOnly: true,
@@ -128,7 +128,7 @@ class SecurityVerification extends StatelessWidget {
                          height: screenHeight * 0.05,
                           borderColor: AppColors.blackColor.withValues(alpha: 0.8),
                           widget: TextView.title(
-                            Strings.verify,
+                            translation(context).verify,
                             fontSize: 12.sp,
                           )
                       ),

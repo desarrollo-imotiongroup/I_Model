@@ -66,7 +66,7 @@ void createFileDialog(BuildContext context,) {
                                  /// Cards/bonos content
                                  controller.isDataSaved.value
                                      ? CreateCards()
-                                     : noEntryToTab(context, title: Strings.noEntryToBonos)
+                                     : noEntryToTab(context, title: translation(context).noEntryToBonos)
                                ],
                              ),
                            ),

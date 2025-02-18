@@ -107,12 +107,6 @@ class ClientController extends GetxController {
   // RxList<dynamic> availablePoints = [].obs;
   RxInt totalAvailablePoints = 0.obs;
 
-  // buyPoints(){
-  //   availablePoints.add(ClientPoints(date: '01/02/25', quantity: int.parse(pointsTextEditingController.text)));
-  //   totalAvailablePoints = totalAvailablePoints + int.parse(pointsTextEditingController.text);
-  //   pointsTextEditingController.clear();
-  //   update();
-  // }
 
   /// Consumed points list
   RxList<ClientPoints> consumedPoints = <ClientPoints>[].obs;

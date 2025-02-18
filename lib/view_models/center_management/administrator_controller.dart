@@ -21,8 +21,6 @@ class AdministratorController extends GetxController{
   RxMap selectedAdministrator = {}.obs;
 
 
-
-
   /// Personal data
   final TextEditingController perDataNameController = TextEditingController();
   final TextEditingController nickNameController = TextEditingController();
@@ -179,7 +177,7 @@ class AdministratorController extends GetxController{
       // Filtra por nombre
       admins = admins.where((admin) {
         final matchesName = admin['name']!.toLowerCase().contains(searchText.toLowerCase());
-        final matchesStatus = selectedStatus == Strings.all ||
+        final matchesStatus = selectedStatus.value == Strings.all ||
             admin['status']!.toLowerCase() == selectedStatus.toLowerCase();
         return matchesName && matchesStatus;
       }).toList();

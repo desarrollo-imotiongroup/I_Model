@@ -129,13 +129,13 @@ class SettingController extends GetxController {
           context,
           isOneButtonNeeded: true,
           heading: translation(context).alertCompleteForm,
-          description: Strings.emptySecurityVerifyNumber
+          description: translation(context).emptySecurityVerifyNumber
       );
     }
     else if(sum.value != int.parse(textEditingController.text)){
       HelperMethods.showSnackBar(
           context,
-          title: Strings.incorrectResult
+          title: translation(context).incorrectResult
       );
     }
     else{

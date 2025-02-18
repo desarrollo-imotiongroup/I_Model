@@ -71,12 +71,12 @@ void createNewClientDialog(BuildContext context) {
                                      /// Cards/bonos content
                                      controller.isDataSaved.value
                                      ? CreateClientCard()
-                                     : noEntryToTab(context, title: Strings.noEntryToBonos),
+                                     : noEntryToTab(context, title: translation(context).noEntryToBonos),
 
                                      /// Content for Grupos Activos
                                      controller.isDataSaved.value
                                      ? CreateClientActiveGroups()
-                                     : noEntryToTab(context, title: Strings.noEntryToActiveGroups)
+                                     : noEntryToTab(context, title: translation(context).noEntryToActiveGroups)
                                    ],
                                  ),
                                ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/textview.dart';
 
@@ -76,7 +76,7 @@ class TechnicalSupport extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(left: screenWidth * 0.01),
                       child: TextView.title(
-                        Strings.technicalSupport.toUpperCase(),
+                        translation(context).technicalSupport.toUpperCase(),
                         isUnderLine: true,
                         color: AppColors.pinkColor,
                         fontSize: 14.sp,
@@ -114,17 +114,17 @@ class TechnicalSupport extends StatelessWidget {
                Row(
                  mainAxisAlignment: MainAxisAlignment.center,
                  children: [
-                   technicalSupportWidget(title: Strings.importClient),
-                   technicalSupportWidget(title: Strings.reloadPrograms),
-                   technicalSupportWidget(title: Strings.reloadMCI18000),
+                   technicalSupportWidget(title: translation(context).importClient),
+                   technicalSupportWidget(title: translation(context).reloadPrograms),
+                   technicalSupportWidget(title: translation(context).reloadMCI18000),
                  ],
                ),
                SizedBox(height: screenHeight * 0.02,),
                Row(
                  mainAxisAlignment: MainAxisAlignment.center,
                  children: [
-                   technicalSupportWidget(title: Strings.searchMybodypro),
-                   technicalSupportWidget(title: Strings.timeTo100),
+                   technicalSupportWidget(title: translation(context).searchMybodypro),
+                   technicalSupportWidget(title: translation(context).timeTo100),
                  ],
                )
              ],

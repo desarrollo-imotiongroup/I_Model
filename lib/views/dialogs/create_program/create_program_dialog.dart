@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/programs_controller.dart';
 import 'package:i_model/views/dialogs/create_program/automatic/automatic_program.dart';
-import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/views/dialogs/create_program/individual/active_groups.dart';
 import 'package:i_model/views/dialogs/create_program/individual/configuration.dart';
 import 'package:i_model/views/dialogs/create_program/individual/cronaxia.dart';
+import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/widgets/no_entry_widget.dart';
 import 'package:i_model/widgets/tab_header.dart';
-import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/top_title_button.dart';
 
 void createProgramDialog(BuildContext context,) {
@@ -94,12 +92,12 @@ void createProgramDialog(BuildContext context,) {
                                               /// Cronaxia
                                               controller.isConfigurationSaved.value
                                                   ? Cronaxia()
-                                                  : noEntryToTab(context, title: Strings.noEntryToIndCronaxia),
+                                                  : noEntryToTab(context, title: translation(context).noEntryToIndCronaxia),
 
                                               /// Active groups
                                               controller.isConfigurationSaved.value
                                                   ? ActiveGroups()
-                                                  : noEntryToTab(context, title: Strings.noEntryToIndActiveGroups),
+                                                  : noEntryToTab(context, title: translation(context).noEntryToIndActiveGroups),
                                             ],
                                           ),
                                         ),
