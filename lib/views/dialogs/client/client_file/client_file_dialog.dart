@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/views/dialogs/client/client_file/client_active_groups.dart';
 import 'package:i_model/views/dialogs/client/client_file/client_activities.dart';

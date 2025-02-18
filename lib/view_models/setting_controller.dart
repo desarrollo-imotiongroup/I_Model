@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/helper_methods.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/views/overlays/alert_overlay.dart';
 
 class SettingController extends GetxController {

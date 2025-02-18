@@ -1,11 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
-import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/helper_methods.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/db/db_helper.dart';
-import 'package:i_model/models/program.dart';
 import 'package:i_model/models/program_details.dart';
 import 'package:i_model/models/programs/automatic/sub_program.dart';
 import 'package:i_model/models/programs/individual/cronaxia.dart';

@@ -241,11 +241,11 @@ class LoginController extends GetxController{
       print('Valores previos de user_id y user_tipo_perfil eliminados.');
 
       // Guardar el nuevo userId en SharedPreferences
-      prefs.setInt('user_id', userId!); // Guardar el userId
+      prefs.setInt('user_id', userId); // Guardar el userId
       print('Nuevo user_id guardado: ${prefs.getInt('user_id')}');
 
       // Obtener el tipo de perfil actualizado para el usuario
-      String? tipoPerfil = await dbHelper.getTipoPerfilByUserId(userId!);
+      String? tipoPerfil = await dbHelper.getTipoPerfilByUserId(userId);
       if (tipoPerfil != null) {
         prefs.setString(
             'user_tipo_perfil', tipoPerfil); // Guardar el tipo de perfil

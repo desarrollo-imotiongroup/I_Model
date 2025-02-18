@@ -410,9 +410,9 @@ class ClientController extends GetxController {
 
     if (updatedClientData != null) {
         clientNameController.text = updatedClientData['name'] ?? '';
-        clientHeightController.text = updatedClientData['height'].toString() ?? '';
+        clientHeightController.text = updatedClientData['height'].toString();
         clientEmailController.text = updatedClientData['email'] ?? '';
-        clientPhoneController.text = updatedClientData['phone'].toString() ?? '';
+        clientPhoneController.text = updatedClientData['phone'].toString();
         clientWeightController.text = updatedClientData['weight']?.toString() ?? '';
         clientSelectedGender.value = updatedClientData['gender'];
         fetchedStatus.value = updatedClientData['status'];

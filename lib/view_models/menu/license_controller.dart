@@ -1,14 +1,13 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 import 'package:i_model/core/app_state.dart';
 import 'package:i_model/core/helper_methods.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/models/license.dart';
 import 'package:platform/platform.dart';
-import 'package:http/http.dart' as http;
 
 class LicenseController extends GetxController{
   final TextEditingController licenseNumberController = TextEditingController();
