@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/create_profile_controller.dart';
 import 'package:i_model/views/dialogs/create_file/create_cards.dart';
 import 'package:i_model/views/dialogs/create_file/create_personal_data.dart';
