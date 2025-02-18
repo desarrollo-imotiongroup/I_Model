@@ -102,7 +102,7 @@ class LicenseController extends GetxController{
 
 
 
-// Método para detectar el sistema operativo
+// Metodo para detectar el sistema operativo
   String detectarSO() {
     final Platform platform = LocalPlatform(); // Obtenemos la plataforma actual
 
@@ -121,7 +121,7 @@ class LicenseController extends GetxController{
     }
   }
 
-// Método para generar la cadena de licencia
+// Metodo para generar la cadena de licencia
   String generarCadenaLicencia() {
     String licencia = licenseNumberController.text;
     String nombre = nameController.text;
@@ -157,7 +157,7 @@ class LicenseController extends GetxController{
     return cadenaLicencia; // Aquí se devuelve la cadena codificada
   }
 
-// Método de encriptación (sin cambios)
+// Metodo de encriptación (sin cambios)
   String encrip(String wcadena) {
     String xkkk =
         'ABCDE0FGHIJ1KLMNO2PQRST3UVWXY4Zabcd5efghi6jklmn7opqrs8tuvwx9yz(),-.:;@';
