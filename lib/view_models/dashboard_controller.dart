@@ -245,7 +245,8 @@ class DashboardController extends GetxController {
   RxDouble contractionProgress = 0.0.obs;
   RxDouble pauseProgress = 0.0.obs;
   Timer? contractionCycleTimer;
-  Timer? pauseCycleTimer;
+  Timer? pauseCycleTimer; /// TTT
+  ///  Timer? contractionCycleTimer;
   RxBool isContractionPauseCycleActive = false.obs;
   RxDouble remainingContractionSeconds = 0.0.obs;
   RxDouble remainingPauseSeconds = 0.0.obs;
@@ -293,7 +294,7 @@ class DashboardController extends GetxController {
   }
 
 
-  /// Auto
+  /// Auto Programss
   Future<void> startContractionForMultiplePrograms() async {
     if (automaticProgramValues.isEmpty) {
       print("No programs to process.");
@@ -344,7 +345,7 @@ class DashboardController extends GetxController {
   Future<void> runContractionCycle(var program, double decrementAmount) async {
     contractionProgress.value = 1.0;
     int totalDurationInSeconds = contractionSeconds.value;
-    Timer? contractionCycleTimer;
+
 
     // Run contraction cycle until it's complete
     bool cycleCompleted = false;
@@ -879,16 +880,6 @@ class DashboardController extends GetxController {
     Client(id: '1', name: 'Laura', phone: '666 666 666', status: Strings.active),
   ].obs;
 
-
-  resetEverything(){
-    resetProgramValues();
-    _timer?.cancel();
-    isTimerPaused.value = true;
-    cancelTimersOnTimeUp();
-    isProgramSelected.value = false;
-  }
-
-
   /// Reset all programs value and intensity colors
   resetProgramValues() {
     chestPercentage.value = 0;
@@ -913,11 +904,18 @@ class DashboardController extends GetxController {
     calvesIntensityColor = AppColors.lowIntensityColor;
   }
 
-  @override
-  void onClose() {
-    _timer?.cancel();
-    nameController.dispose();
-    super.onClose();
+  resetEverything() {
+    Get.delete<DashboardController>();
   }
 
+  @override
+  void onClose() {
+    print('Dashboard onClose called');
+    _timer?.cancel();
+    contractionCycleTimer?.cancel();
+    pauseCycleTimer?.cancel();
+    nameController.dispose();
+
+    super.onClose();
+  }
 }

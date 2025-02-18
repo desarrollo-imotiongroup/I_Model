@@ -44,7 +44,7 @@ class TopTitleButton extends StatelessWidget {
           },
           child: Icon(
             Icons.close_sharp,
-            size: screenHeight * 0.04,
+            size: screenHeight * 0.06,
             color: AppColors.blackColor.withValues(alpha: 0.8),
           ),
         )

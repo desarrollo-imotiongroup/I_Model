@@ -67,20 +67,6 @@ class ClientController extends GetxController {
     selectedStatus.value = Strings.all;
   }
 
-  @override
-  void onClose() {
-    nameController.dispose();
-    clientNameController.dispose();
-    clientDobController.dispose();
-    clientPhoneController.dispose();
-    clientHeightController.dispose();
-    clientWeightController.dispose();
-    clientEmailController.dispose();
-    weightFocusNode.dispose();
-    heightFocusNode.dispose();
-    emailFocusNode.dispose();
-    super.onClose();
-  }
 
   unFocus(){
     weightFocusNode.unfocus();
@@ -658,8 +644,35 @@ class ClientController extends GetxController {
     selectedGroupIds.forEach((groupId) {
      print(groupId);
     });
-    showSuccessDialog(context, title: 'Grupos actualizados correctamente');
-
+    showSuccessDialog(context, title: 'Grupos actualizados correctamente', isCloseDialog: true);
+    resetEverything();
   }
+
+  disposeController(){
+    Get.delete<ClientController>();
+  }
+
+  @override
+  void onClose() {
+    // Dispose of all TextEditingControllers
+    nameController.dispose();
+    clientNameController.dispose();
+    clientDobController.dispose();
+    clientPhoneController.dispose();
+    clientHeightController.dispose();
+    clientWeightController.dispose();
+    clientEmailController.dispose();
+    pointsTextEditingController.dispose(); // Added this if used
+
+    // Dispose of FocusNodes
+    weightFocusNode.dispose();
+    heightFocusNode.dispose();
+    emailFocusNode.dispose();
+
+
+    super.onClose();  // Always call super.onClose() to ensure proper cleanup
+  }
+
+
 
 }

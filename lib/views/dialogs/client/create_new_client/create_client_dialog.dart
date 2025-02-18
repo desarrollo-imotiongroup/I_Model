@@ -9,8 +9,8 @@ import 'package:i_model/views/dialogs/client/create_new_client/create_client_act
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_card.dart';
 import 'package:i_model/views/dialogs/client/create_new_client/create_client_personal_data.dart';
 import 'package:i_model/widgets/box_decoration.dart';
+import 'package:i_model/widgets/no_entry_widget.dart';
 import 'package:i_model/widgets/tab_header.dart';
-import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/top_title_button.dart';
 
 void createNewClientDialog(BuildContext context) {
@@ -19,23 +19,6 @@ void createNewClientDialog(BuildContext context) {
   double screenHeight = mediaQuery.size.height;
   CreateNewClientController controller = Get.put(CreateNewClientController());
 
-
-  Widget noEntryToOtherTab({required String title}){
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: screenWidth * 0.15
-      ),
-      child: Center(
-        child: TextView.title(
-            title.toUpperCase(),
-            fontSize: 10.sp,
-            lines: 2,
-            textAlign: TextAlign.center,
-            color: AppColors.blackColor.withValues(alpha: 0.8)
-        ),
-      ),
-    );
-  }
 
   showDialog(
     barrierDismissible: false,
@@ -88,12 +71,12 @@ void createNewClientDialog(BuildContext context) {
                                      /// Cards/bonos content
                                      controller.isDataSaved.value
                                      ? CreateClientCard()
-                                     : noEntryToOtherTab(title: Strings.noEntryToBonos),
+                                     : noEntryToTab(context, title: Strings.noEntryToBonos),
 
                                      /// Content for Grupos Activos
                                      controller.isDataSaved.value
                                      ? CreateClientActiveGroups()
-                                     : noEntryToOtherTab(title: Strings.noEntryToActiveGroups)
+                                     : noEntryToTab(context, title: Strings.noEntryToActiveGroups)
                                    ],
                                  ),
                                ),

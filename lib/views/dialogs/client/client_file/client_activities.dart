@@ -42,11 +42,11 @@ class ClientActivities extends StatelessWidget {
 
                 /// Client status drop down
                 DropDownWidget(
-                  selectedValue: controller.selectedStatus.value,
-                  dropDownList: controller.clientStatusList,
                   isEnable: false,
+                  selectedValue: controller.fetchedStatus.value,
+                  dropDownList: controller.statusList,
                   onChanged: (value){
-                    controller.selectedStatus.value = value;
+                    controller.fetchedStatus.value = value;
                   },
                 )
               ],

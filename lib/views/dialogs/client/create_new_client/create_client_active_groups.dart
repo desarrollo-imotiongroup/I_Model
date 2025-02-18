@@ -19,6 +19,7 @@ class CreateClientActiveGroups extends StatelessWidget {
     double screenHeight = mediaQuery.size.height;
     double screenWidth = mediaQuery.size.width;
     final CreateNewClientController controller = Get.put(CreateNewClientController());
+    controller.loadMostRecentClient();
 
     return Obx(
           () => Column(
@@ -225,7 +226,6 @@ class CreateClientActiveGroups extends StatelessWidget {
               Container(),
               GestureDetector(
                 onTap: (){
-                  int clienteId = controller.selectedClient!['id'];
                   controller.insertClientGroups(context: context);
                 },
                 child: imageWidget(

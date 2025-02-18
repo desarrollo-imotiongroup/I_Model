@@ -42,10 +42,12 @@ class _LoginScreenState extends State<LoginScreen> {
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) {
         alertOverlay(context,
-            heading: translation(context).closeApplication,
-            buttonText: translation(context).closeApplicationButton,
+            heading: Strings.areYouSure,
+            description: Strings.closeApp,
+            buttonText: translation(context).yesDelete,
             onPress: () {
-          SystemNavigator.pop();});
+          SystemNavigator.pop();
+        });
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,

@@ -16,7 +16,11 @@ class CreateProfileController extends GetxController{
   final TextEditingController birthDateController = TextEditingController();
   final TextEditingController registrationDateController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
+  FocusNode nickFocusNode = FocusNode();
+  FocusNode nameFocusNode = FocusNode();
+  FocusNode phoneFocusNode = FocusNode();
 
+  /// Datos personales
   RxString selectedProfile = Strings.nothing.obs;
   RxString selectedSessionControl = Strings.nothing.obs;
   RxString selectedTimeControl = Strings.nothing.obs;
@@ -28,7 +32,7 @@ class CreateProfileController extends GetxController{
   List<String> profileOptions = [Strings.administrator, Strings.beautician];
   List<String> timeControlOptions = [Strings.yes, Strings.no];
   int? userId;
-
+  RxBool isDataSaved = false.obs;
 
 
   createProfilePickBirthDate(BuildContext context) async {
@@ -46,6 +50,42 @@ class CreateProfileController extends GetxController{
     }
     update();
   }
+
+  void resetEverything() {
+    // Reset text controllers
+    nickNameController.clear();
+    nameController.clear();
+    birthDateController.clear();
+    registrationDateController.clear();
+    phoneController.clear();
+
+    // Reset selected options
+    selectedProfile.value = Strings.nothing;
+    selectedSessionControl.value = Strings.nothing;
+    selectedTimeControl.value = Strings.nothing;
+    selectedGender.value = Strings.nothing;
+    selectedStatus.value = Strings.nothing;
+
+    // Reset available points and consumed points
+    totalAvailablePoints.value = 0;
+    consumedPoints.clear();
+
+    // Reset boolean state
+    isDataSaved.value = false;
+
+    // Reset available bonos and total available bonos
+    availableBonos.clear();
+    totalBonosAvailables.value = 0;
+
+    update();
+  }
+
+  unFocus(){
+    nickFocusNode.unfocus();
+    nameFocusNode.unfocus();
+    phoneFocusNode.unfocus();
+  }
+
 
   /// Cards / bonos
   /// Available points list
@@ -129,6 +169,8 @@ class CreateProfileController extends GetxController{
 
     print('Datos del cliente insertados: $clientData');
 
+    unFocus();
+    isDataSaved.value = true;
     showSuccessDialog(context, title: 'Usuario añadido correctamente');
 
   }
@@ -203,6 +245,10 @@ class CreateProfileController extends GetxController{
     });
 
     loadAvailableBonos(userId);
+  }
+
+  disposeController(){
+    Get.delete<CreateProfileController>();
   }
 
   @override

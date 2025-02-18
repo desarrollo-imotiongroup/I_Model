@@ -353,7 +353,7 @@ class ActiveGroups extends StatelessWidget {
                   ),
                 ),
                 Positioned(
-                  bottom: 0,
+                  bottom: 15,
                   right: 0,
                   child: GestureDetector(
                     onTap: (){

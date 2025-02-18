@@ -37,8 +37,11 @@ class AdministratorController extends GetxController{
   RxString selectedSessionControl = ''.obs;
   RxString selectedTimeControl = ''.obs;
   RxString selectedGender = ''.obs;
-
-
+  FocusNode nickFocusNode = FocusNode();
+  FocusNode nameFocusNode = FocusNode();
+  FocusNode phoneFocusNode = FocusNode();
+  List<String> statusList = [Strings.active, Strings.inactive];
+  RxString fetchedStatus = Strings.active.obs;
 
   // setInitialNickName(){
   //   nickNameController.text = selectedAdministrator.value.toUpperCase();
@@ -109,15 +112,12 @@ class AdministratorController extends GetxController{
     AdministratorActivity(date: '2025-02-10', start: '13:15', end: '15:00', bonuses: '200', client: 'Client 10'),
   ].obs;
 
-  @override
-  void onClose() {
-    administratorNameController.dispose();
-    perDataNameController.dispose();
-    nickNameController.dispose();
-    birthDateController.dispose();
-    registrationDateController.dispose();
-    super.onClose();
+  unFocus(){
+    nickFocusNode.unfocus();
+    nameFocusNode.unfocus();
+    phoneFocusNode.unfocus();
   }
+
 
   /// Fetch administrators
   RxList<Map<String, dynamic>> allAdmins = <Map<String, dynamic>>[].obs; // Lista original de clientes
@@ -219,7 +219,7 @@ class AdministratorController extends GetxController{
       selectedProfile.value = tipoPerfil ?? ''; // Actualiza con el tipo de perfil obtenido
       selectedTimeControl.value = updatedAdminData['controltiempo'];
       selectedSessionControl.value = updatedAdminData['controlsesiones'];
-      selectedStatus.value = updatedAdminData['status'];
+      fetchedStatus.value = updatedAdminData['status'];
       birthDateController.text = updatedAdminData['birthdate'];
       registrationDateController.text = updatedAdminData['altadate'];
     }
@@ -232,7 +232,7 @@ class AdministratorController extends GetxController{
         // _emailController.text.isEmpty ||
         phoneController.text.isEmpty ||
         selectedGender.value == Strings.nothing ||
-        selectedStatus.value == Strings.nothing ||
+        fetchedStatus.value == Strings.nothing ||
         selectedSessionControl.value == Strings.nothing ||
         selectedTimeControl.value == Strings.nothing ||
         birthDateController.text.isEmpty ||
@@ -265,7 +265,7 @@ class AdministratorController extends GetxController{
       'altadate': registrationDateController.text,
       'controlsesiones': selectedSessionControl.value,
       'controltiempo': selectedTimeControl.value,
-      'status': selectedStatus.value,
+      'status': fetchedStatus.value,
       'birthdate': birthDateController.text,
     };
 
@@ -290,7 +290,7 @@ class AdministratorController extends GetxController{
     // Refrescar los controladores con los datos actualizados
     // await _refreshControllers();
 
-    // Mostrar un SnackBar de éxito
+    unFocus();
     showSuccessDialog(context, title: 'Usuario actualizado correctamente');
   }
 
@@ -381,4 +381,20 @@ class AdministratorController extends GetxController{
     }
   }
 
+  disposeController(){
+    Get.delete<AdministratorController>();
+  }
+
+  @override
+  void onClose() {
+    administratorNameController.dispose();
+    perDataNameController.dispose();
+    nickNameController.dispose();
+    birthDateController.dispose();
+    registrationDateController.dispose();
+    nameFocusNode.dispose();
+    nickFocusNode.dispose();
+    phoneFocusNode.dispose();
+    super.onClose();
+  }
 }

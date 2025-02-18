@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/beautician_controller.dart';
 import 'package:i_model/views/dialogs/beautician_file/beautician_activities.dart';
 import 'package:i_model/views/dialogs/beautician_file/beautician_card.dart';
@@ -40,7 +41,10 @@ void beauticianFileDialog(BuildContext context,) {
                   Padding(
                     padding:
                     EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title: translation(context).beauticianFile),
+                    child: TopTitleButton(title: translation(context).beauticianFile, onCancel: (){
+                      controller.selectedStatus.value = Strings.all;
+                      Navigator.pop(context);
+                    },),
                   ),
                   Divider(color: AppColors.pinkColor),
 

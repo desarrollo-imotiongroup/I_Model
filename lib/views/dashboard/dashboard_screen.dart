@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
@@ -8,6 +9,7 @@ import 'package:i_model/views/dashboard/first_column.dart';
 import 'package:i_model/views/dashboard/fourth_column.dart';
 import 'package:i_model/views/dashboard/second_column.dart';
 import 'package:i_model/views/dashboard/third_column.dart';
+import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/widgets/mci_widget.dart';
 
 
@@ -17,6 +19,20 @@ class DashboardScreen extends StatelessWidget
  final DashboardController dashboardController = Get.put(DashboardController());
  final ClientController clientController = Get.put(ClientController());
 
+ void closePanel(BuildContext context){
+   alertOverlay(context,
+       heading: Strings.warning,
+       description: Strings.exitFromPanel,
+       buttonText: translation(context).yesDelete,
+       onPress: () {
+         dashboardController.resetEverything();
+         Navigator.pushNamedAndRemoveUntil(
+           context,
+           Strings.menuScreen, (route) => false,
+         );
+       });
+ }
+
   @override
   Widget build(BuildContext context) {
     dashboardController.onInit();
@@ -25,9 +41,9 @@ class DashboardScreen extends StatelessWidget
     double screenHeight = mediaQuery.size.height;
 
     return PopScope(
-      canPop: true,
+      canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) {
-        dashboardController.resetEverything();
+        closePanel(context);
       },
       child: Scaffold(
         body: Container(
@@ -75,8 +91,7 @@ class DashboardScreen extends StatelessWidget
 
                         GestureDetector(
                           onTap: () {
-                            dashboardController.resetEverything();
-                            Navigator.pop(context);
+                            closePanel(context);
                           },
                           child: Image(
                             image: AssetImage(

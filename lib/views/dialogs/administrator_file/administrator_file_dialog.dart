@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
+import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/administrator_controller.dart';
 import 'package:i_model/views/dialogs/administrator_file/administrator_activities.dart';
 import 'package:i_model/views/dialogs/administrator_file/administrator_card.dart';
@@ -40,7 +41,10 @@ void administratorFileDialog(BuildContext context,) {
                   Padding(
                     padding:
                     EdgeInsets.symmetric(horizontal: screenWidth * 0.005),
-                    child: TopTitleButton(title: translation(context).administratorFile),
+                    child: TopTitleButton(title: translation(context).administratorFile, onCancel: (){
+                      controller.selectedStatus.value = Strings.all;
+                      Navigator.pop(context);
+                    },),
                   ),
                   Divider(color: AppColors.pinkColor),
 

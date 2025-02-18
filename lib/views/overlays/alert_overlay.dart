@@ -67,7 +67,8 @@ void alertOverlay(
                     )
                         : Container(),
                     Spacer(),
-                    if (isOneButtonNeeded) Center(
+                    if (isOneButtonNeeded)
+                      Center(
                       child: SizedBox(
                         width: screenWidth * 0.15,
                         child: UnboundedContainer(
@@ -123,102 +124,5 @@ void alertOverlay(
   );
 
   overlayState.insert(overlayEntry);
-
-  // showDialog(
-  //   barrierDismissible: false,
-  //   context: context,
-  //   builder: (BuildContext context) {
-  //     return Dialog(
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(10.0),
-  //       ),
-  //       child: Wrap(
-  //         children: [
-  //           Container(
-  //             width: screenWidth * 0.4,
-  //             height: description != '' ? screenHeight * 0.30 : screenHeight * 0.25,
-  //             decoration: boxDecoration(context),
-  //             child: Padding(
-  //               padding: EdgeInsets.symmetric(
-  //                 vertical: screenHeight * 0.02,
-  //                 horizontal: screenWidth * 0.02,
-  //               ),
-  //               child: Column(
-  //                 children: [
-  //                   TopTitleButton(
-  //                     title: heading,
-  //                     isCancelNeeded: false,
-  //                     isAlert: true,
-  //                     textColor: headingColor,
-  //                     isUnderLine: false,
-  //                   ),
-  //                   description != ''
-  //                       ? Column(
-  //                           children: [
-  //                             SizedBox(
-  //                               height: screenHeight * 0.04,
-  //                             ),
-  //                             Padding(
-  //                               padding: EdgeInsets.symmetric(
-  //                                   horizontal: screenWidth * 0.05),
-  //                               child: TextView.title(
-  //                                   textAlign: TextAlign.center,
-  //                                   description.toUpperCase(),
-  //                                   fontSize: 11.sp,
-  //                                   lines: 2,
-  //                                   color: AppColors.blackColor
-  //                                       .withValues(alpha: 0.7)),
-  //                             ),
-  //                           ],
-  //                         )
-  //                       : Container(),
-  //                   Spacer(),
-  //                   if (isOneButtonNeeded) Center(
-  //                           child: SizedBox(
-  //                             width: screenWidth * 0.15,
-  //                             child: UnboundedContainer(
-  //                               borderColor: AppColors.pinkColor,
-  //                               onTap: () {
-  //                                 Navigator.pop(context);
-  //                                 onGotItTap;
-  //                               },
-  //                               widget: TextView.title(
-  //                                   Strings.gotIt.toUpperCase(),
-  //                                   fontSize: 11.sp,
-  //                                   color: AppColors.pinkColor),
-  //                             ),
-  //                           ),
-  //                         ) else Row(
-  //                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                           children: [
-  //                             UnboundedContainer(
-  //                               borderColor: AppColors.pinkColor,
-  //                               onTap: () {
-  //                                 Navigator.pop(context);
-  //                               },
-  //                               widget: TextView.title(
-  //                                   Strings.cancel.toUpperCase(),
-  //                                   fontSize: 11.sp,
-  //                                   color: AppColors.pinkColor),
-  //                             ),
-  //                             UnboundedContainer(
-  //                               onTap: onRedButtonTap,
-  //                               color: AppColors.darkRedColor,
-  //                               widget: TextView.title(buttonText.toUpperCase(),
-  //                                   fontSize: 11.sp,
-  //                                   color: AppColors.pureWhiteColor),
-  //                             ),
-  //                           ],
-  //                         )
-  //                 ],
-  //               ),
-  //             ),
-  //           ),
-  //         ],
-  //       ),
-  //     );
-  //   },
-  // );
-
 
 }

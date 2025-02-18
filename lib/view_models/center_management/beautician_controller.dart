@@ -33,6 +33,11 @@ class BeauticianController extends GetxController{
   RxString selectedSessionControl = ''.obs;
   RxString selectedTimeControl = ''.obs;
   RxString selectedGender = ''.obs;
+  FocusNode nickFocusNode = FocusNode();
+  FocusNode nameFocusNode = FocusNode();
+  FocusNode phoneFocusNode = FocusNode();
+  List<String> statusList = [Strings.active, Strings.inactive];
+  RxString fetchedStatus = Strings.active.obs;
 
 
   // setInitialNickName(){
@@ -105,15 +110,13 @@ class BeauticianController extends GetxController{
     AdministratorActivity(date: '2025-02-10', start: '13:15', end: '15:00', bonuses: '200', client: 'Client 10'),
   ].obs;
 
-  @override
-  void onClose() {
-    beauticianNameController.dispose();
-    perDataNameController.dispose();
-    nickNameController.dispose();
-    birthDateController.dispose();
-    registrationDateController.dispose();
-    super.onClose();
+
+  unFocus(){
+    nickFocusNode.unfocus();
+    nameFocusNode.unfocus();
+    phoneFocusNode.unfocus();
   }
+
 
   /// Fetch Beauticians / Esteticistas
   RxList<Map<String, dynamic>> allEsteticista = <Map<String, dynamic>>[].obs; // Lista original de clientes
@@ -214,7 +217,7 @@ class BeauticianController extends GetxController{
       selectedProfile.value = tipoPerfil ?? ''; // Actualiza con el tipo de perfil obtenido
       selectedTimeControl.value = updatedEsteticistaData['controltiempo'];
       selectedSessionControl.value = updatedEsteticistaData['controlsesiones'];
-      selectedStatus.value = updatedEsteticistaData['status'];
+      fetchedStatus.value = updatedEsteticistaData['status'];
       birthDateController.text = updatedEsteticistaData['birthdate'];
       registrationDateController.text = updatedEsteticistaData['altadate'];
     }
@@ -240,7 +243,7 @@ class BeauticianController extends GetxController{
         // _emailController.text.isEmpty ||
         phoneController.text.isEmpty ||
         selectedGender.value == Strings.nothing ||
-        selectedStatus.value == Strings.nothing ||
+        fetchedStatus.value == Strings.nothing ||
         selectedSessionControl.value == Strings.nothing ||
         selectedTimeControl.value == Strings.nothing ||
         birthDateController.text.isEmpty ||
@@ -273,7 +276,7 @@ class BeauticianController extends GetxController{
       'altadate': registrationDateController.text,
       'controlsesiones': selectedSessionControl.value,
       'controltiempo': selectedTimeControl.value,
-      'status': selectedStatus.value,
+      'status': fetchedStatus.value,
       'birthdate': birthDateController.text,
     };
 
@@ -298,7 +301,7 @@ class BeauticianController extends GetxController{
     // Refrescar los controladores con los datos actualizados
     // await _refreshControllers();
 
-    // Mostrar un SnackBar de éxito
+    unFocus();
     showSuccessDialog(context, title: 'Usuario actualizado correctamente');
   }
 
@@ -355,5 +358,40 @@ class BeauticianController extends GetxController{
     loadAvailableBonos();
   }
 
+  Future<void> updatePassword(BuildContext context) async {
+    try {
+      // Crear el mapa con solo el campo pwd
+      final clientData = {'pwd': '0000'};
 
+      // Actualizar el usuario en la base de datos
+      DatabaseHelper dbHelper = DatabaseHelper();
+      await dbHelper.updateUser(selectedBeautician['id']!, clientData);
+    }
+    catch (e) {
+      print('Error al actualizar la contraseña: $e');
+      alertOverlay(
+          context,
+          heading: translation(context).alertCompleteForm,
+          isOneButtonNeeded: true,
+          description: 'Error al resetear la contraseña'
+      );
+    }
+  }
+
+  disposeController(){
+    Get.delete<BeauticianController>();
+  }
+
+  @override
+  void onClose() {
+    beauticianNameController.dispose();
+    perDataNameController.dispose();
+    nickNameController.dispose();
+    birthDateController.dispose();
+    registrationDateController.dispose();
+    nameFocusNode.dispose();
+    nickFocusNode.dispose();
+    phoneFocusNode.dispose();
+    super.onClose();
+  }
 }

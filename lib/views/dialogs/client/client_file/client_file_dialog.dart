@@ -42,6 +42,7 @@ void clientFileDialog(BuildContext context) {
                     isCancelNeeded: true,
                     onCancel: (){
                     Navigator.pop(context);
+                    // controller.disposeController();
                     controller.resetEverything();
                   },),
                   Divider(color: AppColors.pinkColor),

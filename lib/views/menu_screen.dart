@@ -10,7 +10,7 @@ import 'package:i_model/widgets/with_device_biompedancia.dart';
 import 'package:i_model/widgets/without_device_biompedancia.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../overlays/alert_overlay.dart';
+import 'overlays/alert_overlay.dart';
 
 class MenuScreen extends StatelessWidget {
   MenuScreen({super.key});
@@ -24,22 +24,26 @@ class MenuScreen extends StatelessWidget {
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
 
+    void closeSession(){
+      alertOverlay(context,
+          heading: Strings.areYouSure,
+          description: Strings.backToLogin,
+          buttonText: translation(context).yesDelete,
+          onPress: () async {
+            SharedPreferences prefs = await SharedPreferences.getInstance();
+            prefs.remove('user_id');
+            loginController.isLoggedIn.value = false;
+            Navigator.pushNamedAndRemoveUntil(
+              context,
+              Strings.initialScreen, (route) => false,
+            );
+          });
+    }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (bool didPop, Object? result) {
-        alertOverlay(context,
-            heading: Strings.areYouSure,
-            description: Strings.backToLogin,
-            buttonText: translation(context).yesDelete,
-            onPress: () async {
-             SharedPreferences prefs = await SharedPreferences.getInstance();
-             prefs.remove('user_id');
-             loginController.isLoggedIn.value = false;
-              Navigator.pushNamedAndRemoveUntil(
-                context,
-                Strings.initialScreen, (route) => false,
-              );
-        });
+        closeSession();
       },
       child: Scaffold(
         body: Container(
@@ -62,11 +66,16 @@ class MenuScreen extends StatelessWidget {
                 children: [
                   Align(
                     alignment: Alignment.centerRight,
-                    child: Image(
-                      image: AssetImage(
-                        Strings.ignitionIcon,
+                    child: GestureDetector(
+                      onTap: (){
+                        closeSession();
+                      },
+                      child: Image(
+                        image: AssetImage(
+                          Strings.ignitionIcon,
+                        ),
+                        height: screenHeight * 0.1,
                       ),
-                      height: screenHeight * 0.1,
                     ),
                   ),
                   SizedBox(

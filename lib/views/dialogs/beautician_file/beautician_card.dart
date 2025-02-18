@@ -47,11 +47,11 @@ class BeauticianCard extends StatelessWidget {
                   children: [
                     /// Client status drop down
                     DropDownWidget(
-                      selectedValue: controller.selectedStatus.value,
-                      dropDownList: controller.statusOptions,
+                      selectedValue: controller.fetchedStatus.value,
+                      dropDownList: controller.statusList,
                       isEnable: false,
                       onChanged: (value){
-                        controller.selectedStatus.value = value;
+                        controller.fetchedStatus.value = value;
                       },
                     ),
                     SizedBox(width: screenWidth * 0.01,),
@@ -65,6 +65,7 @@ class BeauticianCard extends StatelessWidget {
                                 controller.saveBonosUser(
                                     int.parse(controller.pointsTextEditingController.text)
                                 );
+                                controller.pointsTextEditingController.clear();
                               }
                           );
                         },
@@ -84,10 +85,10 @@ class BeauticianCard extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: screenHeight * 0.02,),
+          SizedBox(height: screenHeight * 0.04,),
 
           SizedBox(
-            height: screenHeight * 0.42,
+            height: screenHeight * 0.45,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -129,7 +130,7 @@ class BeauticianCard extends StatelessWidget {
                                 ),
                                 SizedBox(height: screenHeight * 0.005,),
                                 CustomContainer(
-                                  height: screenHeight * 0.25,
+                                  height: screenHeight * 0.3,
                                   width: double.infinity,
                                   color: AppColors.greyColor,
                                   widget: ListView.builder(
@@ -318,20 +319,7 @@ class BeauticianCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: screenHeight * 0.01,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
-              ),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
-              ),
-            ],
-          ),
+
           SizedBox(height: screenHeight * 0.03,)
         ],
       ),

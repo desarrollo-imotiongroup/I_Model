@@ -37,6 +37,7 @@ class AutomaticProgram extends StatelessWidget {
                   label: translation(context).programName2,
                   textEditingController: controller.automaticProgramNameController,
                   fontSize: 11.sp,
+                  focusNode: controller.autoProgramFocusNode,
                 ),
               ),
               // Client status drop down

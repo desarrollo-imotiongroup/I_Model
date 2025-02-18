@@ -3,13 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
-import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/center_management/administrator_controller.dart';
 import 'package:i_model/views/overlays/buy_points_overlay.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
-import 'package:i_model/widgets/drop_down_widget.dart';
-import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';
+import 'package:i_model/widgets/drop_down_widget.dart';
 import 'package:i_model/widgets/table_text_info.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
@@ -47,11 +45,11 @@ class AdministratorCard extends StatelessWidget {
                   children: [
                     /// Client status drop down
                     DropDownWidget(
-                      selectedValue: controller.selectedStatus.value,
-                      dropDownList: controller.statusOptions,
+                      selectedValue: controller.fetchedStatus.value,
+                      dropDownList: controller.statusList,
                       isEnable: false,
                       onChanged: (value){
-                        controller.selectedStatus.value = value;
+                        controller.fetchedStatus.value = value;
                       },
                     ),
                     SizedBox(width: screenWidth * 0.01,),
@@ -65,6 +63,7 @@ class AdministratorCard extends StatelessWidget {
                                 controller.saveBonosUser(
                                   int.parse(controller.pointsTextEditingController.text)
                                 );
+                                controller.pointsTextEditingController.clear();
                               }
                           );
                         },
@@ -84,7 +83,7 @@ class AdministratorCard extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: screenHeight * 0.02,),
+          SizedBox(height: screenHeight * 0.04,),
 
           SizedBox(
             height: screenHeight * 0.42,
@@ -321,20 +320,19 @@ class AdministratorCard extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: screenHeight * 0.01,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
-              ),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
-              ),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     imageWidget(
+          //         image: Strings.removeIcon,
+          //         height: screenHeight * 0.08
+          //     ),
+          //     imageWidget(
+          //         image: Strings.checkIcon,
+          //         height: screenHeight * 0.08
+          //     ),
+          //   ],
+          // ),
           SizedBox(height: screenHeight * 0.03,)
         ],
       ),

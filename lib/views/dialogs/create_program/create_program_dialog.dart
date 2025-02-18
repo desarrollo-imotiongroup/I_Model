@@ -10,6 +10,7 @@ import 'package:i_model/widgets/box_decoration.dart';
 import 'package:i_model/views/dialogs/create_program/individual/active_groups.dart';
 import 'package:i_model/views/dialogs/create_program/individual/configuration.dart';
 import 'package:i_model/views/dialogs/create_program/individual/cronaxia.dart';
+import 'package:i_model/widgets/no_entry_widget.dart';
 import 'package:i_model/widgets/tab_header.dart';
 import 'package:i_model/widgets/textview.dart';
 import 'package:i_model/widgets/top_title_button.dart';
@@ -21,24 +22,6 @@ void createProgramDialog(BuildContext context,) {
 
   ProgramsController controller = Get.put(ProgramsController());
 
-  Widget noConfigurationDataSavedMsg({bool isCronaxia = true}){
-    return Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: screenWidth * 0.15
-      ),
-      child: Center(
-        child: TextView.title(
-            isCronaxia
-                ? Strings.noEntryToCronaxia.toUpperCase()
-                : Strings.noEntryToActiveGroups.toUpperCase(),
-            fontSize: 10.sp,
-            lines: 2,
-            textAlign: TextAlign.center,
-            color: AppColors.blackColor.withValues(alpha: 0.8)
-        ),
-      ),
-    );
-  }
 
   showDialog(
     barrierDismissible: false,
@@ -64,6 +47,7 @@ void createProgramDialog(BuildContext context,) {
                     child: TopTitleButton(
                       title:  translation(context).createProgram, onCancel: (){
                       controller.resetEverything();
+                      // controller.disposeController();
                       Navigator.pop(context);
                     },),
                   ),
@@ -110,12 +94,12 @@ void createProgramDialog(BuildContext context,) {
                                               /// Cronaxia
                                               controller.isConfigurationSaved.value
                                                   ? Cronaxia()
-                                                  : noConfigurationDataSavedMsg(),
+                                                  : noEntryToTab(context, title: Strings.noEntryToIndCronaxia),
 
                                               /// Active groups
                                               controller.isConfigurationSaved.value
                                                   ? ActiveGroups()
-                                                  : noConfigurationDataSavedMsg(isCronaxia: false),
+                                                  : noEntryToTab(context, title: Strings.noEntryToIndActiveGroups),
                                             ],
                                           ),
                                         ),

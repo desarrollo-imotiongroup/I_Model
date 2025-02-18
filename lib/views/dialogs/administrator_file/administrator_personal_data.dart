@@ -13,16 +13,27 @@ import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 
-class AdministratorPersonalData extends StatelessWidget {
+class AdministratorPersonalData extends StatefulWidget {
   const AdministratorPersonalData({super.key});
+
+  @override
+  State<AdministratorPersonalData> createState() => _AdministratorPersonalDataState();
+}
+
+class _AdministratorPersonalDataState extends State<AdministratorPersonalData> {
+  final AdministratorController controller = Get.put(AdministratorController());
+
+  @override
+  void initState() {
+    controller.refreshControllers();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
-    final AdministratorController controller = Get.put(AdministratorController());
-    controller.refreshControllers();
 
     return Obx(
           () => Column(
@@ -41,12 +52,12 @@ class AdministratorPersonalData extends StatelessWidget {
                   ),
                 ),
 
-                /// Client status drop down
+                /// Admin status drop down
                 DropDownWidget(
-                  selectedValue: controller.selectedStatus.value,
-                  dropDownList: controller.statusOptions,
+                  selectedValue: controller.fetchedStatus.value,
+                  dropDownList: controller.statusList,
                   onChanged: (value){
-                    controller.selectedStatus.value = value;
+                    controller.fetchedStatus.value = value;
                   },
                 )
               ],

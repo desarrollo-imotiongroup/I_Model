@@ -4,18 +4,23 @@ import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/programs_controller.dart';
-import 'package:i_model/views/dialogs/create_program/create_program_dialog.dart';
-import 'package:i_model/views/overlays/automatic_program_overlay.dart';
-import 'package:i_model/views/overlays/individual_programs_overlay.dart';
+import 'package:i_model/view_models/center_management/administrator_controller.dart';
+import 'package:i_model/view_models/center_management/beautician_controller.dart';
+import 'package:i_model/view_models/center_management/create_profile_controller.dart';
+import 'package:i_model/view_models/menu/center_management_controller.dart';
+import 'package:i_model/views/dialogs/create_file/create_file_dialog.dart';
+import 'package:i_model/views/overlays/administrator_list_overlay.dart';
+import 'package:i_model/views/overlays/beautician_list_overlay.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/menu_widget.dart';
 import 'package:i_model/widgets/textview.dart';
 
-class ProgramsScreen extends StatelessWidget {
-  ProgramsScreen({super.key});
+class CenterManagementScreen extends StatelessWidget {
+  CenterManagementScreen({super.key});
 
-  final ProgramsController programsController = Get.put(ProgramsController());
+  final AdministratorController administratorController = Get.put(AdministratorController());
+  final BeauticianController beauticianController = Get.put(BeauticianController());
+  final CreateProfileController createProfileController = Get.put(CreateProfileController());
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +31,9 @@ class ProgramsScreen extends StatelessWidget {
     return PopScope(
       canPop: true,
       onPopInvokedWithResult: (bool didPop, Object? result) {
-        programsController.disposeController();
+        administratorController.disposeController();
+        beauticianController.disposeController();
+        createProfileController.disposeController();
       },
       child: Scaffold(
         resizeToAvoidBottomInset: true,
@@ -35,32 +42,30 @@ class ProgramsScreen extends StatelessWidget {
             height: double.infinity,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: AssetImage(
-                        Strings.bgImage
-                    )
-                )
-            ),
+                    fit: BoxFit.cover, image: AssetImage(Strings.bgImage))),
             child: SingleChildScrollView(
               child: ConstrainedBox(
                 constraints: BoxConstraints(
                   minHeight: MediaQuery.of(context).size.height,
                 ),
-                child: IntrinsicHeight( // Ensures the Column takes the full height
+                child: IntrinsicHeight(
+                  // Ensures the Column takes the full height
                   child: Padding(
                     padding: EdgeInsets.only(
-                      top: screenHeight  * 0.06,
-                      left: screenHeight  * 0.1,
-                      right: screenHeight  * 0.04,
-                      bottom: screenHeight  * 0.07,
+                      top: screenHeight * 0.06,
+                      left: screenHeight * 0.1,
+                      right: screenHeight * 0.04,
+                      bottom: screenHeight * 0.07,
                     ),
                     child: Column(
                       children: [
                         Align(
                           alignment: Alignment.centerRight,
                           child: GestureDetector(
-                            onTap: (){
-                              programsController.disposeController();
+                            onTap: () {
+                              administratorController.disposeController();
+                              beauticianController.disposeController();
+                              createProfileController.disposeController();
                               Navigator.pop(context);
                             },
                             child: Image(
@@ -71,49 +76,55 @@ class ProgramsScreen extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(height: screenHeight * 0.05,),
+                        SizedBox(
+                          height: screenHeight * 0.05,
+                        ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            /// Programs
+                            /// Center management
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 TextView.title(
-                                    translation(context).programs.toUpperCase(),
-                                    color: AppColors.pinkColor,
-                                    isUnderLine: true,
-                                    fontSize: 18.sp
+                                  translation(context).centerManagement.toUpperCase(),
+                                  color: AppColors.pinkColor,
+                                  isUnderLine: true,
+                                  fontSize: 18.sp,
                                 ),
-                                SizedBox(height: screenHeight *  0.07,),
+                                SizedBox(
+                                  height: screenHeight * 0.07,
+                                ),
 
-                                /// Individuals
+                                /// Administrators
                                 MenuWidget(
-                                  title: translation(context).individuals.toUpperCase(),
-                                  onTap: (){
-                                    individualProgramsOverlay(context);
+                                  title: translation(context).administrators.toUpperCase(),
+                                  onTap: () {
+                                    administratorListOverlay(context);
                                   },
                                 ),
-                                SizedBox(height: screenHeight * 0.01,),
+                                SizedBox(
+                                  height: screenHeight * 0.01,
+                                ),
 
-                                /// Automatics
+                                /// Beauticians list
                                 MenuWidget(
-                                  title: translation(context).automatics.toUpperCase(),
-                                  onTap: (){
-                                    automaticProgramOverlay(
-                                        context,
-                                    );
+                                  title: Strings.beauticians.toUpperCase(),
+                                  onTap: () {
+                                    beauticianListOverlay(context);
                                   },
                                 ),
 
-                                SizedBox(height: screenHeight * 0.01,),
+                                SizedBox(
+                                  height: screenHeight * 0.01,
+                                ),
 
-                                /// Create program
+                                /// Create new
                                 MenuWidget(
-                                  title: translation(context).createProgram.toUpperCase(),
-                                  onTap: (){
-                                    createProgramDialog(context);
+                                  title: translation(context).createNew.toUpperCase(),
+                                  onTap: () {
+                                    createFileDialog(context);
                                   },
                                 )
                               ],
@@ -125,7 +136,7 @@ class ProgramsScreen extends StatelessWidget {
                                   top: screenHeight * 0.1,
                                   right: screenWidth * 0.05),
                               child: imageWidget(
-                                image:  Strings.logoIModel,
+                                image: Strings.logoIModel,
                                 height: screenHeight * 0.2,
                               ),
                             )
@@ -136,8 +147,7 @@ class ProgramsScreen extends StatelessWidget {
                   ),
                 ),
               ),
-            )
-        ),
+            )),
       ),
     );
   }

@@ -22,6 +22,7 @@ void createSequenceDialog(BuildContext context,) {
     required TextEditingController textEditingController,
     bool isDone = false,
     bool isUnitNeeded = false,
+    FocusNode? focusNode,
   }) {
     return TextFieldLabel(
       width: screenWidth * 0.15,
@@ -30,6 +31,7 @@ void createSequenceDialog(BuildContext context,) {
       isAllowNumberOnly: true,
       fontSize: 11.sp,
       unit: isUnitNeeded ? ' s.' : '',
+      focusNode: focusNode,
       textInputAction: !isDone ? TextInputAction.next : TextInputAction.done,
     );
   }
@@ -84,22 +86,26 @@ void createSequenceDialog(BuildContext context,) {
                                   textFieldWidget(
                                     label: translation(context).order,
                                     textEditingController: controller.orderController,
+                                    focusNode: controller.orderFocusNode
                                   ),
                                   textFieldWidget(
                                       label: translation(context).duration,
                                       textEditingController: controller.durationController,
-                                      isUnitNeeded: true
+                                      isUnitNeeded: true,
+                                      focusNode: controller.durationFocusNode
                                   ),
                                   textFieldWidget(
                                       label: translation(context).adjustment,
                                       textEditingController: controller.adjustmentController,
-                                      isDone: true
+                                      focusNode: controller.adjustmentFocusNode,
+                                      isDone: true,
                                   ),
                                 ],
                               ),
                             ],
                           ),
                         ),
+
                         /// Check / submit icon
                         Align(
                           alignment: Alignment.bottomRight,

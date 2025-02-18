@@ -197,18 +197,23 @@ class Strings{
   static const success = 'Éxito!';
   static const successMsg = 'Tus datos han sido enviados correctamente';
   static const inCorrectCredentials = 'Usuario o contraseña incorrectos';
-  static const noEntryToCronaxia = 'Por favor, guarde los datos de configuración antes de continuar a la pestaña de Cronaxia.';
-  static const noEntryToActiveGroups = 'Por favor, guarde los datos de configuración antes de continuar a la pestaña de Grupos Acitvos.';
-  static const noEntryToBonos = 'Por favor, guarde los datos de configuración antes de continuar a la pestaña de Bonos.';
+  static const noEntryToIndCronaxia = 'Por favor, guarde los datos de Configuración antes de continuar a la pestaña de Cronaxia.';
+  static const noEntryToIndActiveGroups = 'Por favor, guarde los datos de Configuración antes de continuar a la pestaña de Grupos Acitvos.';
+  static const noEntryToActiveGroups = 'Por favor, guarde los datos de Datos Personales antes de continuar a la pestaña de Grupos Acitvos.';
+  static const noEntryToBonos = 'Por favor, guarde los datos de Datos Personales antes de continuar a la pestaña de Bonos.';
   static const delete = 'Confirmar borrado!';
   static const cancel = 'Cancelar';
   static const yesSure = '¡Sí, estoy seguro!';
   static const confirmDeleteClient = '¿Estás seguro que quieres borrar este cliente?';
   static const confirmDeleteAdmin = '¿Estás seguro que quieres borrar este administrador?';
   static const confirmDeleteBeautician = '¿Estás seguro que quieres borrar este Esteticista?';
-  static const backToLogin = '¿Estás seguro de iniciar sesión de nuevo?';
+  static const backToLogin = '¿Estás seguro de cerrar sesión?';
+  static const closeApp = '¿Estás seguro de cerrar la aplicación?';
   static const areYouSure = 'Estas seguro?';
   static const resetPassTo0000 = '¿Reestablecer Contrasena a 0000?';
+  static const emptySequenceError = 'por favor agregue todos los campos';
+  static const warning = 'Aviso';
+  static const exitFromPanel = '¿Estás seguro de salir del panel?';
 
 
   /// Shared Preferences

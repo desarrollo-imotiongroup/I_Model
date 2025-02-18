@@ -13,16 +13,28 @@ import 'package:i_model/widgets/containers/rounded_container.dart';
 import 'package:i_model/widgets/textfield_label.dart';
 import 'package:i_model/widgets/textview.dart';
 
-class BeauticianPersonalData extends StatelessWidget {
+class BeauticianPersonalData extends StatefulWidget {
   const BeauticianPersonalData({super.key});
+
+  @override
+  State<BeauticianPersonalData> createState() => _BeauticianPersonalDataState();
+}
+
+class _BeauticianPersonalDataState extends State<BeauticianPersonalData> {
+  final BeauticianController controller = Get.put(BeauticianController());
+
+  @override
+  void initState() {
+    controller.refreshControllers();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
-    final BeauticianController controller = Get.put(BeauticianController());
-    controller.refreshControllers();
+
 
     return  Obx(
           () => Column(
@@ -41,12 +53,12 @@ class BeauticianPersonalData extends StatelessWidget {
                   ),
                 ),
 
-                /// Client status drop down
+                /// Beautician status drop down
                 DropDownWidget(
-                  selectedValue: controller.selectedStatus.value,
-                  dropDownList: controller.statusOptions,
+                  selectedValue: controller.fetchedStatus.value,
+                  dropDownList: controller.statusList,
                   onChanged: (value){
-                    controller.selectedStatus.value = value;
+                    controller.fetchedStatus.value = value;
                   },
                 )
               ],
@@ -171,10 +183,17 @@ class BeauticianPersonalData extends StatelessWidget {
                   ),
 
                   SizedBox(height: screenHeight * 0.035,),
-                  /// Registration date
+                  /// reset password
                   RoundedContainer(
                       onTap: (){
-                        resetPasswordOverlay(context);
+                        alertOverlay(context,
+                            heading: translation(context).resetPassword,
+                            buttonText: translation(context).yesDelete,
+                            description: Strings.resetPassTo0000,
+                            onPress: () {
+                              controller.updatePassword(context);
+                              Navigator.pop(context);
+                            });
                       },
                       borderRadius: screenHeight * 0.01,
                       width: screenWidth * 0.2,

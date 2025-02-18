@@ -34,24 +34,11 @@ class CreateNewClientController extends GetxController {
 
   @override
   Future<void> onInit() async {
-    loadMostRecentClient();
     if (clientId != null) {
       _loadAvailableBonos();
     }
     loadMuscleGroups();
     super.onInit();
-  }
-
-  @override
-  void onClose() {
-    print('Client onClose');
-    clientNameController.dispose();
-    clientDobController.dispose();
-    clientPhoneController.dispose();
-    clientHeightController.dispose();
-    clientWeightController.dispose();
-    clientEmailController.dispose();
-    super.onClose();
   }
 
   moveFocusTo(BuildContext context, FocusNode focusNode){
@@ -289,7 +276,7 @@ class CreateNewClientController extends GetxController {
   Future<void> loadMostRecentClient() async {
     final dbHelper = DatabaseHelper();
     final client = await dbHelper.getMostRecentClient();
-
+    print('clientTTTT: $client');
     if (client != null) {
 
         selectedClient = client;
@@ -398,20 +385,10 @@ class CreateNewClientController extends GetxController {
       print(
           "Intentando insertar relaciones: Cliente ID: ${recentClientId.value}, Grupos Musculares IDs: $grupoMuscularId");
     }
-      // Recorrer la lista de grupos musculares e insertar cada uno
-    // for (int grupoMuscularId in grupoMuscularIds) {
-    //   bool success =
-    //   await dbHelper.insertClientGroup(clienteId, grupoMuscularId);
-    //
-    //   if (!success) {
-    //     allSuccess = false; // Si alguna inserción falla, cambiamos el estado
-    //     break; // Salimos del bucle si alguna inserción falla
-    //   }
-    // }
 
-    // Mostrar el SnackBar solo una vez, dependiendo del resultado final
     if (allSuccess) {
-      showSuccessDialog(context, title: 'Grupos Musculares añadidos correctamente');
+      showSuccessDialog(context, title: 'Grupos Musculares añadidos correctamente', isCloseDialog: true);
+      resetEverything();
 
     } else {
       alertOverlay(
@@ -423,4 +400,28 @@ class CreateNewClientController extends GetxController {
     }
   }
 
+  disposeController(){
+    Get.delete<CreateNewClientController>();
+  }
+
+  @override
+  void onClose() {
+    print('Client New Client onClose');
+
+    // Dispose of all TextEditingControllers to release resources
+    clientNameController.dispose();
+    clientDobController.dispose();
+    clientPhoneController.dispose();
+    clientHeightController.dispose();
+    clientWeightController.dispose();
+    clientEmailController.dispose();
+    pointsTextEditingController.dispose(); // Dispose of pointsTextEditingController if used
+
+    // Dispose of FocusNodes (if applicable)
+    weightFocusNode.dispose();
+    heightFocusNode.dispose();
+    emailFocusNode.dispose();
+
+    super.onClose();  // Always call super.onClose() for proper cleanup
+  }
 }

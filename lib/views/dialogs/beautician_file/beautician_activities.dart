@@ -42,11 +42,11 @@ class BeauticianActivities extends StatelessWidget {
 
                 /// Client status drop down
                 DropDownWidget(
-                  selectedValue: controller.selectedStatus.value,
-                  dropDownList: controller.statusOptions,
+                  selectedValue: controller.fetchedStatus.value,
+                  dropDownList: controller.statusList,
                   isEnable: false,
                   onChanged: (value){
-                    controller.selectedStatus.value = value;
+                    controller.fetchedStatus.value = value;
                   },
                 )
               ],
@@ -162,10 +162,7 @@ class BeauticianActivities extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              imageWidget(
-                  image: Strings.removeIcon,
-                  height: screenHeight * 0.08
-              ),
+              Container(),
               imageWidget(
                   image: Strings.checkIcon,
                   height: screenHeight * 0.08

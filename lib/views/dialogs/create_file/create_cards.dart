@@ -70,6 +70,7 @@ class CreateCards extends StatelessWidget {
                                     controller.lastUserId!,
                                     int.parse(controller.pointsTextEditingController.text)
                                 );
+                                controller.pointsTextEditingController.clear();
                               }
                           );
                         },
@@ -89,7 +90,7 @@ class CreateCards extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: screenHeight * 0.02,),
+          SizedBox(height: screenHeight * 0.04,),
 
           SizedBox(
             height: screenHeight * 0.42,
@@ -323,17 +324,16 @@ class CreateCards extends StatelessWidget {
               ],
             ),
           ),
-          SizedBox(height: screenHeight * 0.01,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Container(),
-              imageWidget(
-                  image: Strings.checkIcon,
-                  height: screenHeight * 0.08
-              ),
-            ],
-          ),
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          //   children: [
+          //     Container(),
+          //     imageWidget(
+          //         image: Strings.checkIcon,
+          //         height: screenHeight * 0.08
+          //     ),
+          //   ],
+          // ),
           SizedBox(height: screenHeight * 0.03,)
         ],
       ),

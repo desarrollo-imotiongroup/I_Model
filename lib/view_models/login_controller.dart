@@ -169,13 +169,15 @@ class LoginController extends GetxController{
       // Si la contraseña es "0000", navega a cambiar la contraseña
       if (password == "0000") {
         resetPasswordOverlay(context, onTap: (){
-          _updatePassword(context);
+          _updatePassword(context, userId);
         });
       } else {
         // Retraso antes de navegar al menú principal
         await Future.delayed(
             const Duration(seconds: 1)); // Retraso de 1 segundo
         // Navegar al menú principal
+        usernameEditingController.clear();
+        passwordEditingController.clear();
         Navigator.pushNamed(context, Strings.menuScreen);
       }
     } else {
@@ -190,7 +192,7 @@ class LoginController extends GetxController{
   final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController repeatPasswordController = TextEditingController();
 
-  Future<void> _updatePassword(BuildContext context) async {
+  Future<void> _updatePassword(BuildContext context, int? userId) async {
     if (userId == null) {
       print('UserId no disponible.');
       return;
@@ -253,12 +255,12 @@ class LoginController extends GetxController{
             'Nuevo user_tipo_perfil guardado: ${prefs.getString('user_tipo_perfil')}');
       }
 
-      // Mostrar mensaje de éxito antes de desmontar el widget
+      // HelperMethods.showSnackBar(context, title: 'Contraseña actualizada con éxito')
       alertOverlay(
           context,
           heading: translation(context).alertCompleteForm,
           isOneButtonNeeded: true,
-          description: 'Contraseña actualizada con éxito'
+          description: 'Contraseña actualizada con éxito',
       );
 
       // Navegar al menú principal

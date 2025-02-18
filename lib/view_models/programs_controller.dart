@@ -20,6 +20,10 @@ import '../models/programs/automatic/automatic_program.dart';
 class ProgramsController extends GetxController{
   final TextEditingController individualProgramNameController = TextEditingController();
   final TextEditingController automaticProgramNameController = TextEditingController();
+  FocusNode autoProgramFocusNode = FocusNode();
+  FocusNode orderFocusNode = FocusNode();
+  FocusNode durationFocusNode = FocusNode();
+  FocusNode adjustmentFocusNode = FocusNode();
   RxList<AutomaticProgramModel> automaticProgramsList = <AutomaticProgramModel>[].obs;
   List<IndividualProgramModel> individualProgramsList = [];
   List<Map<String, dynamic>> individualDropDownPrograms = [];
@@ -101,6 +105,7 @@ class ProgramsController extends GetxController{
     orderController.clear();
     durationController.clear();
     adjustmentController.clear();
+    totalDuration.value = 0;
 
     // Reset selection values
     selectedEquipment.value = Strings.nothing;
@@ -448,6 +453,8 @@ class ProgramsController extends GetxController{
         print('No se encontraron programas en la base de datos');
       }
       showSuccessDialog(context, isCloseDialog: true);
+      resetEverything();
+
     }catch(e){
       print(e);
     }
@@ -669,7 +676,7 @@ class ProgramsController extends GetxController{
 
   Future<void> crearProgramaAutomatico(BuildContext context) async {
     if (automaticProgramNameController.text.isEmpty ||
-        durationController.text.isEmpty ||
+        // durationController.text.isEmpty ||
         selectedAutoEquipment.value == Strings.nothing ||
         secuencias.isEmpty) {
       // Verificación de '@' en el correo
@@ -687,7 +694,7 @@ class ProgramsController extends GetxController{
       'nombre': automaticProgramNameController.text,
       'imagen': Strings.selectProgramIcon,
       'descripcion': '',
-      'duracionTotal': double.tryParse(durationController.text) ?? 0.0,
+      'duracionTotal': totalDuration.value,
       'tipo_equipamiento': selectedAutoEquipment.value == Strings.nothing ? Strings.bioJacket : Strings.bioShape,
     };
 
@@ -702,11 +709,9 @@ class ProgramsController extends GetxController{
     if (programaId > 0) {
       print("Programa insertado con éxito, ID: $programaId");
 
-      // Si el programa se insertó correctamente, ahora insertamos los subprogramas
       List<Map<String, dynamic>> subprogramas = secuencias.map((sec) {
         // Obtener el ID del programa seleccionado desde el dropdown
-        int? idProgramaSeleccionado = sec[
-        'id_programa']; // Asumiendo que en sec tienes el id del programa
+        int? idProgramaSeleccionado = sec['id_programa']; // Asumiendo que en sec tienes el id del programa
 
         var subprograma = {
           'id_programa_automatico': programaId,
@@ -716,10 +721,15 @@ class ProgramsController extends GetxController{
           'duracion': double.tryParse(sec['duracion'].toString()) ?? 0.0,
         };
 
-        print(
-            "Subprograma creado: $subprograma"); // Mostrar cada subprograma creado
+        print("Subprograma creado: $subprograma"); // Mostrar cada subprograma creado
         return subprograma;
       }).toList();
+
+// Sorting the list by 'orden' in ascending order
+      subprogramas.sort((a, b) => a['orden'].compareTo(b['orden']));
+
+      print(subprogramas); // Display the sorted list
+
 
       // Verificar el contenido de la lista de subprogramas
       print("Lista de subprogramas:");
@@ -730,8 +740,9 @@ class ProgramsController extends GetxController{
 
       // Notificar al usuario sobre el resultado
       if (success) {
-          showSuccessDialog(context);
-          clearSequenceFields();
+          showSuccessDialog(context, isCloseDialog: true);
+          disposeController();
+          // resetEverything();
           print("Subprogramas insertados con éxito.");
         } else {
           print("Error al insertar los subprogramas.");
@@ -745,44 +756,38 @@ class ProgramsController extends GetxController{
   /// Create sequence
   final TextEditingController orderController = TextEditingController();
   final TextEditingController durationController = TextEditingController();
+  RxInt totalDuration = 0.obs;
   final TextEditingController adjustmentController = TextEditingController();
   RxString selectedProgram = Strings.nothing.obs;
 
-  // List<String> individualProgramOptionList(BuildContext context){
-  //   return [
-  //     translation(context).cellulite,
-  //     translation(context).buttocks,
-  //     translation(context).contractures,
-  //     translation(context).drainage,
-  //     translation(context).hypertrophy,
-  //     translation(context).pelvicFloor,
-  //     translation(context).slim,
-  //     translation(context).toning,
-  //     translation(context).massage,
-  //     translation(context).metabolic,
-  //     translation(context).calibration,
-  //     translation(context).strength,
-  //   ];
+  // List<Map<String, dynamic>> allPrograms = [];
+  // Future<void> _fetchAllPrograms() async {
+  //   var db = await DatabaseHelper()
+  //       .database; // Obtener la instancia de la base de datos
+  //   try {
+  //     // Llamamos a la función que obtiene los programas de la base de datos filtrados por tipo 'Individual'
+  //     final programData = await DatabaseHelper().getAllPrograms();
+  //
+  //     // Verifica el contenido de los datos obtenidos
+  //     print('Programas obtenidos: $programData');
+  //
+  //     // Actualizamos el estado con los programas obtenidos
+  //       allPrograms = programData; // Asignamos los programas obtenidos a la lista
+  //   } catch (e) {
+  //     print('Error fetching programs: $e');
+  //   }
   // }
-  List<Map<String, dynamic>> allPrograms = [];
-  Future<void> _fetchAllPrograms() async {
-    var db = await DatabaseHelper()
-        .database; // Obtener la instancia de la base de datos
-    try {
-      // Llamamos a la función que obtiene los programas de la base de datos filtrados por tipo 'Individual'
-      final programData = await DatabaseHelper().getAllPrograms();
 
-      // Verifica el contenido de los datos obtenidos
-      print('Programas obtenidos: $programData');
 
-      // Actualizamos el estado con los programas obtenidos
-        allPrograms = programData; // Asignamos los programas obtenidos a la lista
-    } catch (e) {
-      print('Error fetching programs: $e');
-    }
+  unFocusSequenceFields(){
+    orderFocusNode.unfocus();
+    adjustmentFocusNode.unfocus();
+    durationFocusNode.unfocus();
+    autoProgramFocusNode.unfocus();
   }
 
   clearSequenceTextFields(){
+    autoProgramFocusNode.unfocus();
     orderController.clear();
     durationController.clear();
     adjustmentController.clear();
@@ -795,7 +800,7 @@ class ProgramsController extends GetxController{
         adjustmentController.text.isNotEmpty &&
         selectedProgram.value != Strings.nothing) {
 
-
+      // Add the new program sequence to the list
       individualProgramSequenceList.add(
         ProgramDetails(
           name: selectedProgram.value,
@@ -804,6 +809,11 @@ class ProgramsController extends GetxController{
           adjustment: int.parse(adjustmentController.text),
         ),
       );
+
+      // Sort individualProgramSequenceList by 'order' in ascending order
+
+
+      // Add the new sequence to secuencias
       var program = individualDropDownPrograms.firstWhere(
               (element) => element['name'] == selectedProgram.value,
           orElse: () => {} // Return an empty map if no match is found
@@ -815,11 +825,102 @@ class ProgramsController extends GetxController{
         'orden': orderController.text,
         'duracion': durationController.text,
         'ajuste': adjustmentController.text,
-      }
-      );
+      });
+      totalDuration.value = totalDuration.value + int.parse(durationController.text);
+
+      individualProgramSequenceList.sort((a, b) {
+        return a.order.compareTo(b.order);
+      });
+
+      unFocusSequenceFields();
       Navigator.pop(context);
+    } else {
+      alertOverlay(
+        context,
+        heading: translation(context).alertCompleteForm,
+        isOneButtonNeeded: true,
+        description: Strings.emptySequenceError,
+      );
     }
   }
+
+
+  // createSequence(BuildContext context) {
+  //   if (orderController.text.isNotEmpty &&
+  //       durationController.text.isNotEmpty &&
+  //       adjustmentController.text.isNotEmpty &&
+  //       selectedProgram.value != Strings.nothing) {
+  //
+  //     individualProgramSequenceList.add(
+  //       ProgramDetails(
+  //         name: selectedProgram.value,
+  //         order: int.parse(orderController.text),
+  //         duration: int.parse(durationController.text),
+  //         adjustment: int.parse(adjustmentController.text),
+  //       ),
+  //     );
+  //     var program = individualDropDownPrograms.firstWhere(
+  //             (element) => element['name'] == selectedProgram.value,
+  //         orElse: () => {} // Return an empty map if no match is found
+  //     );
+  //
+  //     secuencias.add({
+  //       'programa': selectedProgram.value,
+  //       'id_programa': program['id'],
+  //       'orden': orderController.text,
+  //       'duracion': durationController.text,
+  //       'ajuste': adjustmentController.text,
+  //     });
+  //     secuencias.sort((a, b) {
+  //       return int.parse(a['orden']).compareTo(int.parse(b['orden']));
+  //     });
+  //     print('secuencias: $secuencias');
+  //     Navigator.pop(context);
+  //   }
+  //   else{
+  //     alertOverlay(
+  //       context,
+  //       heading: translation(context).alertCompleteForm,
+  //       isOneButtonNeeded: true,
+  //       description: Strings.emptySequenceError,
+  //     );
+  //   }
+  // }
+
+  // void createSequence(BuildContext context) {
+  //   if (orderController.text.isNotEmpty &&
+  //       durationController.text.isNotEmpty &&
+  //       adjustmentController.text.isNotEmpty &&
+  //       selectedProgram.value != Strings.nothing) {
+  //
+  //     // Add the new sequence to the list
+  //     secuencias.add({
+  //       'programa': selectedProgram.value,
+  //       'id_programa': 'some_id', // Your ID logic here
+  //       'orden': orderController.text,
+  //       'duracion': durationController.text,
+  //       'ajuste': adjustmentController.text,
+  //     });
+  //
+  //     // Sort the secuencias by 'orden' in ascending order
+  //     secuencias.sort((a, b) {
+  //       return int.parse(a['orden']).compareTo(int.parse(b['orden']));
+  //     });
+  //
+  //     // Clear the text fields after adding the sequence
+  //     orderController.clear();
+  //     durationController.clear();
+  //     adjustmentController.clear();
+  //   }
+  //   else{
+  //     alertOverlay(
+  //       context,
+  //       heading: translation(context).alertCompleteForm,
+  //       isOneButtonNeeded: true,
+  //       description: Strings.emptySequenceError,
+  //     );
+  //   }
+  // }
 
   /// Automatic program from program screen
   RxString selectedProgramName = Strings.nothing.obs;
@@ -875,8 +976,13 @@ class ProgramsController extends GetxController{
     selectedProgram.value = Strings.nothing;
   }
 
+  disposeController(){
+    Get.delete<ProgramsController>();
+  }
+
   @override
   void onClose() {
+    print('Programs controller onClose');
     individualProgramNameController.dispose();
     frequencyController.dispose();
     pulseController.dispose();
