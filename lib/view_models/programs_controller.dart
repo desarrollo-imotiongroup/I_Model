@@ -457,28 +457,28 @@ class ProgramsController extends GetxController{
     }
   }
 
-  List<Map<String, dynamic>> _groupProgramsWithSubprograms(List<Map<String, dynamic>> autoProgramData) {
-    List<Map<String, dynamic>> groupedPrograms = [];
-
-    for (var autoProgram in autoProgramData) {
-      List<Map<String, dynamic>> subprogramas =
-          autoProgram['subprogramas'] ?? [];
-
-      Map<String, dynamic> groupedProgram = {
-        'id_programa_automatico': autoProgram['id_programa_automatico'],
-        'nombre_programa_automatico': autoProgram['nombre'],
-        'imagen': autoProgram['imagen'],
-        'descripcion_programa_automatico': autoProgram['descripcion'],
-        'duracionTotal': autoProgram['duracionTotal'],
-        'tipo_equipamiento': autoProgram['tipo_equipamiento'],
-        'subprogramas': subprogramas,
-      };
-
-      groupedPrograms.add(groupedProgram);
-    }
-
-    return groupedPrograms;
-  }
+  // List<Map<String, dynamic>> _groupProgramsWithSubprograms(List<Map<String, dynamic>> autoProgramData) {
+  //   List<Map<String, dynamic>> groupedPrograms = [];
+  //
+  //   for (var autoProgram in autoProgramData) {
+  //     List<Map<String, dynamic>> subprogramas =
+  //         autoProgram['subprogramas'] ?? [];
+  //
+  //     Map<String, dynamic> groupedProgram = {
+  //       'id_programa_automatico': autoProgram['id_programa_automatico'],
+  //       'nombre_programa_automatico': autoProgram['nombre'],
+  //       'imagen': autoProgram['imagen'],
+  //       'descripcion_programa_automatico': autoProgram['descripcion'],
+  //       'duracionTotal': autoProgram['duracionTotal'],
+  //       'tipo_equipamiento': autoProgram['tipo_equipamiento'],
+  //       'subprogramas': subprogramas,
+  //     };
+  //
+  //     groupedPrograms.add(groupedProgram);
+  //   }
+  //
+  //   return groupedPrograms;
+  // }
 
   /// Create program - submitting form
   Future<void> createProgramAndSave(BuildContext context, ) async {

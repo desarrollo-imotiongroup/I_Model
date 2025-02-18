@@ -554,8 +554,8 @@ class ClientController extends GetxController {
     final db = await openDatabase('my_database.db');
 
     // 1. Obtener todos los grupos musculares disponibles
-    final List<Map<String, dynamic>> result =
-    await db.query('grupos_musculares');
+    // final List<Map<String, dynamic>> result =
+    // await db.query('grupos_musculares');
 
     // 2. Obtener los grupos musculares asociados a este cliente
     final List<Map<String, dynamic>> clientGroupsResult = await db.rawQuery('''

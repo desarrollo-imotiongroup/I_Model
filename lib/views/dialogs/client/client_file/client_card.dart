@@ -21,7 +21,7 @@ class ClientCard extends StatelessWidget {
     double screenHeight = mediaQuery.size.height;
     double screenWidth = mediaQuery.size.width;
     final ClientController controller = Get.put(ClientController());
-    if(controller.selectedClient != null && controller.selectedClient.isNotEmpty){
+    if(controller.selectedClient.isNotEmpty){
       controller.loadAvailableBonos();
     }
 
