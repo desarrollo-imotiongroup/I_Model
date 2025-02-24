@@ -60,7 +60,8 @@ void programListOverlay(
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: (){
-                        print('programList[index]: ${programList[index]}');
+                        controller.selectedProgramDetails.value = programList[index];
+                        print('AUTOGROUP:  ${controller.selectedProgramDetails}');
                         controller.setProgramDetails(
                             programName: programList[index]['nombre'],
                             image: programList[index]['imagen'],
@@ -94,11 +95,15 @@ void programListOverlay(
                               'pause' : programList[index]['subprogramas'][i]['pausa'],
                               }
                             );
+
                           }
-                          controller.contractionSeconds.value =  programList[index]['subprogramas'][0]['contraccion'].toInt();
-                          controller.pauseSeconds.value = (programList[index]['subprogramas'][0]['pausa']).toInt();
-                          controller.frequency.value =  programList[index]['subprogramas'][0]['frecuencia'].toInt();
-                          controller.pauseSeconds.value = (programList[index]['subprogramas'][0]['pulso']).toInt();
+                          controller.onAutoProgramSelected(programList[index]);
+
+                          // controller.contractionSeconds.value =  programList[index]['subprogramas'][0]['contraccion'].toInt();
+                          // controller.pauseSeconds.value = (programList[index]['subprogramas'][0]['pausa']).toInt();
+                          // controller.frequency.value =  programList[index]['subprogramas'][0]['frecuencia'].toInt();
+                          // controller.pauseSeconds.value = (programList[index]['subprogramas'][0]['pulso']).toInt();
+
                           // print('controller.automaticProgramValues: ${controller.automaticProgramValues}');
                         }
 
@@ -136,3 +141,25 @@ void programListOverlay(
   overlayState.insert(overlayEntry);
 }
 
+///   if(selectedProgram == Strings.individual){
+//       frecuencia = selectedProgramDetails['frecuencia'];
+//       rampa = selectedProgramDetails['rampa'];
+//       pulso = selectedProgramDetails['pulso'] == 'CX' ? 0.0 : selectedProgramDetails['pulso'];
+//       pause = selectedProgramDetails['pausa'];
+//       contraction = contractionSeconds.value.toDouble();
+//
+//       cronaxias = selectedProgramDetails['cronaxias'];
+//       grupos = selectedProgramDetails['grupos_musculares'];
+//     }
+//
+//     if(selectedProgram == Strings.automatics) {
+//       for (var autoProgram in automaticProgramValues) {
+//         frecuencia = autoProgram['frequency'];
+//         rampa = autoProgram['rampa'];
+//         pulso = autoProgram['pulse'] == 'CX' ? 0.0 : autoProgram['pulso'];
+//         pause = autoProgram['pause'];
+//         contraction = autoProgram['contraction'];
+//       }
+//       cronaxias = cronaxiasNotifier;
+//       grupos = gruposMuscularesNotifier;
+//     }

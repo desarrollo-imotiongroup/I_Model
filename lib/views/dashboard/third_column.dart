@@ -147,6 +147,7 @@ class DashboardThirdColumn extends StatelessWidget {
                 : Column(
                     key: ValueKey('noPantSelectedBodyParts'),
                     children: [
+                      SizedBox(height: screenHeight * 0.02,),
                       /// Upper back
                       DashboardBodyProgram(
                         isImageLeading: false,

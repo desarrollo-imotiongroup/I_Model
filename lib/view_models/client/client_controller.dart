@@ -393,9 +393,6 @@ class ClientController extends GetxController {
         return matchesName && matchesStatus;
       }).toList();
 
-      for(int i=0; i<filteredClients.length ; i++){
-        print('Filter: ${filteredClients[i]}');
-      }
       update();
   }
 
@@ -417,7 +414,6 @@ class ClientController extends GetxController {
         clientSelectedGender.value = updatedClientData['gender'];
         fetchedStatus.value = updatedClientData['status'];
         clientDobController.text = updatedClientData['birthdate'];
-        print('fetchedStatus: $fetchedStatus');
     }
   }
 
@@ -438,7 +434,7 @@ class ClientController extends GetxController {
           context,
           heading: translation(context).alertCompleteForm,
           isOneButtonNeeded: true,
-          description: 'Por favor, complete todos los campos correctamente'
+          description: Strings.completeAllFields
       );
       return; // Exit method if there are empty fields
     }
@@ -452,7 +448,7 @@ class ClientController extends GetxController {
           context,
           heading: translation(context).alertCompleteForm,
           isOneButtonNeeded: true,
-          description: 'Error: Usuario no autenticado'
+          description: Strings.userNotAuthenticated
       );
       return;
     }
@@ -480,20 +476,20 @@ class ClientController extends GetxController {
     await dbHelper.updateClient(selectedClient['id'], clientData); // Pass the ID and client data
 
     // Print updated data
-    print('Datos del cliente actualizados: $clientData');
+    // print('Datos del cliente actualizados: $clientData');
 
     // Refresh the text controllers with the updated data
     // await _refreshControllers();
 
     unFocus();
-    showSuccessDialog(context, title: 'Cliente actualizado correctamente');
+    showSuccessDialog(context, title: Strings.clientDataUpdated);
   }
 
   /// Delete client
   deleteClient(BuildContext context) async {
     DatabaseHelper dbHelper = DatabaseHelper();
     await dbHelper.deleteClient(selectedClient['id']); // Borrar cliente
-    showSuccessDialog(context, title: 'Cliente borrado correctamente');
+    showSuccessDialog(context, title: Strings.clientDeleted);
     resetEverything();
   }
 
@@ -638,7 +634,7 @@ class ClientController extends GetxController {
     selectedGroupIds.forEach((groupId) {
      print(groupId);
     });
-    showSuccessDialog(context, title: 'Grupos actualizados correctamente', isCloseDialog: true);
+    showSuccessDialog(context, title: Strings.groupsUpdated, isCloseDialog: true);
     resetEverything();
   }
 

@@ -2,7 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:i_model/bluetooth/ble_command_service.dart';
+import 'package:i_model/bluetooth/bluetooth_service.dart';
 import 'package:i_model/config/language_constants.dart';
+import 'package:i_model/core/app_state.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/enum/program_status.dart';
 import 'package:i_model/core/strings.dart';
@@ -31,10 +34,18 @@ class DashboardController extends GetxController {
   RxString selectedProgramImage = Strings.celluliteIcon.obs;
   List<Map<String, dynamic>> automaticProgramList = [];
   List<Map<String, dynamic>> individualProgramList = [];
+  RxMap<String, dynamic> selectedProgramDetails = <String, dynamic>{}.obs;
+  RxBool isElectroOn = false.obs;
+  RxInt currentIndex = 0.obs;
 
   RxBool isPantSelected = false.obs;
   RxBool isActive = false.obs;
   RxBool isProgramSelected = false.obs;
+  RxBool isDeviceConnected = false.obs;
+  RxInt selectedDeviceIndex = (-1).obs;
+  RxString selectedMacAddress = Strings.nothing.obs;
+  // RxString errorMessage = Strings.nothing.obs;
+  RxBool isUpdate = false.obs;
 
   /// Handling program active, inactive and block states
   RxList<Program> programsStatus = <Program>[
@@ -90,6 +101,7 @@ class DashboardController extends GetxController {
 
   }
 
+
   /// Intensity colors
   Color chestIntensityColor = AppColors.lowIntensityColor;
   Color armsIntensityColor = AppColors.lowIntensityColor;
@@ -118,6 +130,7 @@ class DashboardController extends GetxController {
 
   @override
   Future<void> onInit() async {
+    initializeBluetoothConnection();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     int initialMinutes = sharedPreferences.getInt(Strings.maxTimeSP) ?? 25;
     remainingSeconds.value = initialMinutes * 60;
@@ -149,6 +162,17 @@ class DashboardController extends GetxController {
     try {
       // Llamamos a la función que obtiene los programas automáticos y sus subprogramas
       autoProgramData = await DatabaseHelper().obtenerProgramasAutomaticosConSubprogramas(db);
+      // autoProgramData = groupedPrograms; // Asigna los programas obtenidos a la lista
+      //
+      // List<Map<String, dynamic>> groupedPrograms =
+      // _groupProgramsWithSubprograms(autoProgramData);
+      //
+      //
+      //
+      // List<Map<String, dynamic>> allAutomaticPrograms = groupedPrograms;
+      // print('allAutomaticPrograms: $allAutomaticPrograms');
+      // onAutoProgramSelected(allAutomaticPrograms[1]);
+
 
       // print('✅ Programas automáticos obtenidos:');
       // for (var program in autoProgramData) {
@@ -171,7 +195,6 @@ class DashboardController extends GetxController {
       //   }
       // }
 
-
       // Agrupamos los subprogramas por programa automático
       // List<Map<String, dynamic>> groupedPrograms = _groupProgramsWithSubprograms(autoProgramData);
       // allAutomaticPrograms = groupedPrograms;
@@ -182,29 +205,220 @@ class DashboardController extends GetxController {
     return autoProgramData;
   }
 
+  void onAutoProgramSelected(Map<String, dynamic>? programA) async {
+    if (programA == null) return;
 
-  // List<Map<String, dynamic>> _groupProgramsWithSubprograms(List<Map<String, dynamic>> autoProgramData) {
-  //   List<Map<String, dynamic>> groupedPrograms = [];
+    // Debug: Check the programA structure
+    print('programA: $programA');
+
+    final List<Map<String, dynamic>> cronaxiasNotifier;
+    final List<Map<String, dynamic>> gruposMuscularesNotifier;
+    final List<Map<String, dynamic>> subprogramasNotifier;
+
+    var db = await DatabaseHelper().database;
+    try {
+      List<Map<String, dynamic>> subprogramas =
+          (programA['subprogramas'] as List<dynamic>?)
+              ?.map((sp) => Map<String, dynamic>.from(sp))
+              .toList() ??
+              [];
+
+      // Debug: Log subprogramas to see the contents
+      print('subprogramas: $subprogramas');
+
+      for (var i = 0; i < subprogramas.length; i++) {
+        var subprograma = Map<String, dynamic>.from(subprogramas[i]);
+
+        var idPrograma = subprograma['id_programa_relacionado'];
+
+        // Debug: Check each subprograma
+        print('Processing subprograma $i: $subprograma');
+
+        if (idPrograma == null) {
+          print("Warning: id_programa_relacionado is null for subprograma: $subprograma");
+          continue; // Skip this subprogram if no valid id_programa_relacionado
+        }
+
+        List<Map<String, dynamic>> cronaxias = (await DatabaseHelper().obtenerCronaxiasPorPrograma(db, idPrograma))
+            .map((c) => {
+          'id': c['id'],  // 'id' will no longer be null
+          'nombre': c['nombre'],
+          'valor': c['valor']
+        })
+            .toList();
+
+        List<Map<String, dynamic>> grupos = (await DatabaseHelper()
+            .obtenerGruposPorPrograma(db, idPrograma))
+            .map((g) => {
+          'id': g['id'],
+          'nombre': g['nombre'] ?? 'Desconocido'
+        })
+            .toList();
+
+        // Debug: Check the fetched data
+        print('Fetched cronaxias: $cronaxias');
+        print('Fetched grupos: $grupos');
+
+        subprogramas[i] = {
+          ...subprograma,
+          'cronaxias': cronaxias,
+          'grupos': grupos
+        };
+      }
+
+      cronaxiasNotifier = subprogramas.isNotEmpty
+          ? subprogramas.first['cronaxias'] ?? []
+          : [];
+      gruposMuscularesNotifier = subprogramas.isNotEmpty
+          ? subprogramas.first['grupos'] ?? []
+          : [];
+      subprogramasNotifier = subprogramas;
+
+      // Debug: Check the final values
+      print('cronaxiasNotifier: $cronaxiasNotifier');
+      print('gruposMuscularesNotifier: $gruposMuscularesNotifier');
+      print('subprogramasNotifier: $subprogramasNotifier');
+    } catch (e) {
+      debugPrint("❌ Error en onAutoProgramSelected: $e");
+    }
+  }
+
+
+  // void onAutoProgramSelected(Map<String, dynamic>? programA) async {
+  //   if (programA == null) return;
   //
-  //   for (var autoProgram in autoProgramData) {
+  //   // Debug: Check the programA structure
+  //   // print('programA: $programA');
+  //
+  //   final List<Map<String, dynamic>> cronaxiasNotifier;
+  //   final List<Map<String, dynamic>> gruposMuscularesNotifier;
+  //   final List<Map<String, dynamic>> subprogramasNotifier;
+  //
+  //   var db = await DatabaseHelper().database;
+  //   try {
   //     List<Map<String, dynamic>> subprogramas =
-  //         autoProgram['subprogramas'] ?? [];
+  //         (programA['subprogramas'] as List<dynamic>?)
+  //             ?.map((sp) => Map<String, dynamic>.from(sp))
+  //             .toList() ??
+  //             [];
   //
-  //     Map<String, dynamic> groupedProgram = {
-  //       'id_programa_automatico': autoProgram['id_programa_automatico'],
-  //       'nombre_programa_automatico': autoProgram['nombre'],
-  //       'imagen': autoProgram['imagen'],
-  //       'descripcion_programa_automatico': autoProgram['descripcion'],
-  //       'duracionTotal': autoProgram['duracionTotal'],
-  //       'tipo_equipamiento': autoProgram['tipo_equipamiento'],
-  //       'subprogramas': subprogramas,
-  //     };
+  //     // Debug: Log subprogramas to see the contents
+  //     // print('subprogramas: $subprogramas');
   //
-  //     groupedPrograms.add(groupedProgram);
+  //     for (var i = 0; i < subprogramas.length; i++) {
+  //       var subprograma = Map<String, dynamic>.from(subprogramas[i]);
+  //
+  //       var idPrograma = subprograma['id_programa_relacionado'];
+  //
+  //       // Debug: Check each subprograma
+  //       // print('subprograma: $subprograma');
+  //
+  //       if (idPrograma == null) {
+  //         print("Warning: id_programa_relacionado is null for subprograma: $subprograma");
+  //         continue; // Skip this subprogram if no valid id_programa_relacionado
+  //       }
+  //
+  //       List<Map<String, dynamic>> cronaxias =
+  //       (await DatabaseHelper().obtenerCronaxiasPorPrograma(db, idPrograma))
+  //           .map((c) => {
+  //         'id': c['id'],
+  //         'nombre': c['nombre'],
+  //         'valor': c['valor']
+  //       })
+  //           .toList();
+  //
+  //       List<Map<String, dynamic>> grupos = (await DatabaseHelper()
+  //           .obtenerGruposPorPrograma(db, idPrograma))
+  //           .map((g) => {
+  //         'id': g['id'],
+  //         'nombre': g['nombre'] ?? 'Desconocido'
+  //       })
+  //           .toList();
+  //
+  //       subprogramas[i] = {
+  //         ...subprograma,
+  //         'cronaxias': cronaxias,
+  //         'grupos': grupos
+  //       };
+  //     }
+  //
+  //     cronaxiasNotifier = subprogramas.isNotEmpty
+  //         ? subprogramas.first['cronaxias']
+  //         : [];
+  //     gruposMuscularesNotifier = subprogramas.isNotEmpty
+  //         ? subprogramas.first['grupos']
+  //         : [];
+  //     subprogramasNotifier = subprogramas;
+  //
+  //     print('cronaxiasNotifier: $cronaxiasNotifier');
+  //     print('gruposMuscularesNotifier: $gruposMuscularesNotifier');
+  //     print('subprogramasNotifier: $subprogramasNotifier');
+  //   } catch (e) {
+  //     debugPrint("❌ Error en onAutoProgramSelected: $e");
   //   }
-  //
-  //   return groupedPrograms;
   // }
+
+
+  List<Map<String, dynamic>> _groupProgramsWithSubprograms(List<Map<String, dynamic>> autoProgramData) {
+    List<Map<String, dynamic>> groupedPrograms = [];
+
+    for (var autoProgram in autoProgramData) {
+      List<Map<String, dynamic>> subprogramas =
+          autoProgram['subprogramas'] ?? [];
+
+      Map<String, dynamic> groupedProgram = {
+        'id_programa_automatico': autoProgram['id_programa_automatico'],
+        'nombre_programa_automatico': autoProgram['nombre'],
+        'imagen': autoProgram['imagen'],
+        'descripcion_programa_automatico': autoProgram['descripcion'],
+        'duracionTotal': autoProgram['duracionTotal'],
+        'tipo_equipamiento': autoProgram['tipo_equipamiento'],
+        'subprogramas': subprogramas,
+      };
+
+      print('subprogramas: $subprogramas');
+      groupedPrograms.add(groupedProgram);
+    }
+
+    return groupedPrograms;
+  }
+
+
+  // void handleIndividualSelection(String macAddress) {
+  //   print("📱❌ $macAddress no pertenece a ningún grupo");
+  //
+  //   // Deseleccionamos todos los dispositivos
+  //   isSelected.forEach((key, value) {
+  //     if (value == true) {
+  //       isSelected[key] = false;
+  //       print("✖️ El dispositivo $key ha sido deseleccionado.");
+  //     }
+  //   });
+  //
+  //   // Seleccionamos el dispositivo individual
+  //   isSelected[macAddress] = true;
+  //   selectedKey = macAddress;
+  //   print("📱 $macAddress ha sido seleccionado.");
+  //   print("🔑 Clave asignada (dispositivo individual): $selectedKey");
+  //
+  //   // Actualizamos la selección del dispositivo individual
+  //   updateDeviceSelection(macAddress, ''); // El grupo es vacío para selección individual
+  // }
+  //
+  // void updateDeviceSelection(String mac, String group) {
+  //
+  //     macAddress = mac; // Actualizamos el macAddress
+  //     grupoKey =
+  //         group; // Actualizamos la clave del grupo (vacío para selección individual)
+  //
+  //
+  //   if (group.isEmpty) {
+  //     print("🔄 Dispositivo individual seleccionado: $mac");
+  //   } else {
+  //     print("🔄 Dispositivo $mac del grupo $group seleccionado.");
+  //   }
+  // }
+
 
   String formatTime(int totalSeconds) {
     minutes.value = totalSeconds ~/ 60;
@@ -257,20 +471,31 @@ class DashboardController extends GetxController {
     isContractionPauseCycleActive.value = true;
     contractionProgress.value = 1.0;
     double decrementAmount = 1.0 / (contractionSeconds.value * 10);
-
-    /// Calculate the seconds while decreasing progress value to show on line painters
     int totalDurationInSeconds = contractionSeconds.value;
-    contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-      if (contractionProgress.value > 0) {
+
+    print('In contraction cycle: ${isElectroOn.value}');
+
+    if (!isElectroOn.value) {
+      startFullElectrostimulationTrajeProcess(
+          selectedMacAddress.value,
+          selectedProgramName.value)
+          .then((success) {
+        isElectroOn.value = true;
+      });
+
+      /// Calculate the seconds while decreasing progress value to show on line painters
+      contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+        if (contractionProgress.value > 0) {
           remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
           contractionProgress.value -= decrementAmount;
-      }
-      else {
-        contractionProgress.value = 0;
-        contractionCycleTimer!.cancel();
-        startPauseTimeCycle();
-      }
-    });
+        }
+        else {
+          contractionProgress.value = 0;
+          contractionCycleTimer!.cancel();
+          startPauseTimeCycle();
+        }
+      });
+    }
   }
 
   /// Pause time cycle
@@ -280,6 +505,7 @@ class DashboardController extends GetxController {
 
     /// Calculate the seconds while decreasing progress value to show on line painters
     int totalDurationInSeconds = pauseSeconds.value;
+    stopElectrostimulationProcess(selectedMacAddress.value);
     pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       if (pauseProgress.value > 0) {
         remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
@@ -293,15 +519,16 @@ class DashboardController extends GetxController {
     });
   }
 
-
-  /// Auto Programss
+  /// Auto Programs
   Future<void> startContractionForMultiplePrograms() async {
     if (automaticProgramValues.isEmpty) {
       print("No programs to process.");
       return;
     }
+    print('Automaticooo now');
 
     for (int i = 0; i < automaticProgramValues.length; i++) {
+      currentIndex.value = i;
       var program = automaticProgramValues[i]; // Get current program
 
       int durationInSeconds = program['duration'].toInt();
@@ -332,6 +559,7 @@ class DashboardController extends GetxController {
       await startAutoPauseTimeCycle(program);
     }
 
+    update();
     print("All programs completed.");
   }
 
@@ -349,16 +577,39 @@ class DashboardController extends GetxController {
 
     // Run contraction cycle until it's complete
     bool cycleCompleted = false;
-    contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-      if (contractionProgress.value > 0) {
-        remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
-        contractionProgress.value -= decrementAmount;
-      } else {
-        contractionProgress.value = 0;
-        contractionCycleTimer!.cancel();
-        cycleCompleted = true;
-      }
-    });
+    print('isElectroOn.value: ${isElectroOn.value}');
+
+    if (!isElectroOn.value) {
+      startFullElectrostimulationTrajeProcess(
+          selectedMacAddress.value,
+          selectedProgramName.value)
+          .then((success) {
+        isElectroOn.value = true;
+      });
+
+      // Run the contraction cycle timer
+      contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+        if (contractionProgress.value > 0) {
+          remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
+          contractionProgress.value -= decrementAmount;
+        } else {
+          contractionProgress.value = 0;
+          contractionCycleTimer!.cancel();
+          cycleCompleted = true;
+        }
+      });
+    }
+
+    // contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+    //   if (contractionProgress.value > 0) {
+    //     remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
+    //     contractionProgress.value -= decrementAmount;
+    //   } else {
+    //     contractionProgress.value = 0;
+    //     contractionCycleTimer!.cancel();
+    //     cycleCompleted = true;
+    //   }
+    // });
 
     // Wait until the contraction cycle is finished
     while (!cycleCompleted) {
@@ -377,6 +628,7 @@ class DashboardController extends GetxController {
     bool cycleCompleted = false;
 
     // Start pause cycle
+    stopElectrostimulationProcess( selectedMacAddress.value);
     pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       if (pauseProgress.value > 0) {
         remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
@@ -904,18 +1156,449 @@ class DashboardController extends GetxController {
     calvesIntensityColor = AppColors.lowIntensityColor;
   }
 
+  /// Bluetooth connectivity
+
+  BleConnectionService bleConnectionService = BleConnectionService();
+  BleCommandService bleCommandService = BleCommandService();
+  late StreamSubscription _subscription;
+  bool isDisconnected = true;
+  bool isConnected = false;
+  String? selectedKey;
+  String? macAddress;
+  String? grupoKey;
+  int? selectedIndex = 0;
+  int? totalBonosSeleccionados = 0;
+  String connectionStatus = "desconectado";
+  double scaleFactorBack = 1.0;
+  Map<String, int> equipSelectionMap = {};
+  // Set<String> processedDevices = {};
+
+  ValueNotifier<List<String>> successfullyConnectedDevices = ValueNotifier([]);
+  List<String> connectedDevices = [];
+
+
+  // final Map<String, String> deviceConnectionStatus = {};
+  Map<String, String> clientsNames = {};
+  Map<String, String> bluetoothNames = {};
+  Map<String, int> batteryStatuses = {};
+  Map<String, Key> mciKeys = {};
+  Map<String, String?> mciSelectionStatus = {};
+  Map<String, String?> temporarySelectionStatus = {};
+  Map<String, bool> isSelected = {};
+  final Map<String, StreamSubscription<bool>> _connectionSubscriptions = {};
+  RxList<String> newMacAddresses = <String>[].obs;
+  RxMap<String, String> deviceConnectionStatus = <String, String>{}.obs;
+  RxList<String> processedDevices = <String>[].obs;
+
+
+  RxBool isLoading = false.obs;
+
+  initializeBluetoothConnection() async {
+    isLoading.value = true;
+    await initializeAndConnectBLE();
+    List<String> list = await bleConnectionService.scanTargetDevices();
+    print('list: $list');
+    if(list.isEmpty){
+      isLoading.value = false;
+    }
+    _subscription = bleConnectionService.deviceUpdates.listen((update) {
+      isUpdate.value = false;
+      final macAddress = update['macAddress'];
+
+        if (update.containsKey('bluetoothName')) {
+          bluetoothNames[macAddress] = update['bluetoothName'];
+          print('bluetoothNames: ${bluetoothNames[macAddress]}');
+        }
+        if (update.containsKey('batteryStatus')) {
+          batteryStatuses[macAddress] = update['batteryStatus'];
+          print('batteryStatus: ${batteryStatuses[macAddress]}');
+        }
+
+    });
+    print('Subscription called');
+    isUpdate.value = true;
+    update();
+  }
+
+  Future<void> initializeAndConnectBLE() async {
+
+    print('initializeAndConnectBLE');
+    debugPrint("🛠️ Inicializando BLE y conexiones...");
+    bleConnectionService.isWidgetActive = true;
+    try {
+      await AppState.instance.loadState().timeout(Duration(seconds: 5));
+    }
+    catch (e) {
+      debugPrint("❌ Error al cargar el estado de la app: $e");
+      return;
+    }
+
+    List<String> macAddresses =
+    AppState.instance.mcis.map((mci) => mci['mac'] as String).toList();
+    debugPrint("🔍 Direcciones MAC obtenidas: $macAddresses");
+
+
+    newMacAddresses.value = macAddresses
+        .where((mac) => !bleConnectionService.connectedDevices.contains(mac))
+        .toList();
+
+    if (newMacAddresses.isNotEmpty) {
+      bleConnectionService.updateMacAddresses(newMacAddresses);
+    }
+
+    successfullyConnectedDevices.value.clear();
+    deviceConnectionStatus.clear();
+
+    for (final macAddress in macAddresses) {
+      deviceConnectionStatus[macAddress] = 'desconectado';
+
+      StreamSubscription<bool>? subscription;
+      subscription =
+          bleConnectionService.connectionStateStream(macAddress).listen(
+                (isConnected) {
+                  print('Connected');
+              if (isConnected) {
+                if (!successfullyConnectedDevices.value.contains(macAddress)) {
+                  successfullyConnectedDevices.value = [
+                    ...successfullyConnectedDevices.value,
+                    macAddress,
+                  ];
+                }
+              }
+              else {
+                successfullyConnectedDevices.value = successfullyConnectedDevices
+                    .value
+                    .where((device) => device != macAddress)
+                    .toList();
+              }
+
+                  deviceConnectionStatus[macAddress] =
+                  isConnected ? 'conectado' : 'desconectado';
+              print('Mac Addresses: ${newMacAddresses}');
+              print('ConnectadoONo: ${deviceConnectionStatus[newMacAddresses[0]]}');
+              print('ConnectadoONo: ${deviceConnectionStatus[newMacAddresses[1]]}');
+              print('macAddress: $macAddress');
+              isLoading.value = false;
+              print('isLoading.value: ${isLoading.value}');
+            },
+            onError: (error) {
+              debugPrint("❌ Error en la conexión de $macAddress: $error");
+
+                  deviceConnectionStatus[macAddress] = 'error';
+
+            },
+          );
+
+      _connectionSubscriptions[macAddress] = subscription;
+    }
+    update();
+  }
+
+  Future<void> selectDevice(String macAddress) async {
+    print('222: ${deviceConnectionStatus[macAddress]}');
+    print('222 macAddress: ${macAddress}');
+
+    if (deviceConnectionStatus[macAddress] == 'conectado' || deviceConnectionStatus[macAddress] == 'connected') {
+    // if (deviceConnectionStatus[macAddress] == 'connected') {
+      // Process the device if it's connected
+      if (!processedDevices.contains(macAddress)) {
+        await bleConnectionService.processConnectedDevices(macAddress);
+        processedDevices.add(macAddress);
+      } else {
+        print("✅ El dispositivo $macAddress ya fue procesado.");
+      }
+    } else {
+      // Handle logic when the device is not connected
+      /// mac address, but not connected/off
+      print("❌ El dispositivo $macAddress no está conectado.");
+      if (!successfullyConnectedDevices.value.contains(macAddress)) {
+        onTapConnectToDevice(macAddress);
+      } else {
+        print("✅ El dispositivo $macAddress ya está conectado exitosamente.");
+      }
+    }
+    isUpdate.value = true;
+    // Notify GetX that the state has changed
+    update();  // Ensure UI is updated after selecting the device
+  }
+
+  void onTapConnectToDevice(String macAddress) async {
+    debugPrint("🛠️ Scanning device $macAddress before attempting connection...");
+
+    // Scan for available devices before attempting to connect
+    List<String> availableDevices = await bleConnectionService.scanTargetDevices();
+    if(availableDevices.isEmpty){
+      isLoading.value = false;
+    }
+
+    // Check if the specific device is available
+    if (!availableDevices.contains(macAddress)) {
+      debugPrint("❌ The device $macAddress was not found in the scan. Cannot connect.");
+      // errorMessage.value = 'The device $macAddress was not found in the scan. Cannot connect.';
+      return;
+    }
+
+    // Check if already connected before trying to connect
+    if (bleConnectionService.connectedDevices.contains(macAddress)) {
+      debugPrint("✅ The device $macAddress is already connected.");
+      return;
+    }
+
+    // Add a 500ms delay before connecting
+    await Future.delayed(Duration(milliseconds: 500));
+
+    // Change the status to "connecting"
+    deviceConnectionStatus[macAddress] = 'connecting';
+     // Update UI if necessary
+
+    // Try to connect
+    bool success = await bleConnectionService.connectToDeviceByMac(macAddress);
+
+    if (success) {
+      // Subscribe to the connection stream to update the status in real time
+      bleConnectionService.connectionStateStream(macAddress).listen(
+            (isConnected) {
+          if (isConnected) {
+            if (!successfullyConnectedDevices.value.contains(macAddress)) {
+              successfullyConnectedDevices.value = [
+                ...successfullyConnectedDevices.value,
+                macAddress,
+              ];
+            }
+          } else {
+            successfullyConnectedDevices.value = successfullyConnectedDevices.value
+                .where((device) => device != macAddress)
+                .toList();
+          }
+
+
+              deviceConnectionStatus[macAddress] = isConnected ? 'connected' : 'disconnected';
+
+
+        },
+        onError: (error) {
+          debugPrint("❌ Error connecting to $macAddress: $error");
+
+
+
+              deviceConnectionStatus[macAddress] = 'error';
+
+
+        },
+      );
+    } else {
+      debugPrint("⚠️ Could not connect to $macAddress. Trying to reconnect...");
+    }
+
+    debugPrint("✅ Connection process to $macAddress completed.");
+  }
+
+  Map<String, dynamic> getProgramSettings(String? selectedProgram) {
+    debugPrint("🔹 getProgramSettings() - Iniciando con selectedProgram: $selectedProgram");
+
+
+    print('selectedProgramType.value: ${selectedProgramType.value}');
+    print('selectedProgramDetails: $selectedProgramDetails');
+    // Usando los valores actuales de los ValueNotifiers pasados desde ExpandedContentWidget
+    double frecuencia = selectedProgramDetails['frecuencia'];
+    double rampa = selectedProgramDetails['rampa'];
+    double pulso = selectedProgramDetails['pulso'] == 'CX' ? 0.0 : selectedProgramDetails['pulso'];
+    double pause = selectedProgramDetails['pausa'];
+    double contraction = selectedProgramDetails['contraccion'];
+    // double contraction = contractionSeconds.value.toDouble();
+
+
+    Map<String, dynamic>? selectedProgramData;
+    List<dynamic> cronaxias = selectedProgramDetails['cronaxias'];
+    List<dynamic> grupos = selectedProgramDetails['grupos_musculares'];
+
+    print('selectedProgramType.value: ${selectedProgramType.value}');
+
+    if (selectedProgramType.value == Strings.individual) {
+      selectedProgramData = selectedProgramDetails;
+    }
+    else{
+      selectedProgramData = selectedProgramDetails['subprogramas'][currentIndex];
+      print('selectedProgramData: $selectedProgramData');
+    }
+    // else if (selectedProgram == tr(context, 'Automáticos').toUpperCase()) {
+    //   selectedProgramData = widget.selectedAutoProgramNotifier.value?['subprogramas'][currentSubprogramIndex];
+
+      cronaxias = (selectedProgramData?['cronaxias'] as List<dynamic>?)
+          ?.map((c) => {'id': c['id'], 'nombre': c['nombre'], 'valor': c['valor']})
+          .toList() ?? selectedProgramDetails['cronaxias'];
+
+      grupos = (selectedProgramData?['grupos_musculares'] as List<dynamic>?)
+          ?.map((g) => {'id': g['id']})
+          .toList() ?? selectedProgramDetails['grupos_musculares'];
+
+    if (selectedProgramData != null) {
+      frecuencia = selectedProgramData['frecuencia'] ?? frecuencia;
+      rampa = selectedProgramData['rampa'] ?? rampa;
+      pulso = selectedProgramData['pulso'] ?? pulso;
+    }
+
+    // 🔥 Evitar devolver `selectedClient` si ya fue eliminado
+    // Map<String, dynamic>? clienteData = selectedClient;
+    // if (selectedClient == null || !widget.clientSelectedMap.value.containsValue(selectedClient)) {
+    //   clienteData = null;
+    // }
+
+    debugPrint("📊 Datos obtenidos en getProgramSettings:");
+    // debugPrint("   - Cliente: ${clienteData != null ? clienteData['name'] : 'Ninguno'}");
+    debugPrint("   - Frecuencia: $frecuencia");
+    debugPrint("   - Rampa: $rampa");
+    debugPrint("   - Pulso: $pulso");
+    debugPrint("   - Pausa: $pause");
+    debugPrint("   - Contracción: $contraction");
+    debugPrint("   - Cronaxias: $cronaxias");
+    debugPrint("   - Grupos musculares: $grupos");
+
+    return {
+      // 'cliente': clienteData,
+      'frecuencia': frecuencia,
+      'rampa': rampa,
+      'pulso': pulso,
+      'pausa': pause,
+      'contraccion': contraction,
+      'cronaxias': cronaxias,
+      'grupos_musculares': grupos,
+    };
+  }
+
+  Future<bool> startFullElectrostimulationTrajeProcess(
+      String macAddress, String? selectedProgram) async {
+    try {
+      // Configurar los valores de los canales del traje
+      List<int> valoresCanalesTraje = List.filled(10, 0);
+      valoresCanalesTraje[0] = upperBackPercentage.value;
+      valoresCanalesTraje[1] = middleBackPercentage.value;
+      valoresCanalesTraje[2] = lumbarPercentage.value;
+      valoresCanalesTraje[3] = buttocksPercentage.value;
+      valoresCanalesTraje[4] = hamStringsPercentage.value;
+      valoresCanalesTraje[5] = chestPercentage.value;
+      valoresCanalesTraje[6] = legsPercentage.value;
+      valoresCanalesTraje[7] = abdomenPercentage.value;
+      valoresCanalesTraje[8] = armsPercentage.value;
+      valoresCanalesTraje[9] = 0;
+
+      debugPrint("📊 Valores de canales configurados: $valoresCanalesTraje");
+
+      // Obtener configuraciones del programa seleccionado
+      Map<String, dynamic> settings = getProgramSettings(selectedProgram);
+
+      // Log program settings to make sure they are correct
+      debugPrint("⚙️ Program Settings: $settings");
+
+      double frecuencia = settings['frecuencia'] ?? 50;
+      double rampa = settings['rampa'] ?? 30;
+      double pulso = settings['pulso'] ?? 20;
+
+      // Ajustes de conversión
+      rampa *= 1000;
+      pulso /= 5;
+
+      debugPrint(
+          "⚙️ Configuración del programa: Frecuencia: $frecuencia Hz, Rampa: $rampa ms, Pulso: $pulso µs");
+
+      // Verify that macAddress is valid and the device is connected
+      debugPrint("🔌 Checking BLE connection status for $macAddress...");
+
+
+      // Iniciar sesión de electroestimulación
+      print('macAddress: $macAddress');
+      print('valoresCanalesTraje: $valoresCanalesTraje');
+      print('frecuencia: $frecuencia');
+      print('rampa: $rampa');
+      print('pulso: $pulso');
+
+      final isElectroOn = await bleCommandService.startElectrostimulationSession(
+        macAddress,
+        valoresCanalesTraje,
+        frecuencia,
+        rampa,
+        pulso: pulso,
+      );
+
+      if (!isElectroOn) {
+        debugPrint("❌ Error al iniciar la electroestimulación en $macAddress.");
+        return false;
+      }
+
+      // Controlar todos los canales del dispositivo
+      final response = await bleCommandService.controlAllChannels(
+        macAddress,
+        1, // Endpoint
+        0, // Modo
+        valoresCanalesTraje,
+      );
+
+      // Check response from controlAllChannels method
+      debugPrint("💬 Control All Channels response: $response");
+
+      if (response['resultado'] != "OK") {
+        debugPrint("❌ Error al configurar los canales: $response");
+        return false;
+      }
+
+      debugPrint(
+          "✅ Proceso completo de electroestimulación iniciado correctamente en $macAddress.");
+      return true;
+    } catch (e) {
+      debugPrint("❌ Error en el proceso completo de electroestimulación: $e");
+      return false;
+    }
+  }
+
+
+  Future<bool> stopElectrostimulationProcess(String macAddress) async {
+    try {
+      // Check if electrostimulation is active
+      if (isElectroOn.value) {
+        debugPrint(
+            "🛑 Stopping electrostimulation on device ${macAddress}...");
+
+        // Call the service to stop the electrostimulation session
+        await bleCommandService
+            .stopElectrostimulationSession(macAddress);
+
+
+          // Update UI state
+
+            isElectroOn.value = false; // Change the flag to reflect that it is stopped
+
+
+
+        debugPrint(
+            "✅ Electrostimulation stopped successfully at ${macAddress}.");
+        return true; // Operation successful
+      } else {
+        debugPrint(
+            "⚠️ There are no active electrostimulation sessions to stop.");
+        return false; // There was no active session to stop
+      }
+    } catch (e) {
+      debugPrint(
+          "❌ Error stopping electrostimulation on ${macAddress}: $e");
+      return false; // Error during operation
+    }
+  }
+
+
+
   resetEverything() {
     Get.delete<DashboardController>();
   }
 
   @override
   void onClose() {
-    print('Dashboard onClose called');
     _timer?.cancel();
     contractionCycleTimer?.cancel();
     pauseCycleTimer?.cancel();
     nameController.dispose();
-
+    bleConnectionService.removeBluetoothConnection();
     super.onClose();
   }
+
 }
+

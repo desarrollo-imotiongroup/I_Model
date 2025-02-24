@@ -465,7 +465,7 @@ class DatabaseHelper {
         });
 
         print(
-            'ASOCIADO cronaxia "$nombreCronaxia" al programa ID $programaId1 con valor $valorCronaxia en la tabla programa_cronaxia');
+            '///////////////////ASOCIADO cronaxia "$nombreCronaxia" con id $cronaxiaId al programa ID $programaId1 con valor $valorCronaxia en la tabla programa_cronaxia');
       }
 
       // Paso 4: Seleccionar los grupos musculares asociados al tipo de equipamiento
@@ -3148,12 +3148,22 @@ CREATE TABLE IF NOT EXISTS usuario_perfil (
   Future<List<Map<String, dynamic>>> obtenerCronaxiasPorPrograma(
       Database db, int programaId) async {
     return await db.rawQuery('''
-    SELECT c.nombre, pc.valor
+    SELECT c.id, c.nombre, pc.valor
     FROM programa_cronaxia AS pc
     INNER JOIN cronaxia AS c ON pc.cronaxia_id = c.id
     WHERE pc.programa_id = ?
   ''', [programaId]);
   }
+
+  // Future<List<Map<String, dynamic>>> obtenerCronaxiasPorPrograma(
+  //     Database db, int programaId) async {
+  //   return await db.rawQuery('''
+  //   SELECT c.nombre, pc.valor
+  //   FROM programa_cronaxia AS pc
+  //   INNER JOIN cronaxia AS c ON pc.cronaxia_id = c.id
+  //   WHERE pc.programa_id = ?
+  // ''', [programaId]);
+  // }
 
 // Obtener el programa más reciente (con el id más alto) y su tipo de equipamiento
   Future<Map<String, dynamic>?> getMostRecentPrograma() async {

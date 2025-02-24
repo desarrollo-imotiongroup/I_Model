@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
+import 'package:i_model/core/app_state.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/client/client_controller.dart';
@@ -62,51 +64,87 @@ class DashboardScreen extends StatelessWidget
               child: Column(
                 children: [
                   /// MCI Containers
-                  Container(
-                    color: AppColors.seperatorColor,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Obx(() =>
-                            Row(
-                              children: [
-                                MciWidget(
-                                  mciName: clientController.selectedClientName.value == ''
-                                      ? Strings.mciNames[0]
-                                      : clientController.selectedClientName.value,
-                                  mciId: Strings.mciIDs[0],
-                                ),
-                                MciWidget(
-                                  mciName: Strings.mciNames[1],
-                                  mciId: Strings.mciIDs[1],
-                                ),
-                                MciWidget(
-                                  icon: Strings.selectedSuitIcon,
-                                  mciName: Strings.mciNames[2],
-                                  mciId: Strings.mciIDs[2],
-                                ),
-                              ],
-                            ),
-                        ),
+                  Obx(() =>
+                      Container(
+                        color: AppColors.seperatorColor,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // ListView.builder wrapped with Obx to make the list reactive
 
-                        GestureDetector(
-                          onTap: () {
-                            closePanel(context);
-                          },
-                          child: Image(
-                            image: AssetImage(
-                              Strings.backIcon,
+                            dashboardController.newMacAddresses.isEmpty
+                                ? Center(child: Text("No devices available"))
+                                : dashboardController.isLoading.value
+                                ? Center(
+                              child: CircularProgressIndicator(
+                                color: AppColors.pinkColor,
+                              ),
+                            )
+                                : SizedBox(
+                              height: screenHeight * 0.1,  // Set fixed height for ListView
+                              width: screenWidth * 0.8,
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                scrollDirection: Axis.horizontal,
+                                itemCount: dashboardController.newMacAddresses.length,
+                                itemBuilder: (context, index) {
+                                  final mciName = clientController.selectedClientName.value.isEmpty
+                                      ? Strings.nothing
+                                      : clientController.selectedClientName.value;
+
+                                  dashboardController.isUpdate.value;
+
+                                  return GestureDetector(
+                                      onTap: () async {
+                                          dashboardController.selectedDeviceIndex.value = index;
+                                          await dashboardController.selectDevice(dashboardController.newMacAddresses[index]);
+                                          dashboardController.selectedMacAddress.value = dashboardController.newMacAddresses[index];
+                                      },
+                                      child:Obx(() =>
+                                          MciWidget(
+                                            isUpdated: dashboardController.isUpdate.value,
+                                            mciName: mciName,
+                                            mciId: (dashboardController.bluetoothNames[dashboardController.newMacAddresses[index]]) ?? '',
+                                            batteryStatus: dashboardController.batteryStatuses[dashboardController.newMacAddresses[index]],
+                                            isConnected: dashboardController.deviceConnectionStatus[dashboardController.newMacAddresses[index]] == 'desconectado'
+                                                ? false
+                                                : true,
+                                            isSelected: (dashboardController.selectedDeviceIndex.value == index
+                                                && (dashboardController.deviceConnectionStatus[dashboardController.newMacAddresses[index]] == 'conectado'
+                                                   || dashboardController.deviceConnectionStatus[dashboardController.newMacAddresses[index]] == 'connected'))
+                                                ? true  // Set border width when selected
+                                                : false,
+
+                                          ),
+                                      )
+
+                                  );
+                                },
+                              ),
                             ),
-                            height: screenHeight * 0.1,
-                          ),
+
+
+                            // GestureDetector for handling back button
+                            GestureDetector(
+                              onTap: () {
+                                closePanel(context);  // Handle the back button tap
+                              },
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Image(
+                                  image: AssetImage(Strings.backIcon),
+                                  height: screenHeight * 0.1,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
                   ),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      /// Muscle group  - first column
+                      /// Muscle group - first column
                       DashboardFirstColumn(),
                       SizedBox(width: screenWidth * 0.01,),
 
@@ -121,7 +159,7 @@ class DashboardScreen extends StatelessWidget
                       /// Fourth column, contraction, pause, reset
                       DashboardFourthColumn()
                     ],
-                  )
+                  ),
                 ],
               ),
             ),

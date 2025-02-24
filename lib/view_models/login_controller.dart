@@ -11,6 +11,7 @@ import 'package:i_model/db/db_helper_pc.dart';
 import 'package:i_model/db/db_helper_web.dart';
 import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/views/overlays/reset_password_overlay.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -37,6 +38,7 @@ class LoginController extends GetxController{
     _fetchAdmins();
     _checkUserProfile();
     checkUserLoginStatus();
+    getPermissions();
     super.onInit();
   }
 
@@ -302,6 +304,22 @@ class LoginController extends GetxController{
     return isLoggedIn.value;
   }
 
+  Future<void> getPermissions() async {
+    print("📢 Solicitando permisos...");
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.bluetooth,
+      Permission.bluetoothScan,
+      Permission.bluetoothConnect,
+      Permission.location,
+    ].request();
 
+    statuses.forEach((permission, status) {
+      print("🟢 Permiso $permission: ${status.isGranted ? 'Allowed' : 'Denied'}");
+    });
+
+    if (statuses.values.any((status) => status.isDenied)) {
+      print("⚠️ Algunos permisos fueron denegados.");
+    }
+  }
 
 }

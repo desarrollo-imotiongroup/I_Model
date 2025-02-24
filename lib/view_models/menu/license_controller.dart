@@ -132,7 +132,7 @@ class LicenseController extends GetxController{
     String telefono = phoneController.text;
     String email = emailController.text;
 
-    String modulo = "imotion21"; // Valor fijo
+    String modulo = "imotion"; // Valor fijo
     String so = detectarSO(); // Detectamos el sistema operativo
 
     // Imprimimos todos los valores para comprobar que están correctos
@@ -278,7 +278,6 @@ class LicenseController extends GetxController{
           print("Sesiones en la nube: ${licenciaData['nubeSesiones']}");
           print("EMS activo: ${licenciaData['emsActivo']}");
           print("MCIs procesadas:");
-          print('MCIIII: ${mcis[0]['mac']}');
           mcis.forEach((mci) {
             print(
                 "MCI - MAC: ${mci['mac']}, MAC BLOQUEADA: ${mci['macBloqueo'] ? 'Bloqueada' : 'Activa'}, BLE: ${mci['macBle'] ? 'BLE' : 'BT'}, Nombre: ${mci['nombre']}");
@@ -287,7 +286,6 @@ class LicenseController extends GetxController{
           // Marcar la licencia como válida
 
           _isLicenciaValida = true;
-
 
           // Guardar el estado utilizando AppState
           AppState.instance.nLicencia = licenseNumberController.text;

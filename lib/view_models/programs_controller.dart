@@ -62,9 +62,6 @@ class ProgramsController extends GetxController{
     print('onInit called');
     automaticProgramsList.value = await fetchAutoPrograms();
     individualProgramsList = await fetchIndividualPrograms();
-    for(var program in individualProgramsList){
-      print('IndProgram: ${program.name}');
-    }
     fetchCronaxias();
     fetchGruposMusculares();
     super.onInit();
@@ -681,7 +678,7 @@ class ProgramsController extends GetxController{
           context,
           heading: translation(context).alertCompleteForm,
           isOneButtonNeeded: true,
-          description: 'Por favor, introduzca todos los campos y secuencias'
+          description: Strings.completeAllFieldsAndSequences
       );
       return; // Esto previene la ejecución del código posterior
     }

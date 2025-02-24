@@ -242,7 +242,7 @@ class AdministratorController extends GetxController{
           context,
           heading: translation(context).alertCompleteForm,
           isOneButtonNeeded: true,
-          description: 'Por favor, complete todos los campos correctamente'
+          description: Strings.completeAllFields
       );
       return;
     }
@@ -289,7 +289,7 @@ class AdministratorController extends GetxController{
     // await _refreshControllers();
 
     unFocus();
-    showSuccessDialog(context, title: 'Usuario actualizado correctamente');
+    showSuccessDialog(context, title: Strings.userUpdated);
   }
 
   /// Delete administrator
@@ -301,7 +301,7 @@ class AdministratorController extends GetxController{
         context,
         heading: translation(context).alertCompleteForm,
         isOneButtonNeeded: true,
-        description: 'Administrador borrado correctamente'
+        description: Strings.adminDeleted
     );
   }
 
@@ -374,7 +374,7 @@ class AdministratorController extends GetxController{
           context,
           heading: translation(context).alertCompleteForm,
           isOneButtonNeeded: true,
-          description: 'Error al resetear la contraseña'
+          description: Strings.resetPassError
       );
     }
   }

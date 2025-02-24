@@ -83,6 +83,18 @@ class Strings{
   // static const warning = 'Aviso';
   // static const exitFromPanel = '¿Estás seguro de salir del panel?';
   // static const validLicense = 'Licencia válida';
+  static const completeAllFields = 'Por favor, complete todos los campos correctamente';
+  static const completeAllFieldsAndSequences = 'Por favor, introduzca todos los campos y secuencias';
+  static const userNotAuthenticated = 'Error: Usuario no autenticado';
+  static const clientAdded = 'Cliente añadido correctamente';
+  static const clientDataUpdated = 'Cliente actualizado correctamente';
+  static const clientDeleted = 'Cliente borrado correctamente';
+  static const groupsUpdated = 'Grupos Musculares actualizados correctamente';
+  static const groupsAdded = 'Grupos Musculares añadidos correctamente';
+  static const groupsNotAdded = 'No se han podido añadir todos los grupos';
+  static const userUpdated = 'Usuario actualizado correctamente';
+  static const adminDeleted = 'Administrador borrado correctamente';
+  static const resetPassError = 'Error al resetear la contraseña';
 
 
   /// Shared Preferences

@@ -104,6 +104,10 @@ class DashboardSecondColumn extends StatelessWidget {
             if (controller.isProgramSelected.value) {
               if (controller.isTimerPaused.value && controller.minutes.value > 0) {
                 controller.startTimer();
+                // controller.startFullElectrostimulationTrajeProcess(
+                //     controller.selectedMacAddress.value,
+                //     controller.selectedProgramName.value
+                // );
                 if(controller.selectedProgramType.value == Strings.individual) {
                   controller.startContractionTimeCycle();
                 }
@@ -113,6 +117,7 @@ class DashboardSecondColumn extends StatelessWidget {
               }
               else {
                 controller.pauseTimer();
+                controller.stopElectrostimulationProcess(controller.selectedMacAddress.value);
                 controller.contractionCycleTimer?.cancel();
                 controller.pauseCycleTimer?.cancel();
               }

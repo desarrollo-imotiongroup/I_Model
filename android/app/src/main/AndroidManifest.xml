@@ -1,6 +1,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+<!--    <uses-permission android:name="android.permission.BLUETOOTH" />-->
+<!--    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
+<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
+<!--    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" /> &lt;!&ndash; for Android 12 and above &ndash;&gt;-->
+<!--    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />&lt;!&ndash; for Android 12 and above &ndash;&gt;-->
+
+    <!-- 📡 Permisos de Internet -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- 📲 Permisos de Bluetooth -->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+
+    <!-- 📍 Permisos de ubicación (Solo hasta Android 11) -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" android:maxSdkVersion="30"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" android:maxSdkVersion="30"/>
+
+    <!-- 🌍 Permiso de ubicación en segundo plano (Solo si es necesario) -->
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
 
     <application
         android:label="i_model"

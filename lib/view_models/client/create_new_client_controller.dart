@@ -218,7 +218,7 @@ class CreateNewClientController extends GetxController {
           context,
           heading: translation(context).alertCompleteForm,
           isOneButtonNeeded: true,
-          description: 'Por favor, complete todos los campos correctamente'
+          description: Strings.completeAllFields
       );
       return;
     }
@@ -228,7 +228,7 @@ class CreateNewClientController extends GetxController {
     int? userId = prefs.getInt('user_id');
 
     if (userId == null) {
-      HelperMethods.showSnackBar(context, title: 'Error: Usuario no autenticado');
+      HelperMethods.showSnackBar(context, title: Strings.userNotAuthenticated);
       return;
     }
 
@@ -255,11 +255,10 @@ class CreateNewClientController extends GetxController {
 
       print('Datos del cliente insertados: $clientData');
       // isConfigurationSaved.value = true;
-      showSuccessDialog(context, title: 'Cliente añadido correctamente');
+      showSuccessDialog(context, title: Strings.clientAdded);
 
       unFocus();
       isDataSaved.value = true;
-      print('HERE');
       // print( isConfigurationSaved.value);
     }catch(e){
       print(e);
@@ -276,7 +275,6 @@ class CreateNewClientController extends GetxController {
   Future<void> loadMostRecentClient() async {
     final dbHelper = DatabaseHelper();
     final client = await dbHelper.getMostRecentClient();
-    print('clientTTTT: $client');
     if (client != null) {
 
         selectedClient = client;
@@ -387,7 +385,7 @@ class CreateNewClientController extends GetxController {
     }
 
     if (allSuccess) {
-      showSuccessDialog(context, title: 'Grupos Musculares añadidos correctamente', isCloseDialog: true);
+      showSuccessDialog(context, title: Strings.groupsAdded, isCloseDialog: true);
       resetEverything();
 
     } else {
@@ -395,7 +393,7 @@ class CreateNewClientController extends GetxController {
           context,
           heading: translation(context).alertCompleteForm,
           isOneButtonNeeded: true,
-          description: 'No se han podido añadir todos los grupos'
+          description: Strings.groupsNotAdded
       );
     }
   }

@@ -12,14 +12,20 @@ class MciWidget extends StatelessWidget {
   final String mciName;
   final String mciId;
   final Color? barColor;
-
-
+  final bool isConnected;
+  final bool isSelected;
+  final bool isUpdated;
+  final int? batteryStatus;
 
   const MciWidget({
     this.icon,
     required this.mciName,
     required this.mciId,
     this.barColor,
+    this.isConnected = false,
+    this.isSelected = false,
+    this.isUpdated = false,
+    this.batteryStatus,
     super.key});
 
   @override
@@ -31,6 +37,8 @@ class MciWidget extends StatelessWidget {
     return  Padding(
       padding: EdgeInsets.only(right: screenWidth * 0.005),
       child: RoundedContainer(
+        borderColor: isConnected ? Colors.pink : AppColors.darkGrey2,
+        borderWidth: isSelected ? 3 : 1,
           padding: EdgeInsets.only(
               top: screenWidth * 0.0,
               left: screenHeight * 0.008,
@@ -45,7 +53,7 @@ class MciWidget extends StatelessWidget {
                   height: screenHeight * 0.06
               ),
               Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   TextView.title(
@@ -63,20 +71,44 @@ class MciWidget extends StatelessWidget {
                   SizedBox(
                     height: screenHeight * 0.01,
                     width: screenWidth * 0.1,
-                    child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      scrollDirection: Axis.horizontal, // Horizontal scrolling
-                      itemCount: 4,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Padding(
-                          padding: EdgeInsets.only(left: screenWidth * 0.005),
-                          child: BarContainer(
-                            width: screenWidth * 0.018,
-                            color: barColor ?? AppColors.greenColor,
-                          ),
-                        );
-                      },
-                    ),
+                    child: isConnected
+                    ? Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children:
+                      List.generate(
+                        5,
+                            (batteryIndex) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: MediaQuery.of(context).size.width * 0.001),
+                            child:
+                            Container(
+                              width: MediaQuery.of(context).size.width * 0.015,
+                              height: MediaQuery.of(context).size.height * 0.015,
+                              color: batteryIndex <= (batteryStatus ?? -1)
+                                  ? _lineColor(batteryStatus!)
+                                  : Colors.white.withValues(alpha: 0.5),
+                            ),
+                          );
+                        },
+                      ),
+                    )
+                    : SizedBox(),
+
+                    // ListView.builder(
+                    //   padding: EdgeInsets.zero,
+                    //   scrollDirection: Axis.horizontal, // Horizontal scrolling
+                    //   itemCount: 5,
+                    //   itemBuilder: (BuildContext context, int index) {
+                    //     return Padding(
+                    //       padding: EdgeInsets.only(left: screenWidth * 0.005),
+                    //       child: BarContainer(
+                    //         width: screenWidth * 0.015,
+                    //         color: barColor ?? AppColors.greyColor,
+                    //       ),
+                    //     );
+                    //   },
+                    // ),
                   )
                 ],
               )
@@ -85,5 +117,26 @@ class MciWidget extends StatelessWidget {
       ),
     );
 
+  }
+}
+
+Color _lineColor(int battery) {
+  // Obtener el estado de la batería de la dirección MAC proporcionada
+  final int? batteryStatus = battery;
+  // final int? batteryStatus = batteryStatuses[macAddress];
+  // Determinar el color basado en el estado de la batería
+  switch (batteryStatus) {
+    case 0: // Muy baja
+      return Colors.red;
+    case 1: // Baja
+      return Colors.orange;
+    case 2: // Media
+      return Colors.yellow;
+    case 3: // Alta
+      return Colors.lightGreenAccent;
+    case 4: // Llena
+      return Colors.green;
+    default: // Desconocido o no disponible
+      return Colors.transparent;
   }
 }

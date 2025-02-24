@@ -32,17 +32,21 @@ class DashboardFirstColumn extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  onTap: (){
-                    selectClientOverlay(context);
-                  },
                   child: imageWidget(
                     image: Strings.selectClientIcon,
                     height: screenHeight * 0.08,
                   ),
+                  onTap: (){
+                     selectClientOverlay(context);
+                  },
                 ),
-                imageWidget(
-                  image: Strings.repeatSession,
-                  height: screenHeight * 0.08,
+                GestureDetector(
+                  onTap: (){
+                  },
+                  child: imageWidget(
+                    image: Strings.repeatSession,
+                    height: screenHeight * 0.08,
+                  ),
                 ),
                 GestureDetector(
                   onTap: () {

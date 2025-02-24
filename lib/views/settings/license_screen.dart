@@ -305,13 +305,13 @@ class _LicenseScreenState extends State<LicenseScreen> {
                                                   itemBuilder: (BuildContext context, int index) {
                                                     return  GestureDetector(
                                                       onTap: () async {
-                                                        controller.selectedStatus.value =
-                                                            controller.mciLicenseList[index].status.value;
-
-                                                        licenseDetailDialog(
-                                                          context,
-                                                          index: index,
-                                                        );
+                                                        // controller.selectedStatus.value =
+                                                        //     controller.mciLicenseList[index].status.value;
+                                                        //
+                                                        // licenseDetailDialog(
+                                                        //   context,
+                                                        //   index: index,
+                                                        // );
                                                       },
                                                       child: Column(
                                                         children: [
@@ -330,7 +330,7 @@ class _LicenseScreenState extends State<LicenseScreen> {
                                                                     tableTextInfo(
                                                                       title: controller.mcis[index]['mac'],
                                                                       color: AppColors.blackColor.withValues(alpha: 0.8),
-                                                                      fontSize: 9.sp,
+                                                                      fontSize: 8.sp,
                                                                     ),
                                                                     tableTextInfo(
                                                                       title: controller.mcis[index]['macBle'] == true
@@ -380,8 +380,6 @@ class _LicenseScreenState extends State<LicenseScreen> {
                             )
                           ],
                         ),
-
-
                       ],
                     )
                   ],
