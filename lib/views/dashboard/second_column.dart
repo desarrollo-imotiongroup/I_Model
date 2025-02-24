@@ -37,11 +37,13 @@ class DashboardSecondColumn extends StatelessWidget {
         SizedBox(height: screenHeight * 0.01,),
         RoundedContainer(
             onTap: (){
-              if(controller.selectedProgramType.value == Strings.individual){
-                controller.changeProgramType();
-              }
-              else{
-                controller.changeProgramType(isIndividual: false);
+              if(controller.isTimerPaused.value){
+                if(controller.selectedProgramType.value == Strings.individual){
+                  controller.changeProgramType();
+                }
+                else{
+                  controller.changeProgramType(isIndividual: false);
+                }
               }
             },
             width: screenWidth * 0.1,
@@ -64,7 +66,9 @@ class DashboardSecondColumn extends StatelessWidget {
         ),
         SizedBox(height: screenHeight * 0.01,),
         GestureDetector(
-          onTap: (){
+          onTap: (!controller.isTimerPaused.value)
+            ? null
+            : (){
             programListOverlay(
               context,
               programList:
@@ -90,10 +94,14 @@ class DashboardSecondColumn extends StatelessWidget {
         TimeCounterWidget(
           minutes: controller.formatTime(controller.remainingSeconds.value),
           onIncrease: (){
-            controller.increaseMinute();
+            if(controller.selectedProgramType.value == Strings.individual) {
+              controller.increaseMinute();
+            }
           },
           onDecrease: (){
-            controller.decreaseMinute();
+            if(controller.selectedProgramType.value == Strings.individual) {
+              controller.decreaseMinute();
+            }
           },
           timeImage: controller.timerImage.value,
         ),
@@ -104,10 +112,6 @@ class DashboardSecondColumn extends StatelessWidget {
             if (controller.isProgramSelected.value) {
               if (controller.isTimerPaused.value && controller.minutes.value > 0) {
                 controller.startTimer();
-                // controller.startFullElectrostimulationTrajeProcess(
-                //     controller.selectedMacAddress.value,
-                //     controller.selectedProgramName.value
-                // );
                 if(controller.selectedProgramType.value == Strings.individual) {
                   controller.startContractionTimeCycle();
                 }
@@ -133,6 +137,5 @@ class DashboardSecondColumn extends StatelessWidget {
         )
       ],
     ));
-
   }
 }

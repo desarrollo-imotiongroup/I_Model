@@ -61,14 +61,15 @@ void programListOverlay(
                     return GestureDetector(
                       onTap: (){
                         controller.selectedProgramDetails.value = programList[index];
-                        print('AUTOGROUP:  ${controller.selectedProgramDetails}');
+                        // print('AUTOGROUP:  ${controller.selectedProgramDetails}');
                         controller.setProgramDetails(
                             programName: programList[index]['nombre'],
                             image: programList[index]['imagen'],
                             mainProgramName: programList[index]['nombre']
                         );
 
-                        // print('programList: ${programList[index]}');
+                        controller.resetProgramTimerValue();
+
                         if(controller.selectedProgramType.value == Strings.individual){
                           controller.contractionSeconds.value =  (programList[index]['contraccion']).toInt();
                           controller.pauseSeconds.value = programList[index]['pausa'].toInt();
@@ -81,6 +82,9 @@ void programListOverlay(
                           }
                         }
                         else{
+                          controller.contractionSeconds.value =  0;
+                          controller.pauseSeconds.value = 0;
+
                           for(int i=0; i<programList[index]['subprogramas'].length; i++){
                             controller.automaticProgramValues.add(
                               {

@@ -37,6 +37,7 @@ class DashboardController extends GetxController {
   RxMap<String, dynamic> selectedProgramDetails = <String, dynamic>{}.obs;
   RxBool isElectroOn = false.obs;
   RxInt currentIndex = 0.obs;
+  RxBool isBluetoothConnected = false.obs;
 
   RxBool isPantSelected = false.obs;
   RxBool isActive = false.obs;
@@ -154,6 +155,21 @@ class DashboardController extends GetxController {
     return individualPrograms;
   }
 
+  resetProgramTimerValue() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    int initialMinutes = sharedPreferences.getInt(Strings.maxTimeSP) ?? 25;
+    remainingSeconds.value = initialMinutes * 60;
+
+    contractionCycleTimer?.cancel();
+    pauseCycleTimer?.cancel();
+    isContractionPauseCycleActive.value = false;
+    contractionProgress.value = 0;
+    pauseProgress.value = 0;
+    remainingContractionSeconds.value = 0;
+    remainingPauseSeconds.value = 0;
+
+  }
+
   /// Fetching automatic programs from SQL
   Future<List<Map<String, dynamic>>> fetchAutoPrograms() async {
     // List<Map<String, dynamic>> allAutomaticPrograms = [];
@@ -205,15 +221,15 @@ class DashboardController extends GetxController {
     return autoProgramData;
   }
 
+   List<Map<String, dynamic>> autoProgramCronaxias = [];
+   List<Map<String, dynamic>> autoProgramGrupos = [];
+   List<Map<String, dynamic>> subprogramasNotifier = [];
+
   void onAutoProgramSelected(Map<String, dynamic>? programA) async {
     if (programA == null) return;
 
     // Debug: Check the programA structure
     print('programA: $programA');
-
-    final List<Map<String, dynamic>> cronaxiasNotifier;
-    final List<Map<String, dynamic>> gruposMuscularesNotifier;
-    final List<Map<String, dynamic>> subprogramasNotifier;
 
     var db = await DatabaseHelper().database;
     try {
@@ -255,9 +271,6 @@ class DashboardController extends GetxController {
         })
             .toList();
 
-        // Debug: Check the fetched data
-        print('Fetched cronaxias: $cronaxias');
-        print('Fetched grupos: $grupos');
 
         subprogramas[i] = {
           ...subprograma,
@@ -266,17 +279,17 @@ class DashboardController extends GetxController {
         };
       }
 
-      cronaxiasNotifier = subprogramas.isNotEmpty
+      autoProgramCronaxias = subprogramas.isNotEmpty
           ? subprogramas.first['cronaxias'] ?? []
           : [];
-      gruposMuscularesNotifier = subprogramas.isNotEmpty
+      autoProgramGrupos = subprogramas.isNotEmpty
           ? subprogramas.first['grupos'] ?? []
           : [];
       subprogramasNotifier = subprogramas;
 
       // Debug: Check the final values
-      print('cronaxiasNotifier: $cronaxiasNotifier');
-      print('gruposMuscularesNotifier: $gruposMuscularesNotifier');
+      print('cronaxiasNotifier: $autoProgramCronaxias');
+      print('gruposMuscularesNotifier: $autoProgramGrupos');
       print('subprogramasNotifier: $subprogramasNotifier');
     } catch (e) {
       debugPrint("❌ Error en onAutoProgramSelected: $e");
@@ -519,50 +532,6 @@ class DashboardController extends GetxController {
     });
   }
 
-  /// Auto Programs
-  Future<void> startContractionForMultiplePrograms() async {
-    if (automaticProgramValues.isEmpty) {
-      print("No programs to process.");
-      return;
-    }
-    print('Automaticooo now');
-
-    for (int i = 0; i < automaticProgramValues.length; i++) {
-      currentIndex.value = i;
-      var program = automaticProgramValues[i]; // Get current program
-
-      int durationInSeconds = program['duration'].toInt();
-      int minutes = durationInSeconds ~/ 60;
-      int remainingSeconds = durationInSeconds % 60;
-
-      // Start the contraction cycle
-      print("Starting contraction for ${program['subProgramName']} Contraction: ${program['contraction']} for $minutes minutes and $remainingSeconds seconds");
-
-      // Set the selected program values for UI
-      selectedProgramImage.value = program['image'];
-      selectedProgramName.value = program['subProgramName'];
-      frequency.value = program['frequency'].toInt();
-      pulse.value = program['pulse'].toInt();
-
-      // Start pulse cycle
-      await startPulseCycle(program);
-
-      // Set the contraction duration
-      contractionSeconds.value = program['contraction'].toInt();
-      contractionProgress.value = 1.0;
-      double decrementAmount = 1.0 / (contractionSeconds.value * 10);
-
-      // Run the contraction cycle timer
-      await runContractionCycle(program, decrementAmount);
-
-      // Start the pause cycle after contraction cycle
-      await startAutoPauseTimeCycle(program);
-    }
-
-    update();
-    print("All programs completed.");
-  }
-
   Future<void> startPulseCycle(var program) async {
     print("Starting pulse for ${program['subProgramName']} with frequency: ${program['frequency']} Hz and pulse: ${program['pulse']}");
 
@@ -570,83 +539,260 @@ class DashboardController extends GetxController {
     await Future.delayed(Duration(seconds: 1)); // Simulate pulse cycle delay for now
   }
 
-  Future<void> runContractionCycle(var program, double decrementAmount) async {
+
+  /// Auto Programs
+
+  // Future<void> startContractionForMultiplePrograms() async {
+  //   if (automaticProgramValues.isEmpty) {
+  //     print("No programs to process.");
+  //     return;
+  //   }
+  //
+  //   for (int i = 0; i < automaticProgramValues.length; i++) {
+  //     currentIndex.value = i;
+  //     var program = automaticProgramValues[i]; // Get current program
+  //
+  //     int durationInSeconds = program['duration'].toInt();
+  //     int minutes = durationInSeconds ~/ 60;
+  //     int remainingSeconds = durationInSeconds % 60;
+  //
+  //     // Start the contraction cycle
+  //     print("Starting contraction for ${program['subProgramName']} Contraction: ${program['contraction']} for $minutes minutes and $remainingSeconds seconds");
+  //
+  //     // Set the selected program values for UI
+  //     selectedProgramImage.value = program['image'];
+  //     selectedProgramName.value = program['subProgramName'];
+  //     frequency.value = program['frequency'].toInt();
+  //     pulse.value = program['pulse'].toInt();
+  //
+  //     // Start pulse cycle
+  //     await startPulseCycle(program);
+  //
+  //     // Set the contraction duration
+  //     contractionSeconds.value = program['contraction'].toInt();
+  //     contractionProgress.value = 1.0;
+  //     double decrementAmount = 1.0 / (contractionSeconds.value * 10);
+  //
+  //     // Run the contraction cycle timer
+  //     await runContractionCycle(program, decrementAmount);
+  //
+  //     // Start the pause cycle after contraction cycle
+  //     await startAutoPauseTimeCycle(program);
+  //   }
+  //
+  //   update();
+  //   print("All programs completed.");
+  // }
+  //
+  // Future<void> runContractionCycle(var program, double decrementAmount) async {
+  //   contractionProgress.value = 1.0;
+  //   int totalDurationInSeconds = contractionSeconds.value;
+  //
+  //
+  //   // Run contraction cycle until it's complete
+  //   bool cycleCompleted = false;
+  //   print('isElectroOn.value: ${isElectroOn.value}');
+  //
+  //   if (!isElectroOn.value) {
+  //     startFullElectrostimulationTrajeProcess(
+  //         selectedMacAddress.value,
+  //         selectedProgramName.value)
+  //         .then((success) {
+  //       isElectroOn.value = true;
+  //     });
+  //
+  //     // Run the contraction cycle timer
+  //     contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+  //       if (contractionProgress.value > 0) {
+  //         remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
+  //         contractionProgress.value -= decrementAmount;
+  //       } else {
+  //         contractionProgress.value = 0;
+  //         contractionCycleTimer!.cancel();
+  //         cycleCompleted = true;
+  //       }
+  //     });
+  //   }
+  //
+  //   // contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+  //   //   if (contractionProgress.value > 0) {
+  //   //     remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
+  //   //     contractionProgress.value -= decrementAmount;
+  //   //   } else {
+  //   //     contractionProgress.value = 0;
+  //   //     contractionCycleTimer!.cancel();
+  //   //     cycleCompleted = true;
+  //   //   }
+  //   // });
+  //
+  //   // Wait until the contraction cycle is finished
+  //   while (!cycleCompleted) {
+  //     await Future.delayed(Duration(milliseconds: 100)); // Wait for the contraction cycle to complete
+  //   }
+  //
+  //   print("Contraction cycle for ${program['subProgramName']} completed.");
+  // }
+
+  Future<void> startContractionForMultiplePrograms() async {
+    if (automaticProgramValues.isEmpty) {
+      print("No programs to process.");
+      return;
+    }
+    isContractionPauseCycleActive.value = true;
+
+    for (int i = 0; i < automaticProgramValues.length; i++) {
+      currentIndex.value = i;
+      var program = automaticProgramValues[i];
+
+      // Convert the fractional minute duration to seconds.
+      double durationInMinutes = program['duration'];
+      print('durationInMinutes: $durationInMinutes');
+      int totalProgramSeconds = (durationInMinutes * 60).toInt();
+
+      print("Starting program: ${program['subProgramName']} for $totalProgramSeconds seconds.");
+
+      // Set UI values.
+      selectedProgramImage.value = program['image'];
+      selectedProgramName.value = program['subProgramName'];
+      frequency.value = program['frequency'].toInt();
+      pulse.value = program['pulse'].toInt();
+
+      // Start pulse cycle.
+      await startPulseCycle(program);
+
+      int elapsedTime = 0;
+
+      // Loop until the total duration for the program has been reached.
+      while (elapsedTime < totalProgramSeconds) {
+        // --- Contraction Cycle ---
+        int contractionDuration = program['contraction'].toInt();
+        int remainingTime = totalProgramSeconds - elapsedTime;
+        // Run full contraction cycle if there is enough time, else run a partial cycle.
+        int contractionRunTime = (remainingTime < contractionDuration) ? remainingTime : contractionDuration;
+
+        print("Running contraction cycle for $contractionRunTime seconds.");
+        await runContractionCycle(program, contractionRunTime);
+        elapsedTime += contractionRunTime;
+
+        // Check if we've reached the overall duration.
+        if (elapsedTime >= totalProgramSeconds) break;
+
+        // --- Pause Cycle ---
+        int pauseDuration = program['pause'].toInt();
+        remainingTime = totalProgramSeconds - elapsedTime;
+        int pauseRunTime = (remainingTime < pauseDuration) ? remainingTime : pauseDuration;
+
+        print("Running pause cycle for $pauseRunTime seconds.");
+        await startAutoPauseTimeCycle(program, pauseRunTime);
+        elapsedTime += pauseRunTime;
+      }
+
+      print("Completed program: ${program['subProgramName']}.");
+    }
+
+    update();
+    print("All programs completed.");
+  }
+
+  /// Modified contraction cycle method that runs for the specified [runTimeSeconds].
+  Future<void> runContractionCycle(var program, int runTimeSeconds) async {
+    // Set the contraction duration to the runTimeSeconds (which might be partial).
+    contractionSeconds.value = runTimeSeconds;
     contractionProgress.value = 1.0;
-    int totalDurationInSeconds = contractionSeconds.value;
+    int totalDurationInSeconds = runTimeSeconds;
+    // Decrement progress every 100ms so that after totalDurationInSeconds the progress is 0.
+    double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
 
-
-    // Run contraction cycle until it's complete
     bool cycleCompleted = false;
     print('isElectroOn.value: ${isElectroOn.value}');
 
+    // If not already started, begin the electrostimulation process.
     if (!isElectroOn.value) {
-      startFullElectrostimulationTrajeProcess(
-          selectedMacAddress.value,
-          selectedProgramName.value)
+      await startFullElectrostimulationTrajeProcess(selectedMacAddress.value, selectedProgramName.value)
           .then((success) {
         isElectroOn.value = true;
       });
-
-      // Run the contraction cycle timer
-      contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-        if (contractionProgress.value > 0) {
-          remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
-          contractionProgress.value -= decrementAmount;
-        } else {
-          contractionProgress.value = 0;
-          contractionCycleTimer!.cancel();
-          cycleCompleted = true;
-        }
-      });
     }
 
-    // contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-    //   if (contractionProgress.value > 0) {
-    //     remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
-    //     contractionProgress.value -= decrementAmount;
-    //   } else {
-    //     contractionProgress.value = 0;
-    //     contractionCycleTimer!.cancel();
-    //     cycleCompleted = true;
-    //   }
-    // });
+    contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (contractionProgress.value > 0) {
+        remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
+        contractionProgress.value -= decrementAmount;
+      } else {
+        contractionProgress.value = 0;
+        timer.cancel();
+        cycleCompleted = true;
+      }
+    });
 
-    // Wait until the contraction cycle is finished
+    // Wait until the contraction cycle completes.
     while (!cycleCompleted) {
-      await Future.delayed(Duration(milliseconds: 100)); // Wait for the contraction cycle to complete
+      await Future.delayed(Duration(milliseconds: 100));
     }
-
     print("Contraction cycle for ${program['subProgramName']} completed.");
   }
 
-  Future<void> startAutoPauseTimeCycle(var program) async {
-    pauseSeconds.value = program['pause'].toInt(); // Use the pause time from program data
+  /// Modified pause cycle method that runs for the specified [runTimeSeconds].
+  Future<void> startAutoPauseTimeCycle(var program, int runTimeSeconds) async {
+    // Set the pause duration.
+    pauseSeconds.value = runTimeSeconds;
     pauseProgress.value = 1.0;
-    double decrementAmount = 1.0 / (pauseSeconds.value * 10);
+    int totalDurationInSeconds = runTimeSeconds;
+    double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
 
-    int totalDurationInSeconds = pauseSeconds.value;
     bool cycleCompleted = false;
+    print("Starting pause cycle for ${program['subProgramName']} for $runTimeSeconds seconds.");
 
-    // Start pause cycle
-    stopElectrostimulationProcess( selectedMacAddress.value);
+    stopElectrostimulationProcess(selectedMacAddress.value);
     pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
       if (pauseProgress.value > 0) {
         remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
         pauseProgress.value -= decrementAmount;
       } else {
         pauseProgress.value = 0;
-        pauseCycleTimer!.cancel();
+        timer.cancel();
         cycleCompleted = true;
       }
     });
 
-    // Wait for the pause cycle to finish
+    // Wait until the pause cycle completes.
     while (!cycleCompleted) {
-      await Future.delayed(Duration(milliseconds: 100)); // Wait for the pause cycle to complete
+      await Future.delayed(Duration(milliseconds: 100));
     }
-
     print("Pause cycle for ${program['subProgramName']} completed.");
   }
+
+
+
+
+  // Future<void> startAutoPauseTimeCycle(var program) async {
+  //   pauseSeconds.value = program['pause'].toInt(); // Use the pause time from program data
+  //   pauseProgress.value = 1.0;
+  //   double decrementAmount = 1.0 / (pauseSeconds.value * 10);
+  //
+  //   int totalDurationInSeconds = pauseSeconds.value;
+  //   bool cycleCompleted = false;
+  //
+  //   // Start pause cycle
+  //   stopElectrostimulationProcess( selectedMacAddress.value);
+  //   pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+  //     if (pauseProgress.value > 0) {
+  //       remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
+  //       pauseProgress.value -= decrementAmount;
+  //     } else {
+  //       pauseProgress.value = 0;
+  //       pauseCycleTimer!.cancel();
+  //       cycleCompleted = true;
+  //     }
+  //   });
+  //
+  //   // Wait for the pause cycle to finish
+  //   while (!cycleCompleted) {
+  //     await Future.delayed(Duration(milliseconds: 100)); // Wait for the pause cycle to complete
+  //   }
+  //
+  //   print("Pause cycle for ${program['subProgramName']} completed.");
+  // }
 
 
 
@@ -1295,15 +1441,13 @@ class DashboardController extends GetxController {
   }
 
   Future<void> selectDevice(String macAddress) async {
-    print('222: ${deviceConnectionStatus[macAddress]}');
-    print('222 macAddress: ${macAddress}');
-
     if (deviceConnectionStatus[macAddress] == 'conectado' || deviceConnectionStatus[macAddress] == 'connected') {
     // if (deviceConnectionStatus[macAddress] == 'connected') {
       // Process the device if it's connected
       if (!processedDevices.contains(macAddress)) {
         await bleConnectionService.processConnectedDevices(macAddress);
         processedDevices.add(macAddress);
+        isBluetoothConnected.value = true;
       } else {
         print("✅ El dispositivo $macAddress ya fue procesado.");
       }
@@ -1313,7 +1457,8 @@ class DashboardController extends GetxController {
       print("❌ El dispositivo $macAddress no está conectado.");
       if (!successfullyConnectedDevices.value.contains(macAddress)) {
         onTapConnectToDevice(macAddress);
-      } else {
+      }
+      else {
         print("✅ El dispositivo $macAddress ya está conectado exitosamente.");
       }
     }
@@ -1365,6 +1510,8 @@ class DashboardController extends GetxController {
                 macAddress,
               ];
             }
+            print('Bluetooth connected');
+            isBluetoothConnected.value = true;
           } else {
             successfullyConnectedDevices.value = successfullyConnectedDevices.value
                 .where((device) => device != macAddress)
@@ -1400,30 +1547,46 @@ class DashboardController extends GetxController {
     print('selectedProgramType.value: ${selectedProgramType.value}');
     print('selectedProgramDetails: $selectedProgramDetails');
     // Usando los valores actuales de los ValueNotifiers pasados desde ExpandedContentWidget
-    double frecuencia = selectedProgramDetails['frecuencia'];
-    double rampa = selectedProgramDetails['rampa'];
-    double pulso = selectedProgramDetails['pulso'] == 'CX' ? 0.0 : selectedProgramDetails['pulso'];
-    double pause = selectedProgramDetails['pausa'];
-    double contraction = selectedProgramDetails['contraccion'];
-    // double contraction = contractionSeconds.value.toDouble();
-
-
+    double? frecuencia;
+    double? rampa;
+    double? pulso;
+    double? pause;
+    double? contraction;
+    List<dynamic> cronaxias;
+    List<dynamic> grupos;
     Map<String, dynamic>? selectedProgramData;
-    List<dynamic> cronaxias = selectedProgramDetails['cronaxias'];
-    List<dynamic> grupos = selectedProgramDetails['grupos_musculares'];
 
-    print('selectedProgramType.value: ${selectedProgramType.value}');
+    if(selectedProgramType.value == Strings.individual){
+      print('Pulso: $pulso');
+      frecuencia = selectedProgramDetails['frecuencia'];
+      rampa = selectedProgramDetails['rampa'];
+      pulso = selectedProgramDetails['pulso'] == 'CX' ? 0.0 : selectedProgramDetails['pulso'];
+      pause = selectedProgramDetails['pausa'];
+      contraction = selectedProgramDetails['contraccion'];
+      // double contraction = contractionSeconds.value.toDouble();
+      print('Pulso: $pulso');
 
-    if (selectedProgramType.value == Strings.individual) {
-      selectedProgramData = selectedProgramDetails;
+       cronaxias = selectedProgramDetails['cronaxias'];
+       grupos = selectedProgramDetails['grupos_musculares'];
     }
     else{
-      selectedProgramData = selectedProgramDetails['subprogramas'][currentIndex];
-      print('selectedProgramData: $selectedProgramData');
-    }
-    // else if (selectedProgram == tr(context, 'Automáticos').toUpperCase()) {
-    //   selectedProgramData = widget.selectedAutoProgramNotifier.value?['subprogramas'][currentSubprogramIndex];
+      frecuencia = selectedProgramDetails['subprogramas'][currentIndex.value]['frecuencia'];
+      rampa = selectedProgramDetails['subprogramas'][currentIndex.value]['rampa'];
+      pulso = selectedProgramDetails['subprogramas'][currentIndex.value]['pulso'] == 'CX'
+          ? 0.0
+          : selectedProgramDetails['subprogramas'][currentIndex.value]['pulso'];
+      pause = selectedProgramDetails['subprogramas'][currentIndex.value]['pausa'];
+      contraction = selectedProgramDetails['subprogramas'][currentIndex.value]['contraccion'];
+      // double contraction = contractionSeconds.value.toDouble();
 
+      cronaxias = autoProgramCronaxias;
+      grupos = autoProgramGrupos;
+    }
+
+    selectedProgramData = selectedProgramDetails;
+
+
+    if(selectedProgramType.value == Strings.individual){
       cronaxias = (selectedProgramData?['cronaxias'] as List<dynamic>?)
           ?.map((c) => {'id': c['id'], 'nombre': c['nombre'], 'valor': c['valor']})
           .toList() ?? selectedProgramDetails['cronaxias'];
@@ -1431,11 +1594,39 @@ class DashboardController extends GetxController {
       grupos = (selectedProgramData?['grupos_musculares'] as List<dynamic>?)
           ?.map((g) => {'id': g['id']})
           .toList() ?? selectedProgramDetails['grupos_musculares'];
+    }
+    else{
+      cronaxias = autoProgramCronaxias
+          .map((c) => {'id': c['id'], 'nombre': c['nombre'], 'valor': c['valor']})
+          .toList();
+
+      grupos = autoProgramGrupos
+          .map((g) => {'id': g['id']})
+          .toList();
+
+    }
+
+    // print('Cronaxiaaa: ${autoProgramCronaxias}');
+    // print('Cronaxiaaa: ${cronaxias}');
+    // print('gruposssss: ${autoProgramGrupos}');
+    // print('Cronaxiaaa: ${grupos}');
+
+    // print('selectedProgramType.value: ${selectedProgramType.value}');
+    //
+    // if (selectedProgramType.value == Strings.individual) {
+    //   selectedProgramData = selectedProgramDetails;
+    // }
+    // else{
+    //   selectedProgramData = selectedProgramDetails['subprogramas'][currentIndex];
+    //   print('selectedProgramData: $selectedProgramData');
+    // }
+    // else if (selectedProgram == tr(context, 'Automáticos').toUpperCase()) {
+    //   selectedProgramData = widget.selectedAutoProgramNotifier.value?['subprogramas'][currentSubprogramIndex];
 
     if (selectedProgramData != null) {
       frecuencia = selectedProgramData['frecuencia'] ?? frecuencia;
       rampa = selectedProgramData['rampa'] ?? rampa;
-      pulso = selectedProgramData['pulso'] ?? pulso;
+      pulso = pulso ?? selectedProgramData['pulso'];
     }
 
     // 🔥 Evitar devolver `selectedClient` si ya fue eliminado

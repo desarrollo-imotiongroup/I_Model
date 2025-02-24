@@ -141,25 +141,31 @@ class DashboardScreen extends StatelessWidget
                         ),
                       ),
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      /// Muscle group - first column
-                      DashboardFirstColumn(),
-                      SizedBox(width: screenWidth * 0.01,),
+                 Obx(() =>
+                     AbsorbPointer(
+                       absorbing: dashboardController.isBluetoothConnected.value ? false : true,
+                       child: Row(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           /// Muscle group - first column
+                           DashboardFirstColumn(),
+                           SizedBox(width: screenWidth * 0.01,),
 
-                      /// Second column - timer
-                      DashboardSecondColumn(),
-                      SizedBox(width: screenWidth * 0.027,),
+                           /// Second column - timer
+                           DashboardSecondColumn(),
+                           SizedBox(width: screenWidth * 0.027,),
 
-                      /// Muscle group 2 - third column
-                      DashboardThirdColumn(),
-                      SizedBox(width: screenWidth * 0.03,),
+                           /// Muscle group 2 - third column
+                           DashboardThirdColumn(),
+                           SizedBox(width: screenWidth * 0.03,),
 
-                      /// Fourth column, contraction, pause, reset
-                      DashboardFourthColumn()
-                    ],
-                  ),
+                           /// Fourth column, contraction, pause, reset
+                           DashboardFourthColumn()
+                         ],
+                       ),
+                     ),
+                 )
+
                 ],
               ),
             ),
