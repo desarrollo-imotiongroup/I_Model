@@ -5,7 +5,6 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/menu/license_controller.dart';
-import 'package:i_model/views/dialogs/license_detail_dialog.dart';
 import 'package:i_model/views/overlays/maxTimeSelectionOverlay.dart';
 import 'package:i_model/widgets/containers/custom_container.dart';
 import 'package:i_model/widgets/containers/rounded_container.dart';

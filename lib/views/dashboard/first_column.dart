@@ -4,7 +4,6 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/enum/program_status.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/views/overlays/select_client_overlay.dart';
 import 'package:i_model/widgets/dashboard_body_program.dart';

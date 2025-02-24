@@ -27,7 +27,6 @@ class _ExpandedPanelViewState extends State<ExpandedPanelView> {
     print('MACADDRESS: ${widget.macAddress}');
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenWidth = mediaQuery.size.width;
-    double screenHeight = mediaQuery.size.height;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
