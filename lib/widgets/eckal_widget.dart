@@ -17,7 +17,6 @@ class EKalWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
-    double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
 
     return Column(

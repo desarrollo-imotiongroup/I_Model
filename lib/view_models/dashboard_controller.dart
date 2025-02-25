@@ -632,8 +632,8 @@ class DashboardController extends GetxController {
   int elapsedTime = 0;
   int _remainingContractionTime = 0; // Remaining seconds in current contraction cycle
   int _remainingPauseTime = 0;       // Remaining seconds in current pause cycle
-  bool _isContractionPhase = false;  // true if we’re in a contraction cycle
-  bool _isPausePhase = false;
+  // bool _isContractionPhase = false;  // true if we’re in a contraction cycle
+  // bool _isPausePhase = false;
   CyclePhase? _currentCyclePhase;    // indicates which cycle was active
 
 
