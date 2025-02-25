@@ -13,7 +13,9 @@ import 'package:i_model/widgets/time_control_widget.dart';
 import 'package:i_model/widgets/time_counter_widget.dart';
 
 class DashboardSecondColumn extends StatelessWidget {
-  DashboardSecondColumn({super.key});
+  final int index;
+
+  DashboardSecondColumn({required this.index, super.key});
 
   final DashboardController controller = Get.put(DashboardController());
 
@@ -28,6 +30,7 @@ class DashboardSecondColumn extends StatelessWidget {
       children: [
         SizedBox(height: screenHeight * 0.03,),
         TextView.title(
+             // controller.testingPercentage[index].toString(),
             controller.isProgramSelected.value
                 ? controller.selectedMainProgramName.value.toUpperCase()
                 : Strings.nothing,

@@ -10,7 +10,9 @@ import 'package:i_model/widgets/dashboard_body_program.dart';
 import 'package:i_model/widgets/image_widget.dart';
 
 class DashboardFirstColumn extends StatelessWidget {
-  DashboardFirstColumn({super.key});
+  final int index;
+
+  DashboardFirstColumn({required this.index, super.key});
 
   final DashboardController dashboardController = Get.put(DashboardController());
 
@@ -201,7 +203,7 @@ class DashboardFirstColumn extends StatelessWidget {
                         onDecrease: () {
                           dashboardController.changeChestPercentage(isDecrease: true);
                         },
-                        percentage: dashboardController.chestPercentage.value,
+                        percentage: dashboardController.chestPercentage[index],
                         intensityColor: dashboardController.chestIntensityColor,
                         programStatus: dashboardController.programsStatus[0].status!.value,
                         onPress: (){
@@ -215,7 +217,7 @@ class DashboardFirstColumn extends StatelessWidget {
                           }
                         },
                         onLongPress: (){
-                          dashboardController.chestPercentage.value = 0;
+                          dashboardController.chestPercentage[index] = 0;
                           dashboardController.chestIntensityColor = AppColors.lowIntensityColor;
                           dashboardController.updateProgramStatus(
                             Strings.chest,

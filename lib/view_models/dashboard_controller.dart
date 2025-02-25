@@ -17,7 +17,8 @@ enum CyclePhase { contraction, pause }
 
 class DashboardController extends GetxController {
   /// Programs value percentages
-  RxInt chestPercentage = 0.obs;
+  RxList<int> chestPercentage = <int>[].obs;
+  // RxInt chestPercentage = 0.obs;
   RxInt armsPercentage = 0.obs;
   RxInt abdomenPercentage = 0.obs;
   RxInt legsPercentage = 0.obs;
@@ -39,6 +40,7 @@ class DashboardController extends GetxController {
   RxBool isElectroOn = false.obs;
   RxInt currentIndex = 0.obs;
   RxBool isBluetoothConnected = false.obs;
+  RxBool isDashboardLoading = false.obs;
 
   RxBool isPantSelected = false.obs;
   RxBool isActive = false.obs;
@@ -48,6 +50,15 @@ class DashboardController extends GetxController {
   RxString selectedMacAddress = Strings.nothing.obs;
   // RxString errorMessage = Strings.nothing.obs;
   RxBool isUpdate = false.obs;
+
+  /// Testing multiple mci
+  // RxList<int> testingPercentage = <int>[].obs;
+  // RxList<int> testingPercentage = List.generate(2, (index) => 0).obs;
+  //
+  // incrementTestingPercentage(){
+  //   testingPercentage[selectedDeviceIndex.value] = testingPercentage[selectedDeviceIndex.value] + 1;
+  //   update();
+  // }
 
   /// Handling program active, inactive and block states
   RxList<Program> programsStatus = <Program>[
@@ -103,7 +114,6 @@ class DashboardController extends GetxController {
 
   }
 
-
   /// Intensity colors
   Color chestIntensityColor = AppColors.lowIntensityColor;
   Color armsIntensityColor = AppColors.lowIntensityColor;
@@ -132,14 +142,27 @@ class DashboardController extends GetxController {
 
   @override
   Future<void> onInit() async {
+    isDashboardLoading.value = true;
     initializeBluetoothConnection();
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     int initialMinutes = sharedPreferences.getInt(Strings.maxTimeSP) ?? 25;
     remainingSeconds.value = initialMinutes * 60;
-
     automaticProgramList = await fetchAutoPrograms();
     individualProgramList = await fetchIndividualPrograms();
+    initProgramsAndTimers();
     super.onInit();
+  }
+
+  initProgramsAndTimers(){
+    int totalMCIs = 0;
+    totalMCIs = AppState.instance.mcis.length;
+
+    chestPercentage.value = List.generate(totalMCIs, (index) => 0);
+
+    Future.delayed(Duration(milliseconds: 300), () {
+      isDashboardLoading.value = false;
+    });
+
   }
 
   /// Fetching individual programs from SQL
@@ -1010,12 +1033,12 @@ class DashboardController extends GetxController {
   void changeChestPercentage({bool isDecrease = false, bool isIncrease = false}) {
     if (programsStatus[0].status!.value == ProgramStatus.active) {
       if (isIncrease) {
-        chestPercentage.value = clampValue(chestPercentage.value + 1, minPercentage, maxPercentage);
+        chestPercentage[selectedDeviceIndex.value] = clampValue(chestPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
       }
       if (isDecrease) {
-        chestPercentage.value = clampValue(chestPercentage.value - 1, minPercentage, maxPercentage);
+        chestPercentage[selectedDeviceIndex.value] = clampValue(chestPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
-      calculateIntensityColor(chestPercentage.value, isChest: true);
+      calculateIntensityColor(chestPercentage[selectedDeviceIndex.value], isChest: true);
       update();
     }
   }
@@ -1146,7 +1169,7 @@ class DashboardController extends GetxController {
         if (program.status!.value == ProgramStatus.active) {
           switch (program.name) {
             case Strings.chest:
-              chestPercentage.value = clampValue(chestPercentage.value + delta, minPercentage, maxPercentage);
+              chestPercentage[selectedDeviceIndex.value] = clampValue(chestPercentage[selectedDeviceIndex.value] + delta, minPercentage, maxPercentage);
               break;
             case Strings.arms:
               armsPercentage.value = clampValue(armsPercentage.value + delta, minPercentage, maxPercentage);
@@ -1185,7 +1208,7 @@ class DashboardController extends GetxController {
       if (program.status!.value == ProgramStatus.active) {
         switch (program.name) {
           case Strings.chest:
-            calculateIntensityColor(chestPercentage.value, isChest: true);
+            calculateIntensityColor(chestPercentage[selectedDeviceIndex.value], isChest: true);
             break;
           case Strings.arms:
             calculateIntensityColor(armsPercentage.value, isArms: true);
@@ -1248,7 +1271,7 @@ class DashboardController extends GetxController {
 
   /// Reset all programs value and intensity colors
   resetProgramValues() {
-    chestPercentage.value = 0;
+    chestPercentage[selectedDeviceIndex.value] = 0;
     armsPercentage.value = 0;
     abdomenPercentage.value = 0;
     legsPercentage.value = 0;
@@ -1651,7 +1674,7 @@ class DashboardController extends GetxController {
       valoresCanalesTraje[2] = isPantSelected.value ? 0 : lumbarPercentage.value;
       valoresCanalesTraje[3] = buttocksPercentage.value;
       valoresCanalesTraje[4] = hamStringsPercentage.value;
-      valoresCanalesTraje[5] = isPantSelected.value ? 0 : chestPercentage.value;
+      valoresCanalesTraje[5] = isPantSelected.value ? 0 : chestPercentage[selectedDeviceIndex.value];
       valoresCanalesTraje[6] = legsPercentage.value;
       valoresCanalesTraje[7] = abdomenPercentage.value;
       valoresCanalesTraje[8] = armsPercentage.value;

@@ -5,10 +5,7 @@ import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
-import 'package:i_model/views/dashboard/first_column.dart';
-import 'package:i_model/views/dashboard/fourth_column.dart';
-import 'package:i_model/views/dashboard/second_column.dart';
-import 'package:i_model/views/dashboard/third_column.dart';
+import 'package:i_model/views/expanded_panel_view.dart';
 import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/widgets/mci_widget.dart';
 import 'package:i_model/widgets/textview.dart';
@@ -105,9 +102,9 @@ class DashboardScreen extends StatelessWidget
                                       ),
                                     )
                                   : SizedBox(
-                              height: screenHeight * 0.1,  // Set fixed height for ListView
-                              width: screenWidth * 0.8,
-                              child: ListView.builder(
+                                height: screenHeight * 0.1,  // Set fixed height for ListView
+                                width: screenWidth * 0.8,
+                                child: ListView.builder(
                                 padding: EdgeInsets.zero,
                                 scrollDirection: Axis.horizontal,
                                 itemCount: dashboardController.newMacAddresses.length,
@@ -164,28 +161,54 @@ class DashboardScreen extends StatelessWidget
                         ),
                       ),
                   ),
-                 Obx(() =>
-                     AbsorbPointer(
-                       absorbing: dashboardController.isBluetoothConnected.value ? false : true,
-                       child: Row(
-                         crossAxisAlignment: CrossAxisAlignment.start,
-                         children: [
-                           /// Muscle group - first column
-                           DashboardFirstColumn(),
-                           SizedBox(width: screenWidth * 0.01,),
 
-                           /// Second column - timer
-                           DashboardSecondColumn(),
-                           SizedBox(width: screenWidth * 0.027,),
+                  Obx(() =>
+                    dashboardController.isDashboardLoading.value
+                      ? SizedBox(
+                      height: screenHeight * 0.7,
+                      child: handleStates(screenWidth: screenWidth,
+                      widget: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          color: AppColors.pinkColor,
+                        ),
+                        SizedBox(width: screenWidth * 0.03,),
+                        TextView.title(
+                          translation(context).loading,
+                          fontSize: 11.sp,
+                        )
+                      ],
+                    ),),)
+                      : AbsorbPointer(absorbing: dashboardController.isBluetoothConnected.value ? false : true,
+                       child: IndexedStack(
+                           index: dashboardController.selectedDeviceIndex.value == (-1) ? 0 : dashboardController.selectedDeviceIndex.value,
+                           children: List.generate(3, (index){
 
-                           /// Muscle group 2 - third column
-                           DashboardThirdColumn(),
-                           SizedBox(width: screenWidth * 0.03,),
+                             return ExpandedPanelView(index: index);
 
-                           /// Fourth column, contraction, pause, reset
-                           DashboardFourthColumn()
-                         ],
-                       ),
+                           },),)
+
+
+                       // Row(
+                       //   crossAxisAlignment: CrossAxisAlignment.start,
+                       //   children: [
+                       //     /// Muscle group - first column
+                       //     DashboardFirstColumn(),
+                       //     SizedBox(width: screenWidth * 0.01,),
+                       //
+                       //     /// Second column - timer
+                       //     DashboardSecondColumn(),
+                       //     SizedBox(width: screenWidth * 0.027,),
+                       //
+                       //     /// Muscle group 2 - third column
+                       //     DashboardThirdColumn(),
+                       //     SizedBox(width: screenWidth * 0.03,),
+                       //
+                       //     /// Fourth column, contraction, pause, reset
+                       //     DashboardFourthColumn()
+                       //   ],
+                       // ),
                      ),
                  )
 
