@@ -41,6 +41,8 @@ class Strings{
   static const String calves = 'Pantorrillas';
   static const String extra = 'Extra';
   static const String beauticians = 'Esteticistas';
+  static const String noDevicesAvailable = 'No hay dispositivos disponibles';
+  static const String loadingDevices = 'Cargando dispositivos';
   static const String emptyConfigurationError = 'Por favor, introduzca un nombre y el tipo de equipamiento al programa';
 
   /// Strings that later need to add in translation files

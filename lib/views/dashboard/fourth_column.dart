@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
-import 'package:i_model/widgets/eckal_widget.dart';
+import 'package:i_model/widgets/ekcal_page_view.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/line_painter_with_seconds.dart';
 
@@ -35,14 +35,13 @@ class DashboardFourthColumn extends StatelessWidget {
                   duration: Duration(milliseconds: 500),
                   switchInCurve: Curves.easeInOut,
                   switchOutCurve: Curves.easeInOut,
-                  transitionBuilder:
-                      (Widget child, Animation<double> animation) {
+                  transitionBuilder: (Widget child, Animation<double> animation) {
                     return FadeTransition(
-                      opacity: animation, // Add fade effect
+                      opacity: animation,
                       child: SlideTransition(
                         position: Tween<Offset>(
                           begin: Offset(1.0, 0.0), // Slide from right
-                          end: Offset.zero, // Final position
+                          end: Offset.zero,
                         ).animate(animation),
                         child: child,
                       ),
@@ -50,76 +49,48 @@ class DashboardFourthColumn extends StatelessWidget {
                   },
                   child: controller.isEKalWidgetVisible.value
                       ? Padding(
-                          padding: EdgeInsets.only(
-                              left: screenWidth * 0.01,
-                              right: screenWidth * 0.01),
-                          child: Row(
-                            key: ValueKey(1),
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                children: [
-                                  EKalWidget(
-                                    mciName: Strings.mciNames[0],
-                                    mciId: Strings.mciIDs[0],
-                                  ),
-                                  SizedBox(height: screenHeight * 0.04),
-                                  EKalWidget(
-                                    mciName: Strings.mciNames[1],
-                                    mciId: Strings.mciIDs[1],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(width: screenWidth * 0.02),
-                              Column(
-                                children: [
-                                  EKalWidget(
-                                    mciName: Strings.mciNames[0],
-                                    mciId: Strings.mciIDs[0],
-                                  ),
-                                  SizedBox(height: screenHeight * 0.04),
-                                  EKalWidget(
-                                    mciName: Strings.mciNames[1],
-                                    mciId: Strings.mciIDs[1],
-                                  ),
-                                ],
-                              ),
-                              SizedBox(width: screenWidth * 0.01),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    controller.changeEKalMenuVisibility();
-                                  },
-                                  child: imageWidget(
-                                    image: Strings.arrowHideIcon,
-                                    height: screenHeight * 0.15,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : GestureDetector(
-                          key: ValueKey(2),
-                          // Helps AnimatedSwitcher track widget changes
-                          onTap: () {
-                            controller.changeEKalMenuVisibility();
-                          },
-                          child: Padding(
-                            padding: EdgeInsets.only(left: screenWidth * 0.01),
-                            child: Container(
-                                width: screenWidth * 0.25,
-                                alignment: Alignment.centerLeft,
-                                child: Transform.rotate(
-                                  angle: 3.14,
-                                  child: imageWidget(
-                                    image: Strings.arrowHideIcon,
-                                    height: screenHeight * 0.15,
-                                  ),
-                                )),
+                    padding: EdgeInsets.only(left: screenWidth * 0.01, right: screenWidth * 0.01),
+                    child: Row(
+                      key: ValueKey(1),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Dynamic PageView with constraints
+                        EkcalPageView(),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: GestureDetector(
+                            onTap: () {
+                              controller.changeEKalMenuVisibility();
+                            },
+                            child: imageWidget(
+                              image: Strings.arrowHideIcon,
+                              height: screenHeight * 0.15,
+                            ),
                           ),
                         ),
+                      ],
+                    ),
+                  )
+                      : GestureDetector(
+                    key: ValueKey(2),
+                    onTap: () {
+                      controller.changeEKalMenuVisibility();
+                    },
+                    child: Padding(
+                      padding: EdgeInsets.only(left: screenWidth * 0.01),
+                      child: Container(
+                        width: screenWidth * 0.25,
+                        alignment: Alignment.centerLeft,
+                        child: Transform.rotate(
+                          angle: 3.14,
+                          child: imageWidget(
+                            image: Strings.arrowHideIcon,
+                            height: screenHeight * 0.15,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
                 SizedBox(
                   height: screenHeight * 0.05,

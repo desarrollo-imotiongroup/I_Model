@@ -97,7 +97,7 @@ void withDeviceBiompedancia(BuildContext context) {
                                   if (clientData != null) {
                                     controller.setTextFieldsData(clientData);
                                   }
-                                });
+                                },);
                               },
                               borderRadius: screenHeight * 0.01,
                               width: screenWidth * 0.2,

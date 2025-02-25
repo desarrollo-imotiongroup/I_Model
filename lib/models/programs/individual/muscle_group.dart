@@ -9,8 +9,8 @@ class MuscleGroupModel {
 
   factory MuscleGroupModel.fromJson(Map<String, dynamic> json) {
     return MuscleGroupModel(
-      id: json['grupo_muscular_id'],
-      name: json['nombre_grupo_muscular'],
+      id: json['id'],
+      name: json['nombre'],
     );
   }
 

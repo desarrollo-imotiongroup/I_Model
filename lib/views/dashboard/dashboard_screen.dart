@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
-import 'package:i_model/view_models/client/client_controller.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
 import 'package:i_model/views/dashboard/first_column.dart';
 import 'package:i_model/views/dashboard/fourth_column.dart';
@@ -11,13 +11,22 @@ import 'package:i_model/views/dashboard/second_column.dart';
 import 'package:i_model/views/dashboard/third_column.dart';
 import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/widgets/mci_widget.dart';
+import 'package:i_model/widgets/textview.dart';
 
 
 class DashboardScreen extends StatelessWidget
 {DashboardScreen({super.key});
 
  final DashboardController dashboardController = Get.put(DashboardController());
- final ClientController clientController = Get.put(ClientController());
+
+ Widget handleStates({required double screenWidth, required Widget widget}){
+   return SizedBox(
+     width: screenWidth * 0.7,
+     child: Center(
+         child: widget
+     ),
+   );
+ }
 
  void closePanel(BuildContext context){
    alertOverlay(context,
@@ -71,14 +80,31 @@ class DashboardScreen extends StatelessWidget
                             // ListView.builder wrapped with Obx to make the list reactive
 
                             dashboardController.newMacAddresses.isEmpty
-                                ? Center(child: Text("No devices available"))
-                                : dashboardController.isLoading.value
-                                ? Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.pinkColor,
-                              ),
-                            )
-                                : SizedBox(
+                              ? handleStates(
+                                  screenWidth: screenWidth,
+                                  widget: TextView.title(
+                                      Strings.noDevicesAvailable,
+                                      fontSize: 12.sp,
+                                  ),
+                                )
+                              : dashboardController.isLoading.value
+                                  ? handleStates(
+                                      screenWidth: screenWidth,
+                                      widget: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          CircularProgressIndicator(
+                                            color: AppColors.pinkColor,
+                                          ),
+                                          SizedBox(width: screenWidth * 0.03,),
+                                          TextView.title(
+                                              Strings.loadingDevices,
+                                              fontSize: 11.sp,
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  : SizedBox(
                               height: screenHeight * 0.1,  // Set fixed height for ListView
                               width: screenWidth * 0.8,
                               child: ListView.builder(
@@ -86,9 +112,6 @@ class DashboardScreen extends StatelessWidget
                                 scrollDirection: Axis.horizontal,
                                 itemCount: dashboardController.newMacAddresses.length,
                                 itemBuilder: (context, index) {
-                                  final mciName = clientController.selectedClientName.value.isEmpty
-                                      ? Strings.nothing
-                                      : clientController.selectedClientName.value;
 
                                   dashboardController.isUpdate.value;
 
@@ -98,10 +121,12 @@ class DashboardScreen extends StatelessWidget
                                           await dashboardController.selectDevice(dashboardController.newMacAddresses[index]);
                                           dashboardController.selectedMacAddress.value = dashboardController.newMacAddresses[index];
                                       },
-                                      child:Obx(() =>
+                                      child: Obx(() =>
                                           MciWidget(
                                             isUpdated: dashboardController.isUpdate.value,
-                                            mciName: mciName,
+                                            mciName: dashboardController.selectedClients.containsKey(index)
+                                                ? dashboardController.selectedClients[index]!['name']
+                                                : Strings.nothing,
                                             mciId: (dashboardController.bluetoothNames[dashboardController.newMacAddresses[index]]) ?? '',
                                             batteryStatus: dashboardController.batteryStatuses[dashboardController.newMacAddresses[index]],
                                             isConnected: dashboardController.deviceConnectionStatus[dashboardController.newMacAddresses[index]] == 'desconectado'

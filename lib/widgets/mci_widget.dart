@@ -58,10 +58,10 @@ class MciWidget extends StatelessWidget {
                 children: [
                   TextView.title(
                       mciName.toUpperCase(),
-                      fontSize: 9.sp,
+                      fontSize: 8.sp,
                       color: AppColors.blackColor.withValues(alpha: 0.7)
                   ),
-                  SizedBox(height: screenHeight * 0.005,),
+                  SizedBox(height: screenHeight * 0.001,),
                   TextView.title(
                       mciId,
                       fontSize: 8.sp,

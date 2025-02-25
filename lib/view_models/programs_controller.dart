@@ -136,71 +136,126 @@ class ProgramsController extends GetxController{
     List<IndividualProgramModel> individualPrograms = [];
     final db = await DatabaseHelper().database;
 
-    try {
-      // Fetching the raw data from the database
-      List<Map<String, dynamic>> individualProgramData = await DatabaseHelper().obtenerProgramasPredeterminadosPorTipoIndividual(db);
 
-      // To hold the programs in the map to group them
-      Map<int, IndividualProgramModel> programMap = {};
+      // Fetch the raw, preprocessed data from the database.
+      List<Map<String, dynamic>> individualProgramData =
+      await DatabaseHelper().obtenerProgramasPredeterminadosPorTipoIndividual(db);
 
-      // Iterate through the fetched data
-      for (var row in individualProgramData) {
-        int programId = row['id_programa'];
+      print('individualProgramData Cronaxias: ${individualProgramData[0]['cronaxias']}');
+      print('individualProgramData Grupos: ${individualProgramData[0]['grupos_musculares']}');
 
+      // Map each preprocessed program into your model with fallback values.
+      individualPrograms = individualProgramData.map((row) {
         individualDropDownPrograms.add({
           'id': row['id_programa'],
           'name': row['nombre'],
         });
 
-        // If the program is not yet in the map, create a new one
-        if (!programMap.containsKey(programId)) {
-          programMap[programId] = IndividualProgramModel(
-            id: row['id_programa'],
-            name: row['nombre'],
-            image: row['imagen'],
-            frequency: row['frecuencia'].toDouble(),
-            pulse: row['pulso'] is String ? 0.0 : row['pulso'].toDouble(), // Handling potential string values
-            ramp: row['rampa'].toDouble(),
-            contraction: row['contraccion'].toDouble(),
-            pause: row['pausa'].toDouble(),
-            type: row['tipo'],
-            equipmentType: row['tipo_equipamiento'],
-            cronaxias: [],
-            muscleGroups: [],
-          );
-        }
+        return IndividualProgramModel(
+          id: row['id_programa'],
+          name: row['nombre'] ,
+          image: row['imagen'],
+          frequency: row['frecuencia'] != null ? row['frecuencia'].toDouble() : 0.0,
+          pulse: (row['pulso'] != null && row['pulso'] is! String) ? row['pulso'].toDouble() : 0.0,
+          ramp: row['rampa'] != null ? row['rampa'].toDouble() : 0.0,
+          contraction: row['contraccion'] != null ? row['contraccion'].toDouble() : 0.0,
+          pause: row['pausa'] != null ? row['pausa'].toDouble() : 0.0,
+          type: row['tipo'],
+          equipmentType: row['tipo_equipamiento'],
+          cronaxias: (row['cronaxias'] as List? ?? [])
+              .map((cronaxia) => CronaxiaModel.fromJson(cronaxia))
+              .toList(),
+          muscleGroups: (row['grupos_musculares'] as List? ?? [])
+              .map((mg) => MuscleGroupModel.fromJson(mg))
+              .toList(),
+        );
+      }).toList();
 
-        // Adding cronaxia if available
-        if (row['cronaxia_id'] != null) {
-          programMap[programId]!.cronaxias.add(CronaxiaModel(
-            id: row['cronaxia_id'],
-            name: row['nombre_cronaxia'],
-            value: row['valor_cronaxia'],
-          ));
-        }
-
-        // Adding muscle group if available
-        if (row['grupo_muscular_id'] != null) {
-          programMap[programId]!.muscleGroups.add(MuscleGroupModel(
-            id: row['grupo_muscular_id'],
-            name: row['nombre_grupo_muscular'],
-          ));
-        }
-      }
-
-      // Convert the map into a list of programs
-      individualPrograms = programMap.values.toList();
-
-      print('Fetched and mapped individual programs');
-
-    } catch (e) {
-      print('❌ Error fetching programs: $e');
-      return [];
-    }
 
     isFetchIndividualProgramsLoading.value = false;
     return individualPrograms;
   }
+
+
+  // Future<List<IndividualProgramModel>> fetchIndividualPrograms() async {
+  //   isFetchIndividualProgramsLoading.value = true;
+  //   List<IndividualProgramModel> individualPrograms = [];
+  //   final db = await DatabaseHelper().database;
+  //
+  //   try {
+  //     // Fetching the raw data from the database
+  //     List<Map<String, dynamic>> individualProgramData = await DatabaseHelper().obtenerProgramasPredeterminadosPorTipoIndividual(db);
+  //     print('individualProgramData Cronaxias: ${individualProgramData[0]['cronaxias']}');
+  //     print('individualProgramData Grupos: ${individualProgramData[0]['grupos_musculares']}');
+  //
+  //     // To hold the programs in the map to group them
+  //     Map<int, IndividualProgramModel> programMap = {};
+  //
+  //     // Iterate through the fetched data
+  //     for (var row in individualProgramData) {
+  //       int programId = row['id_programa'];
+  //
+  //       individualDropDownPrograms.add({
+  //         'id': row['id_programa'],
+  //         'name': row['nombre'],
+  //       });
+  //
+  //       // If the program is not yet in the map, create a new one
+  //       if (!programMap.containsKey(programId)) {
+  //         programMap[programId] = IndividualProgramModel(
+  //           id: row['id_programa'],
+  //           name: row['nombre'],
+  //           image: row['imagen'],
+  //           frequency: row['frecuencia'].toDouble(),
+  //           pulse: row['pulso'] is String ? 0.0 : row['pulso'].toDouble(), // Handling potential string values
+  //           ramp: row['rampa'].toDouble(),
+  //           contraction: row['contraccion'].toDouble(),
+  //           pause: row['pausa'].toDouble(),
+  //           type: row['tipo'],
+  //           equipmentType: row['tipo_equipamiento'],
+  //           cronaxias: [],
+  //           muscleGroups: [],
+  //         );
+  //       }
+  //
+  //       // Adding cronaxia if available
+  //       if (row['cronaxia_id'] != null) {
+  //         programMap[programId]!.cronaxias.add(CronaxiaModel(
+  //           id: row['cronaxia_id'],
+  //           name: row['nombre_cronaxia'],
+  //           value: row['valor_cronaxia'],
+  //         ));
+  //       }
+  //
+  //       // Adding muscle group if available
+  //       if (row['grupo_muscular_id'] != null) {
+  //         programMap[programId]!.muscleGroups.add(MuscleGroupModel(
+  //           id: row['grupo_muscular_id'],
+  //           name: row['nombre_grupo_muscular'],
+  //         ));
+  //       }
+  //     }
+  //
+  //
+  //     // Convert the map into a list of programs
+  //     individualPrograms = programMap.values.toList();
+  //     //
+  //     print('------------------');
+  //     for(int i=0; i< individualPrograms.length; i++){
+  //       print(individualPrograms[i].name);
+  //       print(individualPrograms[i].cronaxias);
+  //       // print(individualPrograms[i].muscleGroups);
+  //     }
+  //     print('Fetched and mapped individual programs');
+  //
+  //   } catch (e) {
+  //     print('❌ Error fetching programs: $e');
+  //     return [];
+  //   }
+  //
+  //   isFetchIndividualProgramsLoading.value = false;
+  //   return individualPrograms;
+  // }
 
   /// Fetching automatic programs from SQL and mapping them to models
   RxBool isFetchAutoProgramsLoading = false.obs;

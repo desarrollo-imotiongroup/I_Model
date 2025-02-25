@@ -36,7 +36,16 @@ class DashboardFirstColumn extends StatelessWidget {
                     height: screenHeight * 0.08,
                   ),
                   onTap: (){
-                     selectClientOverlay(context);
+                     selectClientOverlay(
+                         context,
+                        deviceIndex: dashboardController.selectedDeviceIndex.value,
+                        selectedClientNames: dashboardController.selectedClientNames,
+                        onClientSelectedForDevice: (int deviceIndex, clientData) {
+                         if (clientData != null) {
+                           dashboardController.setClientInfoForDevice(deviceIndex, clientData);
+                         }
+                       },
+                     );
                   },
                 ),
                 GestureDetector(
@@ -49,7 +58,9 @@ class DashboardFirstColumn extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    dashboardController.changeSuitSelection();
+                    if(dashboardController.isTimerPaused.value) {
+                      dashboardController.changeSuitSelection();
+                    }
                   },
                   child: imageWidget(
                     image: dashboardController.isPantSelected.value

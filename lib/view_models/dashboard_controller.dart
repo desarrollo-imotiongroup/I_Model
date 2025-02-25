@@ -13,6 +13,7 @@ import 'package:i_model/db/db_helper.dart';
 import 'package:i_model/models/client/clients.dart';
 import 'package:i_model/models/program.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+enum CyclePhase { contraction, pause }
 
 class DashboardController extends GetxController {
   /// Programs value percentages
@@ -488,110 +489,93 @@ class DashboardController extends GetxController {
 
     print('In contraction cycle: ${isElectroOn.value}');
 
+    // Start electrostimulation if needed.
     if (!isElectroOn.value) {
       startFullElectrostimulationTrajeProcess(
-          selectedMacAddress.value,
-          selectedProgramName.value)
+          selectedMacAddress.value, selectedProgramName.value)
           .then((success) {
         isElectroOn.value = true;
       });
-
-      /// Calculate the seconds while decreasing progress value to show on line painters
-      contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-        if (contractionProgress.value > 0) {
-          remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
-          contractionProgress.value -= decrementAmount;
-        }
-        else {
-          contractionProgress.value = 0;
-          contractionCycleTimer!.cancel();
-          startPauseTimeCycle();
-        }
-      });
     }
+
+    // Immediately set UI to max value.
+    remainingContractionSeconds.value = totalDurationInSeconds.toDouble();
+
+    // Introduce firstTick flag to skip first decrement.
+    bool firstTick = true;
+
+    /// Calculate the seconds while decreasing progress value to show on line painters
+    contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (firstTick) {
+        firstTick = false;
+        // Ensure the UI remains at the max value for the first tick.
+        remainingContractionSeconds.value = totalDurationInSeconds.toDouble();
+        return;
+      }
+      if (contractionProgress.value > 0) {
+        // Update UI
+        remainingContractionSeconds.value = (totalDurationInSeconds * contractionProgress.value).ceilToDouble();
+        contractionProgress.value -= decrementAmount;
+      } else {
+        contractionProgress.value = 0;
+        remainingContractionSeconds.value = 0;
+        contractionCycleTimer!.cancel();
+        startPauseTimeCycle();
+      }
+    });
   }
 
   /// Pause time cycle
   Future<void> startPauseTimeCycle() async {
     pauseProgress.value = 1.0;
     double decrementAmount = 1.0 / (pauseSeconds.value * 10);
-
-    /// Calculate the seconds while decreasing progress value to show on line painters
     int totalDurationInSeconds = pauseSeconds.value;
+
+    // Immediately set UI to max value.
+    remainingPauseSeconds.value = totalDurationInSeconds.toDouble();
+
+    // Introduce firstTick flag to skip first decrement.
+    bool firstTick = true;
+
+    // Stop electrostimulation during pause.
     stopElectrostimulationProcess(selectedMacAddress.value);
+
     pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-      if (pauseProgress.value > 0) {
-        remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
-        pauseProgress.value -= decrementAmount;
+      if (firstTick) {
+        firstTick = false;
+        // Ensure the UI remains at the max value for the first tick.
+        remainingPauseSeconds.value = totalDurationInSeconds.toDouble();
+        return;
       }
-      else {
+      if (pauseProgress.value > 0) {
+        remainingPauseSeconds.value = (totalDurationInSeconds * pauseProgress.value).ceilToDouble();
+        pauseProgress.value -= decrementAmount;
+      } else {
         pauseProgress.value = 0;
+        remainingPauseSeconds.value = 0;
         pauseCycleTimer!.cancel();
         startContractionTimeCycle();
       }
     });
   }
 
+  /// Pulse cycle
   Future<void> startPulseCycle(var program) async {
     print("Starting pulse for ${program['subProgramName']} with frequency: ${program['frequency']} Hz and pulse: ${program['pulse']}");
-
     // Pulse logic here, you can implement your pulse method depending on the requirement
     await Future.delayed(Duration(seconds: 1)); // Simulate pulse cycle delay for now
   }
 
 
-  /// Auto Programs
-
-  // Future<void> startContractionForMultiplePrograms() async {
-  //   if (automaticProgramValues.isEmpty) {
-  //     print("No programs to process.");
-  //     return;
-  //   }
-  //
-  //   for (int i = 0; i < automaticProgramValues.length; i++) {
-  //     currentIndex.value = i;
-  //     var program = automaticProgramValues[i]; // Get current program
-  //
-  //     int durationInSeconds = program['duration'].toInt();
-  //     int minutes = durationInSeconds ~/ 60;
-  //     int remainingSeconds = durationInSeconds % 60;
-  //
-  //     // Start the contraction cycle
-  //     print("Starting contraction for ${program['subProgramName']} Contraction: ${program['contraction']} for $minutes minutes and $remainingSeconds seconds");
-  //
-  //     // Set the selected program values for UI
-  //     selectedProgramImage.value = program['image'];
-  //     selectedProgramName.value = program['subProgramName'];
-  //     frequency.value = program['frequency'].toInt();
-  //     pulse.value = program['pulse'].toInt();
-  //
-  //     // Start pulse cycle
-  //     await startPulseCycle(program);
-  //
-  //     // Set the contraction duration
-  //     contractionSeconds.value = program['contraction'].toInt();
-  //     contractionProgress.value = 1.0;
-  //     double decrementAmount = 1.0 / (contractionSeconds.value * 10);
-  //
-  //     // Run the contraction cycle timer
-  //     await runContractionCycle(program, decrementAmount);
-  //
-  //     // Start the pause cycle after contraction cycle
-  //     await startAutoPauseTimeCycle(program);
-  //   }
-  //
-  //   update();
-  //   print("All programs completed.");
-  // }
-  //
-  // Future<void> runContractionCycle(var program, double decrementAmount) async {
+  /// ORIGNAL CODE 1
+  /// Contraction time cycle
+  // Future<void> startContractionTimeCycle() async {
+  //   isContractionPauseCycleActive.value = true;
   //   contractionProgress.value = 1.0;
+  //   double decrementAmount = 1.0 / (contractionSeconds.value * 10);
   //   int totalDurationInSeconds = contractionSeconds.value;
   //
-  //
-  //   // Run contraction cycle until it's complete
-  //   bool cycleCompleted = false;
-  //   print('isElectroOn.value: ${isElectroOn.value}');
+  //   print('In contraction cycle: ${isElectroOn.value}');
   //
   //   if (!isElectroOn.value) {
   //     startFullElectrostimulationTrajeProcess(
@@ -601,38 +585,61 @@ class DashboardController extends GetxController {
   //       isElectroOn.value = true;
   //     });
   //
-  //     // Run the contraction cycle timer
+  //     /// Calculate the seconds while decreasing progress value to show on line painters
   //     contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
   //       if (contractionProgress.value > 0) {
   //         remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
   //         contractionProgress.value -= decrementAmount;
-  //       } else {
+  //       }
+  //       else {
   //         contractionProgress.value = 0;
   //         contractionCycleTimer!.cancel();
-  //         cycleCompleted = true;
+  //         startPauseTimeCycle();
   //       }
   //     });
   //   }
+  // }
   //
-  //   // contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
-  //   //   if (contractionProgress.value > 0) {
-  //   //     remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
-  //   //     contractionProgress.value -= decrementAmount;
-  //   //   } else {
-  //   //     contractionProgress.value = 0;
-  //   //     contractionCycleTimer!.cancel();
-  //   //     cycleCompleted = true;
-  //   //   }
-  //   // });
+  // /// Pause time cycle
+  // Future<void> startPauseTimeCycle() async {
+  //   pauseProgress.value = 1.0;
+  //   double decrementAmount = 1.0 / (pauseSeconds.value * 10);
   //
-  //   // Wait until the contraction cycle is finished
-  //   while (!cycleCompleted) {
-  //     await Future.delayed(Duration(milliseconds: 100)); // Wait for the contraction cycle to complete
-  //   }
+  //   /// Calculate the seconds while decreasing progress value to show on line painters
+  //   int totalDurationInSeconds = pauseSeconds.value;
+  //   stopElectrostimulationProcess(selectedMacAddress.value);
+  //   pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+  //     if (pauseProgress.value > 0) {
+  //       remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
+  //       pauseProgress.value -= decrementAmount;
+  //     }
+  //     else {
+  //       pauseProgress.value = 0;
+  //       pauseCycleTimer!.cancel();
+  //       startContractionTimeCycle();
+  //     }
+  //   });
+  // }
   //
-  //   print("Contraction cycle for ${program['subProgramName']} completed.");
+  // Future<void> startPulseCycle(var program) async {
+  //   print("Starting pulse for ${program['subProgramName']} with frequency: ${program['frequency']} Hz and pulse: ${program['pulse']}");
+  //
+  //   // Pulse logic here, you can implement your pulse method depending on the requirement
+  //   await Future.delayed(Duration(seconds: 1)); // Simulate pulse cycle delay for now
   // }
 
+  int currentProgramIndex = 0;
+  int elapsedTime = 0;
+  int _remainingContractionTime = 0; // Remaining seconds in current contraction cycle
+  int _remainingPauseTime = 0;       // Remaining seconds in current pause cycle
+  bool _isContractionPhase = false;  // true if we’re in a contraction cycle
+  bool _isPausePhase = false;
+  CyclePhase? _currentCyclePhase;    // indicates which cycle was active
+
+
+
+  /// Auto Programs
+  /// ------ LATEST ------
   Future<void> startContractionForMultiplePrograms() async {
     if (automaticProgramValues.isEmpty) {
       print("No programs to process.");
@@ -640,13 +647,12 @@ class DashboardController extends GetxController {
     }
     isContractionPauseCycleActive.value = true;
 
-    for (int i = 0; i < automaticProgramValues.length; i++) {
-      currentIndex.value = i;
-      var program = automaticProgramValues[i];
+    // DO NOT reset elapsedTime here if we're resuming mid-program.
+    for (; currentProgramIndex < automaticProgramValues.length; currentProgramIndex++) {
+      var program = automaticProgramValues[currentProgramIndex];
 
-      // Convert the fractional minute duration to seconds.
+      // Convert fractional minutes to seconds.
       double durationInMinutes = program['duration'];
-      print('durationInMinutes: $durationInMinutes');
       int totalProgramSeconds = (durationInMinutes * 60).toInt();
 
       print("Starting program: ${program['subProgramName']} for $totalProgramSeconds seconds.");
@@ -657,147 +663,821 @@ class DashboardController extends GetxController {
       frequency.value = program['frequency'].toInt();
       pulse.value = program['pulse'].toInt();
 
-      // Start pulse cycle.
+      // Start the pulse cycle.
       await startPulseCycle(program);
 
-      int elapsedTime = 0;
-
-      // Loop until the total duration for the program has been reached.
+      // Continue until the program's total duration is reached.
       while (elapsedTime < totalProgramSeconds) {
-        // --- Contraction Cycle ---
-        int contractionDuration = program['contraction'].toInt();
-        int remainingTime = totalProgramSeconds - elapsedTime;
-        // Run full contraction cycle if there is enough time, else run a partial cycle.
-        int contractionRunTime = (remainingTime < contractionDuration) ? remainingTime : contractionDuration;
-
-        print("Running contraction cycle for $contractionRunTime seconds.");
-        await runContractionCycle(program, contractionRunTime);
-        elapsedTime += contractionRunTime;
-
-        // Check if we've reached the overall duration.
-        if (elapsedTime >= totalProgramSeconds) break;
-
-        // --- Pause Cycle ---
-        int pauseDuration = program['pause'].toInt();
-        remainingTime = totalProgramSeconds - elapsedTime;
-        int pauseRunTime = (remainingTime < pauseDuration) ? remainingTime : pauseDuration;
-
-        print("Running pause cycle for $pauseRunTime seconds.");
-        await startAutoPauseTimeCycle(program, pauseRunTime);
-        elapsedTime += pauseRunTime;
+        // If a pause cycle was interrupted, resume it.
+        if (_currentCyclePhase == CyclePhase.pause && _remainingPauseTime > 0) {
+          print("Resuming pause cycle for $_remainingPauseTime seconds.");
+          await startAutoPauseTimeCycle(program, _remainingPauseTime);
+          if (isTimerPaused.value) return; // pause again if needed
+          elapsedTime += _remainingPauseTime;
+          _remainingPauseTime = 0;
+          _currentCyclePhase = CyclePhase.contraction;
+          continue;
+        }
+        // If a contraction cycle was interrupted, resume it.
+        else if (_currentCyclePhase == CyclePhase.contraction && _remainingContractionTime > 0) {
+          print("Resuming contraction cycle for $_remainingContractionTime seconds.");
+          await runContractionCycle(program, _remainingContractionTime);
+          if (isTimerPaused.value) return;
+          elapsedTime += _remainingContractionTime;
+          _remainingContractionTime = 0;
+          _currentCyclePhase = CyclePhase.pause;
+          if (elapsedTime >= totalProgramSeconds) break;
+          continue;
+        }
+        // If no cycle was interrupted, start a new contraction cycle.
+        else if (_currentCyclePhase == null || _currentCyclePhase == CyclePhase.contraction) {
+          int contractionDuration = program['contraction'].toInt();
+          int remainingTime = totalProgramSeconds - elapsedTime;
+          int contractionRunTime = (remainingTime < contractionDuration) ? remainingTime : contractionDuration;
+          _remainingContractionTime = contractionRunTime;
+          _currentCyclePhase = CyclePhase.contraction;
+          print("Starting contraction cycle for $contractionRunTime seconds.");
+          await runContractionCycle(program, contractionRunTime);
+          if (isTimerPaused.value) return;
+          elapsedTime += contractionRunTime;
+          _remainingContractionTime = 0;
+          _currentCyclePhase = CyclePhase.pause;
+          if (elapsedTime >= totalProgramSeconds) break;
+        }
+        // Start a new pause cycle.
+        if (_currentCyclePhase == CyclePhase.pause) {
+          int pauseDuration = program['pause'].toInt();
+          int remainingTime = totalProgramSeconds - elapsedTime;
+          int pauseRunTime = (remainingTime < pauseDuration) ? remainingTime : pauseDuration;
+          _remainingPauseTime = pauseRunTime;
+          print("Starting pause cycle for $pauseRunTime seconds.");
+          await startAutoPauseTimeCycle(program, pauseRunTime);
+          if (isTimerPaused.value) return;
+          elapsedTime += pauseRunTime;
+          _remainingPauseTime = 0;
+          _currentCyclePhase = CyclePhase.contraction;
+        }
       }
 
-      print("Completed program: ${program['subProgramName']}.");
+      // When a program finishes, reset state for the next program.
+      elapsedTime = 0;
+      _remainingContractionTime = 0;
+      _remainingPauseTime = 0;
+      _currentCyclePhase = null;
     }
 
     update();
     print("All programs completed.");
   }
 
-  /// Modified contraction cycle method that runs for the specified [runTimeSeconds].
+  /// Modified contraction cycle.
+  /// It saves the remaining time when paused and uses a first-tick flag so that the UI shows the maximum value.
   Future<void> runContractionCycle(var program, int runTimeSeconds) async {
-    // Set the contraction duration to the runTimeSeconds (which might be partial).
     contractionSeconds.value = runTimeSeconds;
     contractionProgress.value = 1.0;
     int totalDurationInSeconds = runTimeSeconds;
-    // Decrement progress every 100ms so that after totalDurationInSeconds the progress is 0.
     double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
-
     bool cycleCompleted = false;
-    print('isElectroOn.value: ${isElectroOn.value}');
 
-    // If not already started, begin the electrostimulation process.
+    // Start electrostimulation if not already on.
     if (!isElectroOn.value) {
-      await startFullElectrostimulationTrajeProcess(selectedMacAddress.value, selectedProgramName.value)
-          .then((success) {
+      await startFullElectrostimulationTrajeProcess(
+          selectedMacAddress.value, selectedProgramName.value
+      ).then((success) {
         isElectroOn.value = true;
       });
     }
 
+    // Immediately set UI to maximum.
+    remainingContractionSeconds.value = totalDurationInSeconds.toDouble();
+
+    bool firstTick = true;
+
     contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (isTimerPaused.value) {
+        timer.cancel();
+        _remainingContractionTime = (contractionProgress.value * totalDurationInSeconds).toInt();
+        print("Contraction paused with $_remainingContractionTime seconds remaining.");
+        return;
+      }
+      if (firstTick) {
+        firstTick = false;
+        remainingContractionSeconds.value = totalDurationInSeconds.toDouble();
+        return;
+      }
       if (contractionProgress.value > 0) {
-        remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
         contractionProgress.value -= decrementAmount;
+        remainingContractionSeconds.value = (contractionProgress.value * totalDurationInSeconds).ceilToDouble();
       } else {
         contractionProgress.value = 0;
+        remainingContractionSeconds.value = 0;
         timer.cancel();
         cycleCompleted = true;
       }
     });
 
-    // Wait until the contraction cycle completes.
     while (!cycleCompleted) {
+      if (isTimerPaused.value) return;
       await Future.delayed(Duration(milliseconds: 100));
     }
     print("Contraction cycle for ${program['subProgramName']} completed.");
   }
 
-  /// Modified pause cycle method that runs for the specified [runTimeSeconds].
+  /// Modified pause cycle.
+  /// It saves the remaining time when paused and ensures the UI immediately displays the maximum value.
   Future<void> startAutoPauseTimeCycle(var program, int runTimeSeconds) async {
-    // Set the pause duration.
     pauseSeconds.value = runTimeSeconds;
     pauseProgress.value = 1.0;
     int totalDurationInSeconds = runTimeSeconds;
     double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
-
     bool cycleCompleted = false;
-    print("Starting pause cycle for ${program['subProgramName']} for $runTimeSeconds seconds.");
 
+    // Stop electrostimulation during pause.
     stopElectrostimulationProcess(selectedMacAddress.value);
+
+    remainingPauseSeconds.value = totalDurationInSeconds.toDouble();
+
+    bool firstTick = true;
+
     pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+      if (isTimerPaused.value) {
+        timer.cancel();
+        _remainingPauseTime = (pauseProgress.value * totalDurationInSeconds).toInt();
+        print("Pause cycle paused with $_remainingPauseTime seconds remaining.");
+        return;
+      }
+      if (firstTick) {
+        firstTick = false;
+        remainingPauseSeconds.value = totalDurationInSeconds.toDouble();
+        return;
+      }
       if (pauseProgress.value > 0) {
-        remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
         pauseProgress.value -= decrementAmount;
+        remainingPauseSeconds.value = (pauseProgress.value * totalDurationInSeconds).ceilToDouble();
       } else {
         pauseProgress.value = 0;
+        remainingPauseSeconds.value = 0;
         timer.cancel();
         cycleCompleted = true;
       }
     });
 
-    // Wait until the pause cycle completes.
     while (!cycleCompleted) {
+      if (isTimerPaused.value) return;
       await Future.delayed(Duration(milliseconds: 100));
     }
     print("Pause cycle for ${program['subProgramName']} completed.");
   }
 
 
-
-
-  // Future<void> startAutoPauseTimeCycle(var program) async {
-  //   pauseSeconds.value = program['pause'].toInt(); // Use the pause time from program data
-  //   pauseProgress.value = 1.0;
-  //   double decrementAmount = 1.0 / (pauseSeconds.value * 10);
+  /// LATEST --- Cycles working fine except that the cycle should resume from the point where left off (for specific programs e,g index).
+  // Future<void> startContractionForMultiplePrograms() async {
+  //   if (automaticProgramValues.isEmpty) {
+  //     print("No programs to process.");
+  //     return;
+  //   }
+  //   isContractionPauseCycleActive.value = true;
   //
-  //   int totalDurationInSeconds = pauseSeconds.value;
+  //   for (; currentProgramIndex < automaticProgramValues.length; currentProgramIndex++) {
+  //     var program = automaticProgramValues[currentProgramIndex];
+  //
+  //     // Convert the fractional minute duration to seconds.
+  //     double durationInMinutes = program['duration'];
+  //     int totalProgramSeconds = (durationInMinutes * 60).toInt();
+  //
+  //     print("Starting program: ${program['subProgramName']} for $totalProgramSeconds seconds.");
+  //
+  //     // Set UI values.
+  //     selectedProgramImage.value = program['image'];
+  //     selectedProgramName.value = program['subProgramName'];
+  //     frequency.value = program['frequency'].toInt();
+  //     pulse.value = program['pulse'].toInt();
+  //
+  //     // Start the pulse cycle.
+  //     await startPulseCycle(program);
+  //
+  //     // Continue until the total program duration has been reached.
+  //     while (elapsedTime < totalProgramSeconds) {
+  //       // If we were in the middle of a pause cycle, resume it.
+  //       if (_currentCyclePhase == CyclePhase.pause && _remainingPauseTime > 0) {
+  //         print("Resuming pause cycle for $_remainingPauseTime seconds.");
+  //         await startAutoPauseTimeCycle(program, _remainingPauseTime);
+  //         if (isTimerPaused.value) return;
+  //         elapsedTime += _remainingPauseTime;
+  //         _remainingPauseTime = 0;
+  //         _currentCyclePhase = CyclePhase.contraction; // next cycle will be contraction.
+  //         continue;
+  //       }
+  //       // If we were in the middle of a contraction cycle, resume it.
+  //       else if (_currentCyclePhase == CyclePhase.contraction && _remainingContractionTime > 0) {
+  //         print("Resuming contraction cycle for $_remainingContractionTime seconds.");
+  //         await runContractionCycle(program, _remainingContractionTime);
+  //         if (isTimerPaused.value) return;
+  //         elapsedTime += _remainingContractionTime;
+  //         _remainingContractionTime = 0;
+  //         _currentCyclePhase = CyclePhase.pause; // next cycle will be pause.
+  //         if (elapsedTime >= totalProgramSeconds) break;
+  //         continue;
+  //       }
+  //       // If no cycle was interrupted, start a new contraction cycle.
+  //       else if (_currentCyclePhase == null || _currentCyclePhase == CyclePhase.contraction) {
+  //         int contractionDuration = program['contraction'].toInt();
+  //         int remainingTime = totalProgramSeconds - elapsedTime;
+  //         int contractionRunTime = (remainingTime < contractionDuration) ? remainingTime : contractionDuration;
+  //         _remainingContractionTime = contractionRunTime;
+  //         _currentCyclePhase = CyclePhase.contraction;
+  //         print("Starting contraction cycle for $contractionRunTime seconds.");
+  //         await runContractionCycle(program, contractionRunTime);
+  //         if (isTimerPaused.value) return;
+  //         elapsedTime += contractionRunTime;
+  //         _remainingContractionTime = 0;
+  //         _currentCyclePhase = CyclePhase.pause; // switch to pause phase next.
+  //         if (elapsedTime >= totalProgramSeconds) break;
+  //       }
+  //       // Now start a new pause cycle.
+  //       if (_currentCyclePhase == CyclePhase.pause) {
+  //         int pauseDuration = program['pause'].toInt();
+  //         int remainingTime = totalProgramSeconds - elapsedTime;
+  //         int pauseRunTime = (remainingTime < pauseDuration) ? remainingTime : pauseDuration;
+  //         _remainingPauseTime = pauseRunTime;
+  //         print("Starting pause cycle for $pauseRunTime seconds.");
+  //         await startAutoPauseTimeCycle(program, pauseRunTime);
+  //         if (isTimerPaused.value) return;
+  //         elapsedTime += pauseRunTime;
+  //         _remainingPauseTime = 0;
+  //         _currentCyclePhase = CyclePhase.contraction; // next cycle will be contraction.
+  //       }
+  //     }
+  //
+  //     // Reset state for the next program.
+  //     elapsedTime = 0;
+  //     _remainingContractionTime = 0;
+  //     _remainingPauseTime = 0;
+  //     _currentCyclePhase = null;
+  //   }
+  //
+  //   update();
+  //   print("All programs completed.");
+  // }
+  //
+  // Future<void> runContractionCycle(var program, int runTimeSeconds) async {
+  //   contractionSeconds.value = runTimeSeconds;
+  //   contractionProgress.value = 1.0;
+  //   int totalDurationInSeconds = runTimeSeconds;
+  //   double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
   //   bool cycleCompleted = false;
   //
-  //   // Start pause cycle
-  //   stopElectrostimulationProcess( selectedMacAddress.value);
+  //   // Start electrostimulation if needed.
+  //   if (!isElectroOn.value) {
+  //     await startFullElectrostimulationTrajeProcess(selectedMacAddress.value, selectedProgramName.value)
+  //         .then((success) {
+  //       isElectroOn.value = true;
+  //     });
+  //   }
+  //
+  //   // Immediately set UI to max value.
+  //   remainingContractionSeconds.value = totalDurationInSeconds.toDouble();
+  //
+  //   bool firstTick = true; // flag to ensure we set max value on the first tick
+  //
+  //   contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+  //     if (isTimerPaused.value) {
+  //       timer.cancel();
+  //       _remainingContractionTime = (contractionProgress.value * totalDurationInSeconds).toInt();
+  //       print("Contraction paused with $_remainingContractionTime seconds remaining.");
+  //       return;
+  //     }
+  //     if (firstTick) {
+  //       firstTick = false;
+  //       // Force UI to show the max value for the first tick.
+  //       remainingContractionSeconds.value = totalDurationInSeconds.toDouble();
+  //       return; // Skip decrement on the first tick.
+  //     }
+  //     if (contractionProgress.value > 0) {
+  //       contractionProgress.value -= decrementAmount;
+  //       // Update UI: always use ceil to ensure non-zero until truly done.
+  //       remainingContractionSeconds.value = (contractionProgress.value * totalDurationInSeconds).ceilToDouble();
+  //     } else {
+  //       contractionProgress.value = 0;
+  //       remainingContractionSeconds.value = 0;
+  //       timer.cancel();
+  //       cycleCompleted = true;
+  //     }
+  //   });
+  //
+  //   while (!cycleCompleted) {
+  //     if (isTimerPaused.value) return;
+  //     await Future.delayed(Duration(milliseconds: 100));
+  //   }
+  //   print("Contraction cycle for ${program['subProgramName']} completed.");
+  // }
+  //
+  // Future<void> startAutoPauseTimeCycle(var program, int runTimeSeconds) async {
+  //   pauseSeconds.value = runTimeSeconds;
+  //   pauseProgress.value = 1.0;
+  //   int totalDurationInSeconds = runTimeSeconds;
+  //   double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
+  //   bool cycleCompleted = false;
+  //
+  //   // Stop electrostimulation during pause.
+  //   stopElectrostimulationProcess(selectedMacAddress.value);
+  //
+  //   // Immediately set UI to max value.
+  //   remainingPauseSeconds.value = totalDurationInSeconds.toDouble();
+  //
+  //   bool firstTick = true; // flag to ensure we set max value on the first tick
+  //
+  //   pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+  //     if (isTimerPaused.value) {
+  //       timer.cancel();
+  //       _remainingPauseTime = (pauseProgress.value * totalDurationInSeconds).toInt();
+  //       print("Pause cycle paused with $_remainingPauseTime seconds remaining.");
+  //       return;
+  //     }
+  //     if (firstTick) {
+  //       firstTick = false;
+  //       remainingPauseSeconds.value = totalDurationInSeconds.toDouble();
+  //       return; // Skip decrement on the first tick.
+  //     }
+  //     if (pauseProgress.value > 0) {
+  //       pauseProgress.value -= decrementAmount;
+  //       remainingPauseSeconds.value = (pauseProgress.value * totalDurationInSeconds).ceilToDouble();
+  //     } else {
+  //       pauseProgress.value = 0;
+  //       remainingPauseSeconds.value = 0;
+  //       timer.cancel();
+  //       cycleCompleted = true;
+  //     }
+  //   });
+  //
+  //   while (!cycleCompleted) {
+  //     if (isTimerPaused.value) return;
+  //     await Future.delayed(Duration(milliseconds: 100));
+  //   }
+  //   print("Pause cycle for ${program['subProgramName']} completed.");
+  // }
+
+
+  /// ORIGNAL CODE 3
+//   Future<void> startContractionForMultiplePrograms() async {
+//     if (automaticProgramValues.isEmpty) {
+//       print("No programs to process.");
+//       return;
+//     }
+//     isContractionPauseCycleActive.value = true;
+//
+//     for (; currentProgramIndex < automaticProgramValues.length; currentProgramIndex++) {
+//       var program = automaticProgramValues[currentProgramIndex];
+//
+//       // Convert the fractional minute duration to seconds.
+//       double durationInMinutes = program['duration'];
+//       int totalProgramSeconds = (durationInMinutes * 60).toInt();
+//
+//       print("Starting program: ${program['subProgramName']} for $totalProgramSeconds seconds.");
+//
+//       // Set UI values.
+//       selectedProgramImage.value = program['image'];
+//       selectedProgramName.value = program['subProgramName'];
+//       frequency.value = program['frequency'].toInt();
+//       pulse.value = program['pulse'].toInt();
+//
+//       // Start the pulse cycle.
+//       await startPulseCycle(program);
+//
+//       // Continue until the total program duration has been reached.
+//       while (elapsedTime < totalProgramSeconds) {
+//         // If we were in the middle of a pause cycle, resume it.
+//         if (_currentCyclePhase == CyclePhase.pause && _remainingPauseTime > 0) {
+//           print("Resuming pause cycle for $_remainingPauseTime seconds.");
+//           await startAutoPauseTimeCycle(program, _remainingPauseTime);
+//           if (isTimerPaused.value) return;
+//           elapsedTime += _remainingPauseTime;
+//           _remainingPauseTime = 0;
+//           _currentCyclePhase = CyclePhase.contraction; // next cycle will be contraction.
+//           continue;
+//         }
+//         // If we were in the middle of a contraction cycle, resume it.
+//         else if (_currentCyclePhase == CyclePhase.contraction && _remainingContractionTime > 0) {
+//           print("Resuming contraction cycle for $_remainingContractionTime seconds.");
+//           await runContractionCycle(program, _remainingContractionTime);
+//           if (isTimerPaused.value) return;
+//           elapsedTime += _remainingContractionTime;
+//           _remainingContractionTime = 0;
+//           _currentCyclePhase = CyclePhase.pause; // next cycle will be pause.
+//           if (elapsedTime >= totalProgramSeconds) break;
+//           continue;
+//         }
+//         // If no cycle was interrupted, start a new contraction cycle.
+//         else if (_currentCyclePhase == null || _currentCyclePhase == CyclePhase.contraction) {
+//           int contractionDuration = program['contraction'].toInt();
+//           int remainingTime = totalProgramSeconds - elapsedTime;
+//           int contractionRunTime = (remainingTime < contractionDuration) ? remainingTime : contractionDuration;
+//           _remainingContractionTime = contractionRunTime;
+//           _currentCyclePhase = CyclePhase.contraction;
+//           print("Starting contraction cycle for $contractionRunTime seconds.");
+//           await runContractionCycle(program, contractionRunTime);
+//           if (isTimerPaused.value) return;
+//           elapsedTime += contractionRunTime;
+//           _remainingContractionTime = 0;
+//           _currentCyclePhase = CyclePhase.pause; // switch to pause phase next.
+//           if (elapsedTime >= totalProgramSeconds) break;
+//         }
+//         // Now start a new pause cycle.
+//         if (_currentCyclePhase == CyclePhase.pause) {
+//           int pauseDuration = program['pause'].toInt();
+//           int remainingTime = totalProgramSeconds - elapsedTime;
+//           int pauseRunTime = (remainingTime < pauseDuration) ? remainingTime : pauseDuration;
+//           _remainingPauseTime = pauseRunTime;
+//           print("Starting pause cycle for $pauseRunTime seconds.");
+//           await startAutoPauseTimeCycle(program, pauseRunTime);
+//           if (isTimerPaused.value) return;
+//           elapsedTime += pauseRunTime;
+//           _remainingPauseTime = 0;
+//           _currentCyclePhase = CyclePhase.contraction; // next cycle will be contraction.
+//         }
+//       }
+//
+//       // Reset state for the next program.
+//       elapsedTime = 0;
+//       _remainingContractionTime = 0;
+//       _remainingPauseTime = 0;
+//       _currentCyclePhase = null;
+//     }
+//
+//     update();
+//     print("All programs completed.");
+//   }
+//
+// // Modified contraction cycle that saves remaining time if paused.
+//   Future<void> runContractionCycle(var program, int runTimeSeconds) async {
+//     contractionSeconds.value = runTimeSeconds;
+//     contractionProgress.value = 1.0;
+//     int totalDurationInSeconds = runTimeSeconds;
+//     double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
+//     bool cycleCompleted = false;
+//
+//     // Start electrostimulation if needed.
+//     if (!isElectroOn.value) {
+//       await startFullElectrostimulationTrajeProcess(selectedMacAddress.value, selectedProgramName.value)
+//           .then((success) {
+//         isElectroOn.value = true;
+//       });
+//     }
+//
+//     contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+//       if (isTimerPaused.value) {
+//         timer.cancel();
+//         // Save remaining time.
+//         _remainingContractionTime = (contractionProgress.value * totalDurationInSeconds).toInt();
+//         print("Contraction paused with $_remainingContractionTime seconds remaining.");
+//         return;
+//       }
+//       if (contractionProgress.value > 0) {
+//         remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
+//         contractionProgress.value -= decrementAmount;
+//       } else {
+//         contractionProgress.value = 0;
+//         timer.cancel();
+//         cycleCompleted = true;
+//       }
+//     });
+//
+//     while (!cycleCompleted) {
+//       if (isTimerPaused.value) return;
+//       await Future.delayed(Duration(milliseconds: 100));
+//     }
+//     print("Contraction cycle for ${program['subProgramName']} completed.");
+//   }
+//
+// // Modified pause cycle that saves remaining time if paused.
+//   Future<void> startAutoPauseTimeCycle(var program, int runTimeSeconds) async {
+//     pauseSeconds.value = runTimeSeconds;
+//     pauseProgress.value = 1.0;
+//     int totalDurationInSeconds = runTimeSeconds;
+//     double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
+//     bool cycleCompleted = false;
+//
+//     // Stop electrostimulation during pause.
+//     stopElectrostimulationProcess(selectedMacAddress.value);
+//
+//     pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+//       if (isTimerPaused.value) {
+//         timer.cancel();
+//         _remainingPauseTime = (pauseProgress.value * totalDurationInSeconds).toInt();
+//         print("Pause cycle paused with $_remainingPauseTime seconds remaining.");
+//         return;
+//       }
+//       if (pauseProgress.value > 0) {
+//         remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
+//         pauseProgress.value -= decrementAmount;
+//       } else {
+//         pauseProgress.value = 0;
+//         timer.cancel();
+//         cycleCompleted = true;
+//       }
+//     });
+//
+//     while (!cycleCompleted) {
+//       if (isTimerPaused.value) return;
+//       await Future.delayed(Duration(milliseconds: 100));
+//     }
+//     print("Pause cycle for ${program['subProgramName']} completed.");
+//   }
+
+  /// /// ORIGNAL CODE 2
+//   Future<void> startContractionForMultiplePrograms() async {
+//     if (automaticProgramValues.isEmpty) {
+//       print("No programs to process.");
+//       return;
+//     }
+//     isContractionPauseCycleActive.value = true;
+//
+//     // Resume from previously stored program index if any.
+//     for (; currentProgramIndex < automaticProgramValues.length; currentProgramIndex++) {
+//       var program = automaticProgramValues[currentProgramIndex];
+//
+//       // Convert fractional minute duration to seconds.
+//       double durationInMinutes = program['duration'];
+//       int totalProgramSeconds = (durationInMinutes * 60).toInt();
+//
+//       print("Starting program: ${program['subProgramName']} for $totalProgramSeconds seconds.");
+//
+//       // Set UI values.
+//       selectedProgramImage.value = program['image'];
+//       selectedProgramName.value = program['subProgramName'];
+//       frequency.value = program['frequency'].toInt();
+//       pulse.value = program['pulse'].toInt();
+//
+//       // Start pulse cycle.
+//       await startPulseCycle(program);
+//
+//       // The elapsedTime for this program is preserved if we previously paused.
+//       while (elapsedTime < totalProgramSeconds) {
+//         // ---- Contraction Cycle ----
+//         int contractionDuration = program['contraction'].toInt();
+//         int remainingTime = totalProgramSeconds - elapsedTime;
+//         int contractionRunTime;
+//         if (_isContractionPhase && _remainingContractionTime > 0) {
+//           contractionRunTime = _remainingContractionTime;
+//           print("Resuming contraction cycle for $contractionRunTime seconds.");
+//         } else {
+//           contractionRunTime = (remainingTime < contractionDuration) ? remainingTime : contractionDuration;
+//           _remainingContractionTime = contractionRunTime; // initialize for a new cycle
+//           print("Starting contraction cycle for $contractionRunTime seconds.");
+//           _isContractionPhase = true;
+//         }
+//
+//         await runContractionCycle(program, contractionRunTime);
+//         // If a pause was requested during the contraction, exit early so that the resume call re-invokes this method.
+//         if (isTimerPaused.value) return;
+//         elapsedTime += contractionRunTime;
+//         _isContractionPhase = false;
+//
+//         if (elapsedTime >= totalProgramSeconds) break;
+//
+//         // ---- Pause Cycle ----
+//         int pauseDuration = program['pause'].toInt();
+//         remainingTime = totalProgramSeconds - elapsedTime;
+//         int pauseRunTime;
+//         if (_isPausePhase && _remainingPauseTime > 0) {
+//           pauseRunTime = _remainingPauseTime;
+//           print("Resuming pause cycle for $pauseRunTime seconds.");
+//         } else {
+//           pauseRunTime = (remainingTime < pauseDuration) ? remainingTime : pauseDuration;
+//           _remainingPauseTime = pauseRunTime; // initialize for a new cycle
+//           print("Starting pause cycle for $pauseRunTime seconds.");
+//           _isPausePhase = true;
+//         }
+//
+//         await startAutoPauseTimeCycle(program, pauseRunTime);
+//         if (isTimerPaused.value) return;
+//         elapsedTime += pauseRunTime;
+//         _isPausePhase = false;
+//       }
+//
+//       // Reset for the next program.
+//       elapsedTime = 0;
+//       _remainingContractionTime = 0;
+//       _remainingPauseTime = 0;
+//     }
+//
+//     update();
+//     print("All programs completed.");
+//   }
+//
+// // Modified contraction cycle that saves remaining time when paused.
+//   Future<void> runContractionCycle(var program, int runTimeSeconds) async {
+//     contractionSeconds.value = runTimeSeconds;
+//     contractionProgress.value = 1.0;
+//     int totalDurationInSeconds = runTimeSeconds;
+//     double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
+//     bool cycleCompleted = false;
+//
+//     // Start electrostimulation if not already on.
+//     if (!isElectroOn.value) {
+//       await startFullElectrostimulationTrajeProcess(selectedMacAddress.value, selectedProgramName.value)
+//           .then((success) {
+//         isElectroOn.value = true;
+//       });
+//     }
+//
+//     contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+//       // If the timer is paused (and the onPlayPause has canceled the timer), just return.
+//       if (isTimerPaused.value) {
+//         timer.cancel();
+//         return;
+//       }
+//       if (contractionProgress.value > 0) {
+//         remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
+//         contractionProgress.value -= decrementAmount;
+//       } else {
+//         contractionProgress.value = 0;
+//         timer.cancel();
+//         cycleCompleted = true;
+//       }
+//     });
+//
+//     // Wait until the contraction cycle either completes or is interrupted by a pause.
+//     while (!cycleCompleted) {
+//       if (isTimerPaused.value) {
+//         // Save the remaining contraction time.
+//         _remainingContractionTime = (contractionProgress.value * totalDurationInSeconds).toInt();
+//         print("Contraction paused with $_remainingContractionTime seconds remaining.");
+//         return;
+//       }
+//       await Future.delayed(Duration(milliseconds: 100));
+//     }
+//     print("Contraction cycle for ${program['subProgramName']} completed.");
+//   }
+//
+// // Modified pause cycle that saves remaining time when paused.
+//   Future<void> startAutoPauseTimeCycle(var program, int runTimeSeconds) async {
+//     pauseSeconds.value = runTimeSeconds;
+//     pauseProgress.value = 1.0;
+//     int totalDurationInSeconds = runTimeSeconds;
+//     double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
+//     bool cycleCompleted = false;
+//
+//     // Stop the electrostimulation process during pause.
+//     stopElectrostimulationProcess(selectedMacAddress.value);
+//
+//     pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+//       if (isTimerPaused.value) {
+//         timer.cancel();
+//         return;
+//       }
+//       if (pauseProgress.value > 0) {
+//         remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
+//         pauseProgress.value -= decrementAmount;
+//       } else {
+//         pauseProgress.value = 0;
+//         timer.cancel();
+//         cycleCompleted = true;
+//       }
+//     });
+//
+//     while (!cycleCompleted) {
+//       if (isTimerPaused.value) {
+//         _remainingPauseTime = (pauseProgress.value * totalDurationInSeconds).toInt();
+//         print("Pause paused with $_remainingPauseTime seconds remaining.");
+//         return;
+//       }
+//       await Future.delayed(Duration(milliseconds: 100));
+//     }
+//     print("Pause cycle for ${program['subProgramName']} completed.");
+//   }
+
+
+  // ///  /// ORIGNAL CODE
+  // Future<void> startContractionForMultiplePrograms() async {
+  //   if (automaticProgramValues.isEmpty) {
+  //     print("No programs to process.");
+  //     return;
+  //   }
+  //   isContractionPauseCycleActive.value = true;
+  //
+  //   for (int i = 0; i < automaticProgramValues.length; i++) {
+  //     currentIndex.value = i;
+  //     var program = automaticProgramValues[i];
+  //
+  //     // Convert the fractional minute duration to seconds.
+  //     double durationInMinutes = program['duration'];
+  //     print('durationInMinutes: $durationInMinutes');
+  //     int totalProgramSeconds = (durationInMinutes * 60).toInt();
+  //
+  //     print("Starting program: ${program['subProgramName']} for $totalProgramSeconds seconds.");
+  //
+  //     // Set UI values.
+  //     selectedProgramImage.value = program['image'];
+  //     selectedProgramName.value = program['subProgramName'];
+  //     frequency.value = program['frequency'].toInt();
+  //     pulse.value = program['pulse'].toInt();
+  //
+  //     // Start pulse cycle.
+  //     await startPulseCycle(program);
+  //
+  //     int elapsedTime = 0;
+  //
+  //     // Loop until the total duration for the program has been reached.
+  //     while (elapsedTime < totalProgramSeconds) {
+  //       // --- Contraction Cycle ---
+  //       int contractionDuration = program['contraction'].toInt();
+  //       int remainingTime = totalProgramSeconds - elapsedTime;
+  //       // Run full contraction cycle if there is enough time, else run a partial cycle.
+  //       int contractionRunTime = (remainingTime < contractionDuration) ? remainingTime : contractionDuration;
+  //
+  //       print("Running contraction cycle for $contractionRunTime seconds.");
+  //       await runContractionCycle(program, contractionRunTime);
+  //       elapsedTime += contractionRunTime;
+  //
+  //       // Check if we've reached the overall duration.
+  //       if (elapsedTime >= totalProgramSeconds) break;
+  //
+  //       // --- Pause Cycle ---
+  //       int pauseDuration = program['pause'].toInt();
+  //       remainingTime = totalProgramSeconds - elapsedTime;
+  //       int pauseRunTime = (remainingTime < pauseDuration) ? remainingTime : pauseDuration;
+  //
+  //       print("Running pause cycle for $pauseRunTime seconds.");
+  //       await startAutoPauseTimeCycle(program, pauseRunTime);
+  //       elapsedTime += pauseRunTime;
+  //     }
+  //
+  //     print("Completed program: ${program['subProgramName']}.");
+  //   }
+  //
+  //   update();
+  //   print("All programs completed.");
+  // }
+  //
+  // /// Modified contraction cycle method that runs for the specified [runTimeSeconds].
+  // Future<void> runContractionCycle(var program, int runTimeSeconds) async {
+  //   // Set the contraction duration to the runTimeSeconds (which might be partial).
+  //   contractionSeconds.value = runTimeSeconds;
+  //   contractionProgress.value = 1.0;
+  //   int totalDurationInSeconds = runTimeSeconds;
+  //   // Decrement progress every 100ms so that after totalDurationInSeconds the progress is 0.
+  //   double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
+  //
+  //   bool cycleCompleted = false;
+  //   print('isElectroOn.value: ${isElectroOn.value}');
+  //
+  //   // If not already started, begin the electrostimulation process.
+  //   if (!isElectroOn.value) {
+  //     await startFullElectrostimulationTrajeProcess(selectedMacAddress.value, selectedProgramName.value)
+  //         .then((success) {
+  //       isElectroOn.value = true;
+  //     });
+  //   }
+  //
+  //   contractionCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
+  //     if (contractionProgress.value > 0) {
+  //       remainingContractionSeconds.value = totalDurationInSeconds * contractionProgress.value;
+  //       contractionProgress.value -= decrementAmount;
+  //     }
+  //     else {
+  //       contractionProgress.value = 0;
+  //       timer.cancel();
+  //       cycleCompleted = true;
+  //     }
+  //   });
+  //
+  //   // Wait until the contraction cycle completes.
+  //   while (!cycleCompleted) {
+  //     await Future.delayed(Duration(milliseconds: 100));
+  //   }
+  //   print("Contraction cycle for ${program['subProgramName']} completed.");
+  // }
+  //
+  // /// Modified pause cycle method that runs for the specified [runTimeSeconds].
+  // Future<void> startAutoPauseTimeCycle(var program, int runTimeSeconds) async {
+  //   // Set the pause duration.
+  //   pauseSeconds.value = runTimeSeconds;
+  //   pauseProgress.value = 1.0;
+  //   int totalDurationInSeconds = runTimeSeconds;
+  //   double decrementAmount = 1.0 / (totalDurationInSeconds * 10);
+  //
+  //   bool cycleCompleted = false;
+  //   print("Starting pause cycle for ${program['subProgramName']} for $runTimeSeconds seconds.");
+  //
+  //   stopElectrostimulationProcess(selectedMacAddress.value);
   //   pauseCycleTimer = Timer.periodic(Duration(milliseconds: 100), (timer) {
   //     if (pauseProgress.value > 0) {
   //       remainingPauseSeconds.value = totalDurationInSeconds * pauseProgress.value;
   //       pauseProgress.value -= decrementAmount;
   //     } else {
   //       pauseProgress.value = 0;
-  //       pauseCycleTimer!.cancel();
+  //       timer.cancel();
   //       cycleCompleted = true;
   //     }
   //   });
   //
-  //   // Wait for the pause cycle to finish
+  //   // Wait until the pause cycle completes.
   //   while (!cycleCompleted) {
-  //     await Future.delayed(Duration(milliseconds: 100)); // Wait for the pause cycle to complete
+  //     await Future.delayed(Duration(milliseconds: 100));
   //   }
-  //
   //   print("Pause cycle for ${program['subProgramName']} completed.");
   // }
-
-
-
-
-
 
   cancelTimersOnTimeUp(){
     contractionCycleTimer?.cancel();
@@ -1257,7 +1937,8 @@ class DashboardController extends GetxController {
   /// Select client
   var isDropdownOpen = false.obs;
   final TextEditingController nameController = TextEditingController();
-  RxString selectedClient = ''.obs;
+  RxMap<int, Map<String, dynamic>> selectedClients = RxMap<int, Map<String, dynamic>>();
+  RxList<String> selectedClientNames = <String>[].obs;
   RxString selectedStatus = Strings.active.obs;
   List<String> clientStatusList = [Strings.active, Strings.inactive, Strings.all];
 
@@ -1300,6 +1981,45 @@ class DashboardController extends GetxController {
     buttocksIntensityColor = AppColors.lowIntensityColor;
     hamstringsIntensityColor = AppColors.lowIntensityColor;
     calvesIntensityColor = AppColors.lowIntensityColor;
+  }
+
+
+  // void setClientInfoForDevice(int deviceIndex, dynamic clientData) {
+  //   selectedClients[deviceIndex] = clientData;
+  //   String newName = selectedClients[deviceIndex]!['name'];
+  //
+  //   // If the device index already exists in the list, update it.
+  //   if (deviceIndex < selectedClientNames.length) {
+  //     // Only update if the new name is different at that device index.
+  //     if (selectedClientNames[deviceIndex] != newName) {
+  //       selectedClientNames[deviceIndex] = newName;
+  //     }
+  //   }
+  //   // If the device index equals the current length, simply append.
+  //   else if (deviceIndex == selectedClientNames.length) {
+  //     selectedClientNames.add(newName);
+  //   }
+  //   // If the deviceIndex is greater than the list length (a gap), you might decide how to handle it.
+  //   else {
+  //     // Optionally fill the gap with nulls or placeholders then add.
+  //     for (int i = selectedClientNames.length; i < deviceIndex; i++) {
+  //        selectedClientNames.add(''); // or null if you prefer
+  //     }
+  //     selectedClientNames.add(newName);
+  //   }
+  //
+  //   update();
+  // }
+
+
+  setClientInfoForDevice(int deviceIndex, dynamic clientData) {
+    selectedClients[deviceIndex] = clientData;
+    String newName = selectedClients[deviceIndex]!['name'];
+    // Only add if the name isn't already in the list
+    if (!selectedClientNames.contains(newName)) {
+      selectedClientNames.add(newName);
+    }
+    update();
   }
 
   /// Bluetooth connectivity
@@ -1557,14 +2277,12 @@ class DashboardController extends GetxController {
     Map<String, dynamic>? selectedProgramData;
 
     if(selectedProgramType.value == Strings.individual){
-      print('Pulso: $pulso');
       frecuencia = selectedProgramDetails['frecuencia'];
       rampa = selectedProgramDetails['rampa'];
       pulso = selectedProgramDetails['pulso'] == 'CX' ? 0.0 : selectedProgramDetails['pulso'];
       pause = selectedProgramDetails['pausa'];
       contraction = selectedProgramDetails['contraccion'];
       // double contraction = contractionSeconds.value.toDouble();
-      print('Pulso: $pulso');
 
        cronaxias = selectedProgramDetails['cronaxias'];
        grupos = selectedProgramDetails['grupos_musculares'];
@@ -1606,23 +2324,6 @@ class DashboardController extends GetxController {
 
     }
 
-    // print('Cronaxiaaa: ${autoProgramCronaxias}');
-    // print('Cronaxiaaa: ${cronaxias}');
-    // print('gruposssss: ${autoProgramGrupos}');
-    // print('Cronaxiaaa: ${grupos}');
-
-    // print('selectedProgramType.value: ${selectedProgramType.value}');
-    //
-    // if (selectedProgramType.value == Strings.individual) {
-    //   selectedProgramData = selectedProgramDetails;
-    // }
-    // else{
-    //   selectedProgramData = selectedProgramDetails['subprogramas'][currentIndex];
-    //   print('selectedProgramData: $selectedProgramData');
-    // }
-    // else if (selectedProgram == tr(context, 'Automáticos').toUpperCase()) {
-    //   selectedProgramData = widget.selectedAutoProgramNotifier.value?['subprogramas'][currentSubprogramIndex];
-
     if (selectedProgramData != null) {
       frecuencia = selectedProgramData['frecuencia'] ?? frecuencia;
       rampa = selectedProgramData['rampa'] ?? rampa;
@@ -1662,16 +2363,17 @@ class DashboardController extends GetxController {
     try {
       // Configurar los valores de los canales del traje
       List<int> valoresCanalesTraje = List.filled(10, 0);
-      valoresCanalesTraje[0] = upperBackPercentage.value;
-      valoresCanalesTraje[1] = middleBackPercentage.value;
-      valoresCanalesTraje[2] = lumbarPercentage.value;
+
+      valoresCanalesTraje[0] = isPantSelected.value ? 0 : upperBackPercentage.value;
+      valoresCanalesTraje[1] = isPantSelected.value ? 0 : middleBackPercentage.value;
+      valoresCanalesTraje[2] = isPantSelected.value ? 0 : lumbarPercentage.value;
       valoresCanalesTraje[3] = buttocksPercentage.value;
       valoresCanalesTraje[4] = hamStringsPercentage.value;
-      valoresCanalesTraje[5] = chestPercentage.value;
+      valoresCanalesTraje[5] = isPantSelected.value ? 0 : chestPercentage.value;
       valoresCanalesTraje[6] = legsPercentage.value;
       valoresCanalesTraje[7] = abdomenPercentage.value;
       valoresCanalesTraje[8] = armsPercentage.value;
-      valoresCanalesTraje[9] = 0;
+      valoresCanalesTraje[9] = isPantSelected.value ? calvesPercentage.value : 0;
 
       debugPrint("📊 Valores de canales configurados: $valoresCanalesTraje");
 

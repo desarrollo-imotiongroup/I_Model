@@ -7,11 +7,11 @@ import 'package:i_model/widgets/textview.dart';
 
 class EKalWidget extends StatelessWidget {
   final String mciName;
-  final String mciId;
+  // final String mciId;
 
   const EKalWidget({
     required this.mciName,
-    required this.mciId,
+    // required this.mciId,
     super.key});
 
   @override
@@ -33,12 +33,42 @@ class EKalWidget extends StatelessWidget {
             height: screenHeight * 0.025
         ),
         SizedBox(height: screenHeight * 0.006,),
-        TextView.title(
-            mciId,
-            fontSize: 10.sp,
-            color: AppColors.blackColor.withValues(alpha: 0.8)
-        ),
+        // TextView.title(
+        //     mciId,
+        //     fontSize: 10.sp,
+        //     color: AppColors.blackColor.withValues(alpha: 0.8)
+        // ),
       ],
     );
   }
 }
+
+
+// Column(
+//   children: [
+//     EKalWidget(
+//       mciName: Strings.mciNames[0],
+//       mciId: Strings.mciIDs[0],
+//     ),
+//     SizedBox(height: screenHeight * 0.04),
+//     EKalWidget(
+//       mciName: Strings.mciNames[1],
+//       mciId: Strings.mciIDs[1],
+//     ),
+//   ],
+// ),
+// SizedBox(width: screenWidth * 0.02),
+// Column(
+//   children: [
+//     EKalWidget(
+//       mciName: Strings.mciNames[0],
+//       mciId: Strings.mciIDs[0],
+//     ),
+//     SizedBox(height: screenHeight * 0.04),
+//     EKalWidget(
+//       mciName: Strings.mciNames[1],
+//       mciId: Strings.mciIDs[1],
+//     ),
+//   ],
+// ),
+// SizedBox(width: screenWidth * 0.01),

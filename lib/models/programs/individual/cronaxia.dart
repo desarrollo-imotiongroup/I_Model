@@ -11,9 +11,9 @@ class CronaxiaModel {
 
   factory CronaxiaModel.fromJson(Map<String, dynamic> json) {
     return CronaxiaModel(
-      id: json['cronaxia_id'],
-      name: json['nombre_cronaxia'],
-      value: json['valor_cronaxia']?.toDouble() ?? 0.0,
+      id: json['id'],
+      name: json['nombre'],
+      value: json['valor']?.toDouble() ?? 0.0,
     );
   }
 

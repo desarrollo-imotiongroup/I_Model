@@ -21,7 +21,7 @@ class ClientController extends GetxController {
   List<String> genderList = [Strings.man, Strings.women];
   // RxString selectedClient = ''.obs;
   RxMap selectedClient = {}.obs;
-  RxString selectedClientName = Strings.nothing.obs;
+  RxMap pickedClient = {}.obs;
   RxBool isShowTabs = false.obs;
 
   /// Client screen values

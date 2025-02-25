@@ -73,13 +73,24 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                     child: Column(
                       children: [
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Image(
-                            image: AssetImage(
-                              Strings.ignitionIcon,
+                        GestureDetector(
+                          onTap: (){
+                            alertOverlay(context,
+                                heading: translation(context).areYouSure,
+                                description: translation(context).closeApp,
+                                buttonText: translation(context).yesDelete,
+                                onPress: () {
+                                  SystemNavigator.pop();
+                                });
+                          },
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Image(
+                              image: AssetImage(
+                                Strings.ignitionIcon,
+                              ),
+                              height: screenHeight * 0.1,
                             ),
-                            height: screenHeight * 0.1,
                           ),
                         ),
                         SizedBox(

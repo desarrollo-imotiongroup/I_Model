@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_reactive_ble/flutter_reactive_ble.dart';
 
@@ -25,6 +27,8 @@ class BleCommandService {
   static const int FUN_GET_PARAMBAT_R = 0x09;
   static const int FUN_GET_CONTADOR = 0x0C;
   static const int FUN_GET_CONTADOR_R = 0x0D;
+  static const int FUN_SET_CONTADOR = 0x0E;  // 14 en decimal
+  static const int FUN_SET_CONTADOR_R = 0x0F; // 15 en decimal
   static const int FUN_GET_ESTADO_EMS = 0x10;
   static const int FUN_GET_ESTADO_EMS_R = 0x11;
   static const int FUN_RUN_EMS = 0x12;
@@ -50,17 +54,77 @@ class BleCommandService {
   final Map<String, StreamSubscription<List<int>>> _subscriptions = {};
   StreamSubscription<List<int>>? _globalSubscription;
 
+  // ---------------------------
+  // COLA DE COMANDOS
+  // ---------------------------
+
+  // Cola y flag de procesamiento
+  final Queue<_QueuedCommand<dynamic>> _commandQueue = Queue();
+  bool _isProcessingQueue = false;
+
+  // Método para encolar comandos.
+  // Si bypassQueue es true, el comando se ejecuta inmediatamente.
+  Future<T> _enqueueCommand<T>(
+      Future<T> Function() command, {
+        bool priority = false,
+        bool bypassQueue = false,
+      }) {
+    if (bypassQueue) {
+      return command();
+    }
+    final completer = Completer<T>();
+    final queuedCommand = _QueuedCommand<T>(
+        command: command, completer: completer, priority: priority);
+    if (priority) {
+      // Limpiamos la cola y agregamos el comando al frente.
+      _commandQueue.clear();
+      _commandQueue.addFirst(queuedCommand);
+    } else {
+      _commandQueue.add(queuedCommand);
+    }
+    _processQueue();
+    return completer.future;
+  }
+
+  // Procesa la cola de comandos de manera secuencial.
+  void _processQueue() {
+    if (_isProcessingQueue) return;
+    _isProcessingQueue = true;
+    _runQueue();
+  }
+
+  Future<void> _runQueue() async {
+    while (_commandQueue.isNotEmpty) {
+      final queuedCommand = _commandQueue.removeFirst();
+      if (queuedCommand.priority) {
+        // Antes de ejecutar un comando de prioridad, limpiamos la cola.
+        _commandQueue.clear();
+      }
+      try {
+        final result = await queuedCommand.command();
+        queuedCommand.completer.complete(result);
+      } catch (e, stack) {
+        queuedCommand.completer.completeError(e, stack);
+      }
+      if (queuedCommand.priority) {
+        // Después de ejecutar el comando, limpiamos nuevamente la cola.
+        _commandQueue.clear();
+      }
+    }
+    _isProcessingQueue = false;
+  }
+
+  // ---------------------------
+  // CONSTRUCTOR
+  // ---------------------------
   BleCommandService({FlutterReactiveBle? bleInstance})
       : ble = bleInstance ?? FlutterReactiveBle();
 
   // ---------------------------
-  // Métodos Helpers Comunes
+  // MÉTODOS HELPERS COMUNES
   // ---------------------------
-
-  /// Crea un paquete de [PACKET_LENGTH] bytes inicializado en cero.
   List<int> _createPacket() => List.filled(PACKET_LENGTH, 0);
 
-  /// Asegura que el paquete tenga exactamente 20 bytes.
   List<int> _padPacket(List<int> packet) {
     final padded = List<int>.from(packet);
     if (padded.length > PACKET_LENGTH) {
@@ -72,7 +136,6 @@ class BleCommandService {
     return padded;
   }
 
-  /// Devuelve la característica según si es TX o RX.
   QualifiedCharacteristic _getCharacteristic(String macAddress,
       {bool isTx = false}) {
     return QualifiedCharacteristic(
@@ -82,7 +145,6 @@ class BleCommandService {
     );
   }
 
-  /// Cancela la suscripción asociada a [macAddress] o la global.
   Future<void> _cancelSubscription(String macAddress,
       {bool global = false}) async {
     if (global) {
@@ -94,8 +156,6 @@ class BleCommandService {
     }
   }
 
-  /// Ejecuta el comando BLE y retorna el resultado parseado.
-  /// Si se alcanza el timeout, retorna el valor [defaultOnTimeout] sin bloquear el flujo.
   Future<T> _executeBleCommand<T>({
     required String macAddress,
     required int expectedResponseCode,
@@ -108,7 +168,6 @@ class BleCommandService {
     final rxCharacteristic = _getCharacteristic(macAddress, isTx: false);
     final txCharacteristic = _getCharacteristic(macAddress, isTx: true);
 
-    // Cancelar suscripciones previas
     await _cancelSubscription(macAddress, global: globalSubscription);
 
     final completer = Completer<T>();
@@ -119,7 +178,8 @@ class BleCommandService {
           !completer.isCompleted) {
         try {
           final result = parser(data);
-          debugPrint("📥 Respuesta $expectedResponseCode recibida desde $macAddress: $result");
+          debugPrint(
+              "📥 Respuesta $expectedResponseCode recibida desde $macAddress: $result");
           completer.complete(result);
         } catch (e) {
           completer.completeError(e);
@@ -140,9 +200,11 @@ class BleCommandService {
     }
 
     try {
-      await ble.writeCharacteristicWithResponse(rxCharacteristic, value: _padPacket(requestPacket));
+      await ble.writeCharacteristicWithResponse(rxCharacteristic,
+          value: _padPacket(requestPacket));
       final result = await completer.future.timeout(timeout, onTimeout: () {
-        debugPrint("⏱️ Timeout alcanzado para $macAddress, retornando valor por defecto.");
+        debugPrint(
+            "⏱️ Timeout alcanzado para $macAddress, retornando valor por defecto.");
         return defaultOnTimeout;
       });
       return result;
@@ -157,9 +219,9 @@ class BleCommandService {
   }
 
   // ---------------------------
-  // Métodos Específicos
+  // MÉTODOS ESPECÍFICOS
   // ---------------------------
-
+  // NOTA: El método initializeSecurity se ejecuta de inmediato (sin encolar)
   Future<bool> initializeSecurity(String macAddress) async {
     final packet = _createPacket();
     packet[0] = FUN_INIT;
@@ -185,10 +247,14 @@ class BleCommandService {
         debugPrint("Seguridad ya inicializada (R=2) en $macAddress");
         return true;
       } else if (r == 1) {
-        debugPrint("Desafío aceptado (R=1). Seguridad inicializada en $macAddress");
+        debugPrint(
+            "Desafío aceptado (R=1). Seguridad inicializada en $macAddress");
         return true;
       } else if (r == 0) {
-        int h1 = response[2], h2 = response[3], h3 = response[4], h4 = response[5];
+        int h1 = response[2],
+            h2 = response[3],
+            h3 = response[4],
+            h4 = response[5];
         int rH1 = h1 ^ 0x2A;
         int rH2 = h2 ^ 0x55;
         int rH3 = h3 ^ 0xAA;
@@ -215,7 +281,8 @@ class BleCommandService {
 
         int r2 = response2[1];
         if (r2 == 1 || r2 == 2) {
-          debugPrint("Seguridad establecida correctamente tras respuesta al desafío en $macAddress (R=$r2)");
+          debugPrint(
+              "Seguridad establecida correctamente tras respuesta al desafío en $macAddress (R=$r2)");
           return true;
         } else {
           debugPrint("Fallo en la respuesta al desafío en $macAddress. R=$r2");
@@ -232,121 +299,168 @@ class BleCommandService {
   }
 
   Future<Map<String, dynamic>> getDeviceInfo(String macAddress) async {
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_INFO;
-    return _executeBleCommand<Map<String, dynamic>>(
-      macAddress: macAddress,
-      expectedResponseCode: FUN_INFO_R,
-      requestPacket: requestPacket,
-      parser: (data) {
-        return {
-          'mac': data.sublist(1, 7),
-          'tariff': data[7],
-          'powerType': data[8],
-          'hwVersion': data[9],
-          'swCommsVersion': data[10],
-          'endpoints': [
-            {'type': data[11], 'swVersion': data[12]},
-            {'type': data[13], 'swVersion': data[14]},
-            {'type': data[15], 'swVersion': data[16]},
-            {'type': data[17], 'swVersion': data[18]},
-          ],
-        };
-      },
-      timeout: Duration(seconds: 15),
-      defaultOnTimeout: {},
-    );
+    return _enqueueCommand<Map<String, dynamic>>(() {
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_INFO;
+      return _executeBleCommand<Map<String, dynamic>>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_INFO_R,
+        requestPacket: requestPacket,
+        parser: (data) {
+          return {
+            'mac': data.sublist(1, 7),
+            'tariff': data[7],
+            'powerType': data[8],
+            'hwVersion': data[9],
+            'swCommsVersion': data[10],
+            'endpoints': [
+              {'type': data[11], 'swVersion': data[12]},
+              {'type': data[13], 'swVersion': data[14]},
+              {'type': data[15], 'swVersion': data[16]},
+              {'type': data[17], 'swVersion': data[18]},
+            ],
+          };
+        },
+        timeout: Duration(seconds: 15),
+        defaultOnTimeout: {},
+      );
+    });
   }
 
   Future<String> getBluetoothName(String macAddress) async {
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_GET_NAMEBT;
-    return _executeBleCommand<String>(
-      macAddress: macAddress,
-      expectedResponseCode: FUN_GET_NAMEBT_R,
-      requestPacket: requestPacket,
-      parser: (data) {
-        final nameBytes = data.sublist(1).takeWhile((byte) => byte != 0).toList();
-        return String.fromCharCodes(nameBytes);
-      },
-      timeout: Duration(seconds: 10),
-      defaultOnTimeout: "",
-    );
+    return _enqueueCommand<String>(() {
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_GET_NAMEBT;
+      return _executeBleCommand<String>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_GET_NAMEBT_R,
+        requestPacket: requestPacket,
+        parser: (data) {
+          final nameBytes =
+          data.sublist(1).takeWhile((byte) => byte != 0).toList();
+          return String.fromCharCodes(nameBytes);
+        },
+        timeout: Duration(seconds: 10),
+        defaultOnTimeout: "",
+      );
+    });
   }
 
   Future<Map<String, dynamic>> getBatteryParameters(String macAddress) async {
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_GET_PARAMBAT;
-    return _executeBleCommand<Map<String, dynamic>>(
-      macAddress: macAddress,
-      expectedResponseCode: FUN_GET_PARAMBAT_R,
-      requestPacket: requestPacket,
-      parser: (data) {
-        return {
-          'batteryStatusRaw': data[3],
-          'powerType': data[1] == 1 ? "Batería de litio (8.4V)" : "Alimentador AC",
-          'batteryModel': data[2] == 0 ? "Por defecto" : "Desconocido",
-          'batteryStatus': data[3] == 0
-              ? "Muy baja"
-              : data[3] == 1
-              ? "Baja"
-              : data[3] == 2
-              ? "Media"
-              : data[3] == 3
-              ? "Alta"
-              : "Llena",
-          'temperature': "Sin implementar",
-          'compensation': (data[6] << 8) | data[7],
-          'voltages': {
-            'V1': (data[8] << 8) | data[9],
-            'V2': (data[10] << 8) | data[11],
-            'V3': (data[12] << 8) | data[13],
-            'V4': (data[14] << 8) | data[15],
-          },
-          'elevatorMax': {
-            'endpoint1': data[16],
-            'endpoint2': data[17],
-            'endpoint3': data[18],
-            'endpoint4': data[19],
-          },
-        };
-      },
-      timeout: Duration(seconds: 10),
-      defaultOnTimeout: {},
-    );
+    return _enqueueCommand<Map<String, dynamic>>(() {
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_GET_PARAMBAT;
+      return _executeBleCommand<Map<String, dynamic>>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_GET_PARAMBAT_R,
+        requestPacket: requestPacket,
+        parser: (data) {
+          return {
+            'batteryStatusRaw': data[3],
+            'powerType':
+            data[1] == 1 ? "Batería de litio (8.4V)" : "Alimentador AC",
+            'batteryModel': data[2] == 0 ? "Por defecto" : "Desconocido",
+            'batteryStatus': data[3] == 0
+                ? "Muy baja"
+                : data[3] == 1
+                ? "Baja"
+                : data[3] == 2
+                ? "Media"
+                : data[3] == 3
+                ? "Alta"
+                : "Llena",
+            'temperature': "Sin implementar",
+            'compensation': (data[6] << 8) | data[7],
+            'voltages': {
+              'V1': (data[8] << 8) | data[9],
+              'V2': (data[10] << 8) | data[11],
+              'V3': (data[12] << 8) | data[13],
+              'V4': (data[14] << 8) | data[15],
+            },
+            'elevatorMax': {
+              'endpoint1': data[16],
+              'endpoint2': data[17],
+              'endpoint3': data[18],
+              'endpoint4': data[19],
+            },
+          };
+        },
+        timeout: Duration(seconds: 10),
+        defaultOnTimeout: {},
+      );
+    });
   }
 
   Future<Map<String, dynamic>> getTariffCounters(String macAddress) async {
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_GET_CONTADOR;
-    return _executeBleCommand<Map<String, dynamic>>(
-      macAddress: macAddress,
-      expectedResponseCode: FUN_GET_CONTADOR_R,
-      requestPacket: requestPacket,
-      parser: (data) {
-        final tariffStatus = data[1] == 0
-            ? "Sin tarifa"
-            : data[1] == 1
-            ? "Con tarifa"
-            : "Con tarifa agotada";
-        final totalSeconds = (data[2] << 24) |
-        (data[3] << 16) |
-        (data[4] << 8) |
-        data[5];
-        final remainingSeconds = (data[6] << 24) |
-        (data[7] << 16) |
-        (data[8] << 8) |
-        data[9];
-        return {
-          'tariffStatus': tariffStatus,
-          'totalSeconds': totalSeconds,
-          'remainingSeconds': remainingSeconds,
-        };
-      },
-      timeout: Duration(seconds: 10),
-      defaultOnTimeout: {},
-    );
+    return _enqueueCommand<Map<String, dynamic>>(() {
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_GET_CONTADOR;
+      return _executeBleCommand<Map<String, dynamic>>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_GET_CONTADOR_R,
+        requestPacket: requestPacket,
+        parser: (data) {
+          final tariffStatus = data[1] == 0
+              ? "Sin tarifa"
+              : data[1] == 1
+              ? "Con tarifa"
+              : "Con tarifa agotada";
+          final totalSeconds =
+          (data[2] << 24) | (data[3] << 16) | (data[4] << 8) | data[5];
+          final remainingSeconds =
+          (data[6] << 24) | (data[7] << 16) | (data[8] << 8) | data[9];
+          return {
+            'tariffStatus': tariffStatus,
+            'totalSeconds': totalSeconds,
+            'remainingSeconds': remainingSeconds,
+          };
+        },
+        timeout: Duration(seconds: 10),
+        defaultOnTimeout: {},
+      );
+    });
   }
+
+  Future<bool> setTariffCounter(
+      String macAddress, {
+        required int writeMode,
+        required int writeTotal,
+        required int writePartial,
+        required int tariff,
+        required int totalCounterSeconds,
+        required int partialCounterSeconds,
+      }) async {
+    // Crea un paquete de 20 bytes (todos inicializados en 0)
+    final packet = _createPacket();
+    packet[0] = FUN_SET_CONTADOR;
+    packet[1] = writeMode;
+    packet[2] = writeTotal;
+    packet[3] = writePartial;
+    packet[4] = tariff;
+    // Contador total (bytes 5 a 8) en big-endian
+    packet[5] = (totalCounterSeconds >> 24) & 0xFF;
+    packet[6] = (totalCounterSeconds >> 16) & 0xFF;
+    packet[7] = (totalCounterSeconds >> 8) & 0xFF;
+    packet[8] = totalCounterSeconds & 0xFF;
+    // Contador parcial (bytes 9 a 12) en big-endian
+    packet[9]  = (partialCounterSeconds >> 24) & 0xFF;
+    packet[10] = (partialCounterSeconds >> 16) & 0xFF;
+    packet[11] = (partialCounterSeconds >> 8) & 0xFF;
+    packet[12] = partialCounterSeconds & 0xFF;
+    // Los bytes 13 a 19 ya están en 0 por _createPacket()
+
+    return _enqueueCommand<bool>(() {
+      return _executeBleCommand<bool>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_SET_CONTADOR_R,
+        requestPacket: packet,
+        parser: (data) => data[1] == 1,
+        timeout: Duration(seconds: 10),
+        defaultOnTimeout: false,
+      );
+    });
+  }
+
 
   Future<Map<String, dynamic>> getElectrostimulatorState(
       String macAddress, int endpoint, int mode) async {
@@ -356,18 +470,20 @@ class BleCommandService {
     if (mode < 0 || mode > 2) {
       throw ArgumentError("El modo debe estar entre 0 y 2.");
     }
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_GET_ESTADO_EMS;
-    requestPacket[1] = endpoint;
-    requestPacket[2] = mode;
-    return _executeBleCommand<Map<String, dynamic>>(
-      macAddress: macAddress,
-      expectedResponseCode: FUN_GET_ESTADO_EMS_R,
-      requestPacket: requestPacket,
-      parser: (data) => _parseElectrostimulatorState(data, mode),
-      timeout: Duration(seconds: 10),
-      defaultOnTimeout: {},
-    );
+    return _enqueueCommand<Map<String, dynamic>>(() {
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_GET_ESTADO_EMS;
+      requestPacket[1] = endpoint;
+      requestPacket[2] = mode;
+      return _executeBleCommand<Map<String, dynamic>>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_GET_ESTADO_EMS_R,
+        requestPacket: requestPacket,
+        parser: (data) => _parseElectrostimulatorState(data, mode),
+        timeout: Duration(seconds: 10),
+        defaultOnTimeout: {},
+      );
+    });
   }
 
   Map<String, dynamic> _parseElectrostimulatorState(List<int> data, int mode) {
@@ -381,7 +497,7 @@ class BleCommandService {
     final limitador = data[9] == 0 ? "No" : "Sí";
 
     if (mode == 0) {
-      final temperature = ((data[7] << 8) | data[8]) / 10.0;
+      final temperature = ((data[7] << 8) | data[8]) / 100.0;
       final channelLevels = data.sublist(10, 20);
       return {
         'endpoint': endpoint,
@@ -405,7 +521,10 @@ class BleCommandService {
         'ramp': ramp,
         'pulseWidth': pulseWidth,
         'limitador': limitador,
-        if (mode == 1) 'batteryVoltage': voltage else 'elevatorTension': voltage,
+        if (mode == 1)
+          'batteryVoltage': voltage
+        else
+          'elevatorTension': voltage,
         'channelPulseWidths': channelPulseWidths,
       };
     } else {
@@ -419,8 +538,9 @@ class BleCommandService {
     required int mode,
   }) async {
     try {
-      final stateData = await getElectrostimulatorState(macAddress, endpoint, mode);
-      String formatted = "Estado del electroestimulador:\n";
+      final stateData =
+      await getElectrostimulatorState(macAddress, endpoint, mode);
+      String formatted = "ℹ️Estado del electroestimulador:\n";
       formatted += "Endpoint: ${stateData['endpoint']}\n";
       formatted += "Estado: ${stateData['state']}\n";
       formatted += "Estado Batería: ${stateData['batteryStatus']}\n";
@@ -434,10 +554,13 @@ class BleCommandService {
         formatted += "Niveles de canales: ${stateData['channelLevels']}\n";
       } else if (mode == 1) {
         formatted += "Tensión de batería: ${stateData['batteryVoltage']} V\n";
-        formatted += "Anchura de pulso por canal: ${stateData['channelPulseWidths']}\n";
+        formatted +=
+        "Anchura de pulso por canal: ${stateData['channelPulseWidths']}\n";
       } else if (mode == 2) {
-        formatted += "Tensión del elevador: ${stateData['elevatorTension']} V\n";
-        formatted += "Anchura de pulso por canal: ${stateData['channelPulseWidths']}\n";
+        formatted +=
+        "Tensión del elevador: ${stateData['elevatorTension']} V\n";
+        formatted +=
+        "Anchura de pulso por canal: ${stateData['channelPulseWidths']}\n";
       }
 
       return formatted;
@@ -446,8 +569,8 @@ class BleCommandService {
     }
   }
 
-  Future<bool> startElectrostimulationSession(
-      String macAddress, List<int> valoresCanales, double frecuencia, double rampa,
+  Future<bool> startElectrostimulationSession(String macAddress,
+      List<int> valoresCanales, double frecuencia, double rampa,
       {double pulso = 0}) async {
     debugPrint("⚙️ Iniciando sesión de electroestimulación en $macAddress...");
     final runSuccess = await runElectrostimulationSession(
@@ -462,10 +585,12 @@ class BleCommandService {
       anchuraPulsosPorCanal: List.generate(10, (index) => pulso.toInt()),
     );
     if (runSuccess) {
-      debugPrint("✅ Sesión de electroestimulación iniciada correctamente en $macAddress.");
+      debugPrint(
+          "✅ Sesión de electroestimulación iniciada correctamente en $macAddress.");
       return true;
     } else {
-      debugPrint("❌ Error al iniciar la sesión de electroestimulación en $macAddress.");
+      debugPrint(
+          "❌ Error al iniciar la sesión de electroestimulación en $macAddress.");
       return false;
     }
   }
@@ -483,24 +608,24 @@ class BleCommandService {
   }) async {
     if (endpoint < 1 || endpoint > 4) throw ArgumentError("Endpoint inválido.");
     if (anchuraPulsosPorCanal.length != 10) {
-      throw ArgumentError("Debe haber exactamente 10 valores de anchura de pulso.");
+      throw ArgumentError(
+          "Debe haber exactamente 10 valores de anchura de pulso.");
     }
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_RUN_EMS;
-    requestPacket[1] = endpoint;
-    requestPacket[2] = limitador;
-    requestPacket[3] = rampa.toInt();
-    requestPacket[4] = frecuencia.toInt();
-    requestPacket[5] = deshabilitaElevador;
-    for (int i = 0; i < nivelCanales.length; i++) {
-      requestPacket[6 + i] = nivelCanales[i].clamp(0, 100);
-    }
-    // Se inicia en la posición 8 para los pulsos (asegurando que no se solapen)
-    for (int i = 0; i < 10; i++) {
-      requestPacket[8 + i] = anchuraPulsosPorCanal[i];
-    }
-    try {
-      return await _executeBleCommand<bool>(
+    return _enqueueCommand<bool>(() {
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_RUN_EMS;
+      requestPacket[1] = endpoint;
+      requestPacket[2] = limitador;
+      requestPacket[3] = rampa.toInt();
+      requestPacket[4] = frecuencia.toInt();
+      requestPacket[5] = deshabilitaElevador;
+      for (int i = 0; i < nivelCanales.length; i++) {
+        requestPacket[6 + i] = nivelCanales[i].clamp(0, 100);
+      }
+      for (int i = 0; i < 10; i++) {
+        requestPacket[8 + i] = anchuraPulsosPorCanal[i];
+      }
+      return _executeBleCommand<bool>(
         macAddress: macAddress,
         expectedResponseCode: FUN_RUN_EMS_R,
         requestPacket: requestPacket,
@@ -508,20 +633,18 @@ class BleCommandService {
         timeout: Duration(seconds: 20),
         defaultOnTimeout: false,
       );
-    } on TimeoutException catch (e) {
-      debugPrint("❌ Timeout para $macAddress: $e");
-      return false;
-    } catch (e) {
-      debugPrint("❌ Error en runElectrostimulationSession para $macAddress: $e");
-      return false;
-    }
+    });
   }
+
+  // El comando stopElectrostimulationSession se encola con prioridad.
   Future<bool> stopElectrostimulationSession(String macAddress) async {
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_STOP_EMS;
-    requestPacket[1] = 1;
-    try {
-      return await _executeBleCommand<bool>(
+    return _enqueueCommand<bool>(() async {
+      // Limpiar la cola antes de ejecutar el comando stop.
+      _commandQueue.clear();
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_STOP_EMS;
+      requestPacket[1] = 1;
+      final result = await _executeBleCommand<bool>(
         macAddress: macAddress,
         expectedResponseCode: FUN_STOP_EMS_R,
         requestPacket: requestPacket,
@@ -529,13 +652,10 @@ class BleCommandService {
         timeout: Duration(seconds: 10),
         defaultOnTimeout: false,
       );
-    } on TimeoutException catch (e) {
-      debugPrint("❌ Timeout para $macAddress al detener sesión: $e");
-      return false;
-    } catch (e) {
-      debugPrint("❌ Error al detener sesión en $macAddress: $e");
-      return false;
-    }
+      // Limpiar la cola después de ejecutarse.
+      _commandQueue.clear();
+      return result;
+    }, priority: true);
   }
 
   Future<Map<String, dynamic>> controlElectrostimulatorChannel({
@@ -552,32 +672,35 @@ class BleCommandService {
       throw ArgumentError("El canal debe estar entre 0 y 9.");
     }
     if (modo < 0 || modo > 3) {
-      throw ArgumentError("El modo debe ser 0 (absoluto), 1 (incrementa), 2 (decrementa), o 3 (solo retorna valor).");
+      throw ArgumentError(
+          "El modo debe ser 0 (absoluto), 1 (incrementa), 2 (decrementa), o 3 (solo retorna valor).");
     }
     if (valor < 0 || valor > 100) {
       throw ArgumentError("El valor debe estar entre 0 y 100.");
     }
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_CANAL_EMS;
-    requestPacket[1] = endpoint;
-    requestPacket[2] = canal;
-    requestPacket[3] = modo;
-    requestPacket[4] = valor;
-    return _executeBleCommand<Map<String, dynamic>>(
-      macAddress: macAddress,
-      expectedResponseCode: FUN_CANAL_EMS_R,
-      requestPacket: requestPacket,
-      parser: (data) {
-        return {
-          'endpoint': data[1],
-          'canal': data[2],
-          'resultado': data[3] == 1 ? "OK" : "FAIL",
-          'valor': data[4] == 200 ? "Limitador activado" : "$valor%",
-        };
-      },
-      timeout: Duration(seconds: 10),
-      defaultOnTimeout: {},
-    );
+    return _enqueueCommand<Map<String, dynamic>>(() {
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_CANAL_EMS;
+      requestPacket[1] = endpoint;
+      requestPacket[2] = canal;
+      requestPacket[3] = modo;
+      requestPacket[4] = valor;
+      return _executeBleCommand<Map<String, dynamic>>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_CANAL_EMS_R,
+        requestPacket: requestPacket,
+        parser: (data) {
+          return {
+            'endpoint': data[1],
+            'canal': data[2],
+            'resultado': data[3] == 1 ? "OK" : "FAIL",
+            'valor': data[4] == 200 ? "Limitador activado" : "$valor%",
+          };
+        },
+        timeout: Duration(seconds: 10),
+        defaultOnTimeout: {},
+      );
+    });
   }
 
   Future<Map<String, dynamic>> controlSingleChannel(
@@ -616,42 +739,47 @@ class BleCommandService {
       throw ArgumentError("El endpoint debe estar entre 1 y 4.");
     }
     if (modo < 0 || modo > 3) {
-      throw ArgumentError("El modo debe ser 0 (absoluto), 1 (incrementa), 2 (decrementa), o 3 (solo retorna valores).");
+      throw ArgumentError(
+          "El modo debe ser 0 (absoluto), 1 (incrementa), 2 (decrementa), o 3 (solo retorna valores).");
     }
     if (valoresCanales.length != 7 && valoresCanales.length != 10) {
-      throw ArgumentError("La lista de valoresCanales debe tener exactamente 7 o 10 elementos.");
+      throw ArgumentError(
+          "La lista de valoresCanales debe tener exactamente 7 o 10 elementos.");
     }
     if (valoresCanales.any((valor) => valor < 0 || valor > 100)) {
-      throw ArgumentError("Todos los valores de los canales deben estar entre 0 y 100.");
+      throw ArgumentError(
+          "Todos los valores de los canales deben estar entre 0 y 100.");
     }
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_ALL_CANAL_EMS;
-    requestPacket[1] = endpoint;
-    requestPacket[2] = modo;
-    for (int i = 0; i < valoresCanales.length; i++) {
-      requestPacket[3 + i] = valoresCanales[i];
-    }
-    return _executeBleCommand<Map<String, dynamic>>(
-      macAddress: macAddress,
-      expectedResponseCode: FUN_ALL_CANAL_EMS_R,
-      requestPacket: requestPacket,
-      parser: (data) {
-        final valoresResp = data.sublist(3, 13).map((v) {
-          return v == 200 ? "Limitador activado" : "$v%";
-        }).toList();
-        return {
-          'endpoint': data[1],
-          'resultado': data[2] == 1 ? "OK" : "FAIL",
-          'valoresCanales': valoresResp,
-        };
-      },
-      timeout: Duration(seconds: 10),
-      defaultOnTimeout: {},
-    );
+    return _enqueueCommand<Map<String, dynamic>>(() {
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_ALL_CANAL_EMS;
+      requestPacket[1] = endpoint;
+      requestPacket[2] = modo;
+      for (int i = 0; i < valoresCanales.length; i++) {
+        requestPacket[3 + i] = valoresCanales[i];
+      }
+      return _executeBleCommand<Map<String, dynamic>>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_ALL_CANAL_EMS_R,
+        requestPacket: requestPacket,
+        parser: (data) {
+          final valoresResp = data.sublist(3, 13).map((v) {
+            return v == 200 ? "Limitador activado" : "$v%";
+          }).toList();
+          return {
+            'endpoint': data[1],
+            'resultado': data[2] == 1 ? "OK" : "FAIL",
+            'valoresCanales': valoresResp,
+          };
+        },
+        timeout: Duration(seconds: 10),
+        defaultOnTimeout: {},
+      );
+    });
   }
 
-  Future<Map<String, dynamic>> controlAllChannels(
-      String macAddress, int endpoint, int modo, List<int> valoresCanales) async {
+  Future<Map<String, dynamic>> controlAllChannels(String macAddress,
+      int endpoint, int modo, List<int> valoresCanales) async {
     try {
       return await controlAllElectrostimulatorChannels(
         macAddress: macAddress,
@@ -673,20 +801,23 @@ class BleCommandService {
     required String macAddress,
     int temporizado = 0,
   }) async {
-    final rxCharacteristic = _getCharacteristic(macAddress);
-    try {
-      debugPrint("🔄 Enviando comando de shutdown a $macAddress...");
-      final shutdownPacket = _createPacket();
-      shutdownPacket[0] = FUN_RESET;
-      shutdownPacket[1] = 0x66;
-      shutdownPacket[2] = temporizado;
-      await ble.writeCharacteristicWithResponse(rxCharacteristic, value: shutdownPacket);
-      debugPrint("✅ Shutdown enviado correctamente.");
-      return true;
-    } catch (e) {
-      debugPrint("❌ Error en shutdown para $macAddress: $e");
-      return false;
-    }
+    return _enqueueCommand<bool>(() async {
+      final rxCharacteristic = _getCharacteristic(macAddress);
+      try {
+        debugPrint("🔄 Enviando comando de shutdown a $macAddress...");
+        final shutdownPacket = _createPacket();
+        shutdownPacket[0] = FUN_RESET;
+        shutdownPacket[1] = 0x66;
+        shutdownPacket[2] = temporizado;
+        await ble.writeCharacteristicWithResponse(rxCharacteristic,
+            value: shutdownPacket);
+        debugPrint("✅ Shutdown enviado correctamente.");
+        return true;
+      } catch (e) {
+        debugPrint("❌ Error en shutdown para $macAddress: $e");
+        return false;
+      }
+    });
   }
 
   Future<Map<String, dynamic>> getFreeMemory({
@@ -696,24 +827,26 @@ class BleCommandService {
     if (pagina < 0 || pagina > 31) {
       throw ArgumentError("La página debe estar entre 0 y 31.");
     }
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_GET_MEM;
-    requestPacket[1] = pagina;
-    return _executeBleCommand<Map<String, dynamic>>(
-      macAddress: macAddress,
-      expectedResponseCode: FUN_GET_MEM_R,
-      requestPacket: requestPacket,
-      parser: (data) {
-        return {
-          'status': data[1] == 1 ? "OK" : "FAIL",
-          'pagina': data[2],
-          'datos': data.sublist(3, 19),
-        };
-      },
-      timeout: Duration(seconds: 10),
-      defaultOnTimeout: {},
-      globalSubscription: true,
-    );
+    return _enqueueCommand<Map<String, dynamic>>(() {
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_GET_MEM;
+      requestPacket[1] = pagina;
+      return _executeBleCommand<Map<String, dynamic>>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_GET_MEM_R,
+        requestPacket: requestPacket,
+        parser: (data) {
+          return {
+            'status': data[1] == 1 ? "OK" : "FAIL",
+            'pagina': data[2],
+            'datos': data.sublist(3, 19),
+          };
+        },
+        timeout: Duration(seconds: 10),
+        defaultOnTimeout: {},
+        globalSubscription: true,
+      );
+    });
   }
 
   Future<bool> setFreeMemory({
@@ -727,16 +860,18 @@ class BleCommandService {
     if (datos.length != 16) {
       throw ArgumentError("Los datos deben tener exactamente 16 bytes.");
     }
-    final requestPacket = [FUN_SET_MEM, pagina, ...datos];
-    return _executeBleCommand<bool>(
-      macAddress: macAddress,
-      expectedResponseCode: FUN_SET_MEM_R,
-      requestPacket: requestPacket,
-      parser: (data) => data[1] == 1,
-      timeout: Duration(seconds: 10),
-      defaultOnTimeout: false,
-      globalSubscription: true,
-    );
+    return _enqueueCommand<bool>(() {
+      final requestPacket = [FUN_SET_MEM, pagina, ...datos];
+      return _executeBleCommand<bool>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_SET_MEM_R,
+        requestPacket: requestPacket,
+        parser: (data) => data[1] == 1,
+        timeout: Duration(seconds: 10),
+        defaultOnTimeout: false,
+        globalSubscription: true,
+      );
+    });
   }
 
   Future<Map<String, dynamic>> getPulseMeter({
@@ -746,37 +881,41 @@ class BleCommandService {
     if (endpoint < 1 || endpoint > 4) {
       throw ArgumentError("El endpoint debe estar entre 1 y 4.");
     }
-    final requestPacket = _createPacket();
-    requestPacket[0] = FUN_GET_PULSOS;
-    requestPacket[1] = endpoint;
-    return _executeBleCommand<Map<String, dynamic>>(
-      macAddress: macAddress,
-      expectedResponseCode: FUN_GET_PULSOS_R,
-      requestPacket: requestPacket,
-      parser: (data) {
-        return {
-          'endpoint': data[1],
-          'status': mapPulseMeterStatus(data[2]),
-          'bps': (data[3] << 8) | data[4],
-          'SpO2': (data[5] << 8) | data[6],
-        };
-      },
-      timeout: Duration(seconds: 15),
-      defaultOnTimeout: {
-        'endpoint': endpoint,
-        'status': "Timeout",
-        'bps': 0,
-        'SpO2': 0,
-      },
-      globalSubscription: true,
-    );
+    return _enqueueCommand<Map<String, dynamic>>(() {
+      final requestPacket = _createPacket();
+      requestPacket[0] = FUN_GET_PULSOS;
+      requestPacket[1] = endpoint;
+      return _executeBleCommand<Map<String, dynamic>>(
+        macAddress: macAddress,
+        expectedResponseCode: FUN_GET_PULSOS_R,
+        requestPacket: requestPacket,
+        parser: (data) {
+          return {
+            'endpoint': data[1],
+            'status': mapPulseMeterStatus(data[2]),
+            'bps': (data[3] << 8) | data[4],
+            'SpO2': (data[5] << 8) | data[6],
+          };
+        },
+        timeout: Duration(seconds: 15),
+        defaultOnTimeout: {
+          'endpoint': endpoint,
+          'status': "Timeout",
+          'bps': 0,
+          'SpO2': 0,
+        },
+        globalSubscription: true,
+      );
+    });
   }
 
   Future<bool> getSignalCable(String macAddress, int endpoint) async {
     try {
-      final pulseMeterResponse = await getPulseMeter(macAddress: macAddress, endpoint: endpoint);
+      final pulseMeterResponse =
+      await getPulseMeter(macAddress: macAddress, endpoint: endpoint);
       if (pulseMeterResponse['status'] != "OK") {
-        debugPrint("❌ Pulsómetro no operativo en $macAddress: ${pulseMeterResponse['status']}");
+        debugPrint(
+            "❌ Pulsómetro no operativo en $macAddress: ${pulseMeterResponse['status']}");
         return false;
       }
       return true;
@@ -835,7 +974,7 @@ class BleCommandService {
     }
   }
 
-  // Métodos para parsear respuestas (para la UI)
+  // MÉTODOS PARA PARSEAR RESPUESTAS (UI)
   String parseDeviceInfo(Map<String, dynamic> deviceInfo) {
     final mac = (deviceInfo['mac'] as List<int>)
         .map((b) => b.toRadixString(16).padLeft(2, '0').toUpperCase())
@@ -903,6 +1042,7 @@ $endpoints
       final s = duration.inSeconds.remainder(60);
       return "${h}h ${m}m ${s}s";
     }
+
     final totalTime = Duration(seconds: counters['totalSeconds']);
     final remainingTime = Duration(seconds: counters['remainingSeconds']);
     return '''
@@ -945,4 +1085,16 @@ $canales
     }
     _subscriptions.clear();
   }
+}
+
+class _QueuedCommand<T> {
+  final Future<T> Function() command;
+  final Completer<T> completer;
+  final bool priority; // true para STOPSESSION
+
+  _QueuedCommand({
+    required this.command,
+    required this.completer,
+    this.priority = false,
+  });
 }
