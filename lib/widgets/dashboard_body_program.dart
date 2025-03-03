@@ -81,7 +81,7 @@ class DashboardBodyProgram extends StatelessWidget {
                 RoundedContainer(
                     borderRadius: screenHeight * 0.025,
                     borderColor: AppColors.transparentColor,
-                    width: screenWidth * 0.185,
+                    width: screenWidth * 0.19,
                     color: programStatus == ProgramStatus.inactive
                         ? AppColors.greyColor
                         : AppColors.pureWhiteColor,

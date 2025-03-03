@@ -12,7 +12,6 @@ class ExpandedPanelView extends StatelessWidget {
     super.key});
 
 
-
   @override
   Widget build(BuildContext context) {
     MediaQueryData mediaQuery = MediaQuery.of(context);
@@ -23,19 +22,26 @@ class ExpandedPanelView extends StatelessWidget {
       children: [
         /// Muscle group - first column
         DashboardFirstColumn(index: index),
-        SizedBox(width: screenWidth * 0.01,),
+        SizedBox(width: screenWidth * 0.008,),
 
         /// Second column - timer
         DashboardSecondColumn(index: index),
-        SizedBox(width: screenWidth * 0.027,),
+        SizedBox(width: screenWidth * 0.023,),
 
         /// Muscle group 2 - third column
-        DashboardThirdColumn(),
+        DashboardThirdColumn(index: index),
         SizedBox(width: screenWidth * 0.03,),
 
         /// Fourth column, contraction, pause, reset
-        DashboardFourthColumn()
+        DashboardFourthColumn(index: index)
       ],
     );
   }
 }
+
+// if (totalDurationInSeconds == 0) {
+// print("Pause duration is zero. Skipping pause cycle.");
+// remainingPauseSeconds[deviceIndex] = 0;
+// isElectroOn[deviceIndex] = false;
+// return;
+// }

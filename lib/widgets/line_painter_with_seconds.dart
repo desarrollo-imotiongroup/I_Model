@@ -30,7 +30,7 @@ class LinePainterWithSeconds extends StatelessWidget {
               ? translation(context).pauseTime
               : translation(context).contractionTime,
           progressValue:progressValue,
-          progressColor: isPause ? AppColors.greenColor : AppColors.redColor,
+          progressColor: isPause ? AppColors.redColor : AppColors.greenColor,
         ),
         SizedBox(width: screenWidth * 0.01,),
         TextView.title(

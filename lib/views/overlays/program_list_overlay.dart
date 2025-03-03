@@ -12,6 +12,7 @@ import 'package:i_model/widgets/top_title_button.dart';
 
 void programListOverlay(
     BuildContext context,{
+    required int deviceIndex,
       required List<dynamic> programList,
     }) {
   final overlayState = Overlay.of(context);
@@ -59,8 +60,8 @@ void programListOverlay(
                   itemBuilder: (context, index) {
                     return GestureDetector(
                       onTap: (){
-                        controller.selectedProgramDetails.value = programList[index];
-                        // print('AUTOGROUP:  ${controller.selectedProgramDetails}');
+                        controller.selectedProgramDetails[deviceIndex] = programList[index];
+                        print('selectedPrograsssdmDetails: ${controller.selectedProgramDetails}');
                         controller.setProgramDetails(
                             programName: programList[index]['nombre'],
                             image: programList[index]['imagen'],
@@ -69,23 +70,29 @@ void programListOverlay(
 
                         controller.resetProgramTimerValue();
 
-                        if(controller.selectedProgramType.value == Strings.individual){
-                          controller.contractionSeconds.value =  (programList[index]['contraccion']).toInt();
-                          controller.pauseSeconds.value = programList[index]['pausa'].toInt();
-                          controller.frequency.value = programList[index]['frecuencia'].toInt();
+                        if(controller.selectedProgramType[deviceIndex] == Strings.individual){
+                          controller.contractionSeconds[deviceIndex] =  (programList[index]['contraccion']).toInt();
+                          controller.pauseSeconds[deviceIndex] = programList[index]['pausa'].toInt();
+                          controller.frequency[deviceIndex] = programList[index]['frecuencia'].toInt();
                           if(programList[index]['pulso'] == 'CX'){
-                            controller.pulse.value = 0;
+                            controller.pulse[deviceIndex] = 0;
                           }
                           else{
-                            controller.pulse.value = programList[index]['pulso'].toInt();
+                            controller.pulse[deviceIndex] = programList[index]['pulso'].toInt();
                           }
+
+                          print('------------------- Device 00$deviceIndex Individual');
+                          print('ContractionSeconds: ${controller.contractionSeconds[deviceIndex]}');
+                          print('pauseSeconds: ${controller.pauseSeconds[deviceIndex]}');
+                          print('frequency: ${controller.frequency[deviceIndex]}');
+                          print('pulso: ${controller.pulse[deviceIndex]}');
                         }
                         else{
-                          controller.contractionSeconds.value =  0;
-                          controller.pauseSeconds.value = 0;
+                          controller.contractionSeconds[deviceIndex] =  0;
+                          controller.pauseSeconds[deviceIndex] = 0;
 
                           for(int i=0; i<programList[index]['subprogramas'].length; i++){
-                            controller.automaticProgramValues.add(
+                            controller.automaticProgramValues[deviceIndex].add(
                               {
                               'subProgramName' : programList[index]['subprogramas'][i]['nombre'],
                               'duration' : programList[index]['subprogramas'][i]['duracion'],
@@ -98,7 +105,14 @@ void programListOverlay(
                               'pause' : programList[index]['subprogramas'][i]['pausa'],
                               }
                             );
-
+                            print('Automatico --- Device 00$deviceIndex Automatico');
+                            print('Index: $i');
+                            print('subProgramName: ${controller.automaticProgramValues[deviceIndex][i]['subProgramName']}');
+                            print('duration: ${controller.automaticProgramValues[deviceIndex][i]['duration']}');
+                            print('contraction: ${controller.automaticProgramValues[deviceIndex][i]['contraction']}');
+                            print('pause: ${controller.automaticProgramValues[deviceIndex][i]['pause']}');
+                            print('frequency: ${controller.automaticProgramValues[deviceIndex][i]['frequency']}');
+                            print('pulse: ${controller.automaticProgramValues[deviceIndex][i]['pulse']}');
                           }
                           controller.onAutoProgramSelected(programList[index]);
 
@@ -165,4 +179,8 @@ void programListOverlay(
 //       }
 //       cronaxias = cronaxiasNotifier;
 //       grupos = gruposMuscularesNotifier;
-//     }
+// //     }
+// I am working on a app. where there are multiple programs of two types. one of individual and other is automatic.
+// Three are devices on which each program will run. devices upto 7. it means i need to have independent timers and values.
+//
+// When i run single individual, single automatic or two individual programs it work fine. but when i run one automatic and one indivual or two autoamtic. my contraction cycle stops at some where. i am not able to get the issue.

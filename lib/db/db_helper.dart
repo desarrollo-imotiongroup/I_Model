@@ -428,7 +428,7 @@ class DatabaseHelper {
         'nombre': 'CALIBRACION',
         'imagen': Strings.calibrationIcon,
         'frecuencia': 75,
-        'rampa': 1.0,
+        'rampa': 10.0,
         'pulso': 300,
         'contraccion': 4,
         'pausa': 1,
@@ -490,7 +490,7 @@ class DatabaseHelper {
         'nombre': 'TONIFICACION',
         'imagen': Strings.toningIcon,
         'frecuencia': 90,
-        'rampa': 1.0,
+        'rampa': 10.0,
         'pulso': 350,
         'contraccion': 5,
         'pausa': 4,
@@ -546,8 +546,8 @@ class DatabaseHelper {
         'nombre': 'GLUTEO',
         'imagen': Strings.buttocksIndividualIcon,
         'frecuencia': 85,
-        'rampa': 1.0,
-        'pulso': 'CX',
+        'rampa': 10.0,
+        'pulso': 0,
         'contraccion': 5,
         'pausa': 3,
         'tipo': 'Individual',
@@ -600,7 +600,7 @@ class DatabaseHelper {
         'nombre': 'SLIM',
         'imagen': Strings.slimIcon,
         'frecuencia': 66,
-        'rampa': 1.0,
+        'rampa': 10.0,
         'pulso': 350,
         'contraccion': 6,
         'pausa': 3,
@@ -683,7 +683,7 @@ class DatabaseHelper {
         'nombre': 'SUELO PELVICO',
         'imagen': Strings.pelvicFloorIcon,
         'frecuencia': 85,
-        'rampa': 1.0,
+        'rampa': 10.0,
         'pulso': 450,
         'contraccion': 5,
         'pausa': 4,
@@ -748,7 +748,7 @@ class DatabaseHelper {
         'nombre': 'HIPERTROFIA',
         'imagen': Strings.hypertrophyIcon,
         'frecuencia': 75,
-        'rampa': 1.0,
+        'rampa': 10.0,
         'pulso': 450,
         'contraccion': 6,
         'pausa': 2,
@@ -813,7 +813,7 @@ class DatabaseHelper {
         'nombre': 'CELULITIS',
         'imagen': Strings.celluliteIcon,
         'frecuencia': 43,
-        'rampa': 1.0,
+        'rampa': 10.0,
         'pulso': 450,
         'contraccion': 6,
         'pausa': 3,
@@ -878,7 +878,7 @@ class DatabaseHelper {
         'nombre': 'FUERZA',
         'imagen': Strings.strengthIcon,
         'frecuencia': 80,
-        'rampa': 1.0,
+        'rampa': 10.0,
         'pulso': 400,
         'contraccion': 4,
         'pausa': 4,
@@ -942,7 +942,7 @@ class DatabaseHelper {
         'nombre': 'METABOLICO',
         'imagen': Strings.metabolicIcon,
         'frecuencia': 10,
-        'rampa': 0.5,
+        'rampa': 5.0,
         'pulso': 450,
         'contraccion': 1,
         'pausa': 0,
@@ -1007,7 +1007,7 @@ class DatabaseHelper {
         'nombre': 'DRENAJE',
         'imagen': Strings.drainageIcon,
         'frecuencia': 21,
-        'rampa': 1.0,
+        'rampa': 10.0,
         'pulso': 350,
         'contraccion': 5,
         'pausa': 3,
@@ -1072,7 +1072,7 @@ class DatabaseHelper {
         'nombre': 'MASAJE',
         'imagen': Strings.massageIcon,
         'frecuencia': 100,
-        'rampa': 0.5,
+        'rampa': 5.0,
         'pulso': 150,
         'contraccion': 3,
         'pausa': 3,
@@ -1137,8 +1137,8 @@ class DatabaseHelper {
         'nombre': 'CONTRACTURAS',
         'imagen': Strings.contracturesIcon,
         'frecuencia': 120,
-        'rampa': 3.0,
-        'pulso': 'CX',
+        'rampa': 30.0,
+        'pulso': 0,
         'contraccion': 9,
         'pausa': 3,
         'tipo': 'Individual',
@@ -1223,13 +1223,14 @@ class DatabaseHelper {
       );
     ''');
 
+    /// Automatic programs SQL
     await db.transaction((txn) async {
       try {
         // Insertamos el programa automático "TONIFICACIÓN"
         int idProgramaAutomatico = await txn.insert('Programas_Automaticos', {
           'nombre': 'TONIFICACIÓN',
           'imagen': 'assets/automatic_program/TONING_AUTO.png',
-          'descripcion': 'Aumento de la resistencia y retraso de la fatiga.',
+          'descripcion': 'Basado en el programa individual TONIFICACIÓN. Diseñado para mejorar la fuerza, la firmeza y el tono muscular.',
           'duracionTotal': 25,
           'tipo_equipamiento': 'BIO-JACKET',
         });
@@ -1240,85 +1241,43 @@ class DatabaseHelper {
             'id_programa_automatico': idProgramaAutomatico,
             'id_programa_relacionado': 1,
             'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 10,
-            'ajuste': 7,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 9,
-            'ajuste': -4,
+            'id_programa_relacionado': 2,
+            'ajuste': 1,
             'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 9,
-            'ajuste': 2,
-            'duracion': 2
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 9,
+            'id_programa_relacionado': 2,
             'ajuste': 2,
             'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 9,
-            'ajuste': 2,
-            'duracion': 2
+            'id_programa_relacionado': 2,
+            'ajuste': 1,
+            'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 23,
+            'id_programa_relacionado': 2,
+            'ajuste': 2,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico,
+            'id_programa_relacionado': 9,
             'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 5,
-            'ajuste': -2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 5,
-            'ajuste': 1,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 5,
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 5,
-            'ajuste': 1,
-            'duracion': 2
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 5,
-            'ajuste': 1,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 23,
-            'ajuste': 0,
-            'duracion': 0.5
+            'duracion': 3
           },
           {
             'id_programa_automatico': idProgramaAutomatico,
             'id_programa_relacionado': 2,
             'ajuste': -2,
-            'duracion': 1
+            'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico,
@@ -1330,12 +1289,30 @@ class DatabaseHelper {
             'id_programa_automatico': idProgramaAutomatico,
             'id_programa_relacionado': 2,
             'ajuste': 1,
-            'duracion': 1.5
+            'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico,
-            'id_programa_relacionado': 20,
-            'ajuste': -5,
+            'id_programa_relacionado': 9,
+            'ajuste': 1,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico,
+            'id_programa_relacionado': 8,
+            'ajuste': 1,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico,
+            'id_programa_relacionado': 8,
+            'ajuste': 1,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico,
+            'id_programa_relacionado': 11,
+            'ajuste': -3,
             'duracion': 5
           },
         ];
@@ -1393,7 +1370,7 @@ class DatabaseHelper {
         int idProgramaAutomatico3 = await txn.insert('Programas_Automaticos', {
           'nombre': 'SUELO PÉLVICO',
           'imagen': 'assets/automatic_program/PELVIC_FLOOR_AUTO.png',
-          'descripcion': 'Fortalece los músculos del suelo pélvico',
+          'descripcion': 'Basado en el programa individual SUELO PÉLVICO. Tratamiento diseñado para fortalecer los músculos del suelo pélvico mediante el uso de impulsos eléctricos controlados.',
           'duracionTotal': 25, // Duración total del programa en minutos
           'tipo_equipamiento': 'BIO-JACKET',
         });
@@ -1404,107 +1381,83 @@ class DatabaseHelper {
             'id_programa_automatico': idProgramaAutomatico3,
             'id_programa_relacionado': 1, // ID del programa individual 1
             'ajuste': 0,
-            'duracion': 0.5
+            'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 10, // ID del programa individual 2
+            'id_programa_relacionado': 9, // ID del programa individual 2
             'ajuste': 7,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 23, // ID del programa individual 3
+            'id_programa_relacionado': 5, // ID del programa individual 3
+            'ajuste': -5,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico3,
+            'id_programa_relacionado': 5, // ID del programa individual 4
+            'ajuste': 1,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico3,
+            'id_programa_relacionado': 5, // ID del programa individual 14
+            'ajuste': 2,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico3,
+            'id_programa_relacionado': 9, // ID del programa recovery 1
+            'ajuste': 2,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico3,
+            'id_programa_relacionado': 5, // ID del programa recovery 2
             'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 16, // ID del programa individual 4
-            'ajuste': -4,
             'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 16, // ID del programa individual 14
+            'id_programa_relacionado': 5, // ID del programa recovery 3
             'ajuste': 1,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 16, // ID del programa recovery 1
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 16, // ID del programa recovery 2
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 16, // ID del programa recovery 3
-            'ajuste': 1,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 23, // ID del programa recovery 3
-            'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 3, // ID del programa recovery 3
-            'ajuste': -4,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 3, // ID del programa recovery 3
+            'id_programa_relacionado': 5, // ID del programa recovery 3
             'ajuste': 2,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 3, // ID del programa recovery 3
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 3, // ID del programa recovery 3
+            'id_programa_relacionado': 9, // ID del programa recovery 3
             'ajuste': 1,
             'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 23, // ID del programa recovery 3
-            'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 16, // ID del programa recovery 3
-            'ajuste': -2,
+            'id_programa_relacionado': 5, // ID del programa recovery 3
+            'ajuste': 1,
             'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 16, // ID del programa recovery 3
-            'ajuste': 1,
-            'duracion': 2
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 16, // ID del programa recovery 3
+            'id_programa_relacionado': 5, // ID del programa recovery 3
             'ajuste': 2,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico3,
-            'id_programa_relacionado': 12, // ID del programa recovery 3
+            'id_programa_relacionado': 5, // ID del programa recovery 3
+            'ajuste': 2,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico3,
+            'id_programa_relacionado': 11, // ID del programa recovery 3
             'ajuste': -4,
             'duracion': 5
           },
@@ -1562,8 +1515,7 @@ class DatabaseHelper {
         int idProgramaAutomatico7 = await txn.insert('Programas_Automaticos', {
           'nombre': 'GLUTEOS',
           'imagen': 'assets/automatic_program/BUTTOCKS_AUTO.png',
-          'descripcion':
-          'Aumento de resistencia a la fatiga y recuperación entre entrenamientos. Nivel avanzado',
+          'descripcion': 'Basado en el programa individual GLÚTEOS. Tratamiento ideal para quienes buscan realzar y fortalecer los glúteos de forma eficaz.',
           'duracionTotal': 25,
           'tipo_equipamiento': 'BIO-JACKET',
         });
@@ -1574,102 +1526,72 @@ class DatabaseHelper {
             'id_programa_automatico': idProgramaAutomatico7,
             'id_programa_relacionado': 1, // ID del programa individual 1
             'ajuste': 0,
-            'duracion': 0.5
+            'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 10, // ID del programa individual 2
+            'id_programa_relacionado': 9, // ID del programa individual 2
             'ajuste': 7,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico7,
+            'id_programa_relacionado': 3, // ID del programa individual 3
+            'ajuste': -3,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 23, // ID del programa individual 3
-            'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 6, // ID del programa individual 4
-            'ajuste': -4,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 6, // ID del programa individual 14
-            'ajuste': 1,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 6, // ID del programa recovery 1
+            'id_programa_relacionado': 3, // ID del programa individual 4
             'ajuste': 1,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 23, // ID del programa individual 2
-            'ajuste': 1,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 23, // ID del programa individual 2
-            'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 5, // ID del programa recovery 3
-            'ajuste': -2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 5, // ID del programa recovery 3
+            'id_programa_relacionado': 3, // ID del programa individual 14
             'ajuste': 2,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 5, // ID del programa recovery 3
-            'ajuste': 1,
-            'duracion': 2
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 23, // ID del programa recovery 3
-            'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 13, // ID del programa recovery 3
+            'id_programa_relacionado': 9, // ID del programa recovery 1
             'ajuste': 0,
             'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 13, // ID del programa recovery 3
+            'id_programa_relacionado': 7, // ID del programa individual 2
+            'ajuste': 1,
+            'duracion': 4
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico7,
+            'id_programa_relacionado': 9, // ID del programa individual 2
+            'ajuste': 1,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico7,
+            'id_programa_relacionado': 3, // ID del programa recovery 3
             'ajuste': 2,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 13, // ID del programa recovery 3
+            'id_programa_relacionado': 3, // ID del programa recovery 3
             'ajuste': 1,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 13, // ID del programa recovery 3
+            'id_programa_relacionado': 3, // ID del programa recovery 3
             'ajuste': 1,
-            'duracion': 1
+            'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico7,
-            'id_programa_relacionado': 20, // ID del programa recovery 3
-            'ajuste': -5,
+            'id_programa_relacionado': 10, // ID del programa recovery 3
+            'ajuste': -3,
             'duracion': 5
           },
         ];
@@ -1727,10 +1649,9 @@ class DatabaseHelper {
       try {
         // Insertamos el programa automático "CARDIO"
         int idProgramaAutomatico8 = await txn.insert('Programas_Automaticos', {
-          'nombre': 'CELLULITE',
+          'nombre': 'CELULITIS',
           'imagen': 'assets/automatic_program/CELLULITE_AUTO.png',
-          'descripcion':
-          'Mejora del rendimiento cardiopulmonar y oxigenación del cuerpo',
+          'descripcion': 'Programa basado en el programa individual CELULITIS. Mejora la apariencia de la piel y reduce los signos de celulitis.',
           'duracionTotal': 25,
           'tipo_equipamiento': 'BIO-JACKET',
         });
@@ -1741,120 +1662,84 @@ class DatabaseHelper {
             'id_programa_automatico': idProgramaAutomatico8,
             'id_programa_relacionado': 1, // ID del programa individual 1
             'ajuste': 0,
-            'duracion': 0.5
+            'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 10, // ID del programa individual 2
+            'id_programa_relacionado': 9, // ID del programa individual 2
             'ajuste': 7,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico8,
+            'id_programa_relacionado': 7, // ID del programa individual 3
+            'ajuste': -5,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico8,
+            'id_programa_relacionado': 7, // ID del programa individual 4
+            'ajuste': 1,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 23, // ID del programa individual 3
-            'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 11, // ID del programa individual 4
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 11, // ID del programa individual 14
+            'id_programa_relacionado': 7, // ID del programa individual 14
             'ajuste': 2,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 11, // ID del programa recovery 1
+            'id_programa_relacionado': 9, // ID del programa recovery 1
+            'ajuste': 1,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico8,
+            'id_programa_relacionado': 7, // ID del programa individual 2
             'ajuste': 2,
             'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 23, // ID del programa individual 2
+            'id_programa_relacionado': 7, // ID del programa individual 2
+            'ajuste': 2,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico8,
+            'id_programa_relacionado': 7, // ID del programa recovery 3
+            'ajuste': 2,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico8,
+            'id_programa_relacionado': 9, // ID del programa recovery 3
+            'ajuste': 1,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico8,
+            'id_programa_relacionado': 7, // ID del programa recovery 3
             'ajuste': 2,
             'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 23, // ID del programa individual 2
-            'ajuste': 0,
-            'duracion': 0.5
+            'id_programa_relacionado': 7, // ID del programa recovery 3
+            'ajuste': 1,
+            'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 14, // ID del programa recovery 3
+            'id_programa_relacionado': 7, // ID del programa recovery 3
+            'ajuste': 2,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico8,
+            'id_programa_relacionado': 10, // ID del programa recovery 3
             'ajuste': -4,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 14, // ID del programa recovery 3
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 14, // ID del programa recovery 3
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 14, // ID del programa recovery 3
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 14, // ID del programa recovery 3
-            'ajuste': 1,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 23, // ID del programa recovery 3
-            'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 12, // ID del programa recovery 3
-            'ajuste': -4,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 12, // ID del programa recovery 3
-            'ajuste': 1,
-            'duracion': 2
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 12, // ID del programa recovery 3
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 12, // ID del programa recovery 3
-            'ajuste': 1,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 12, // ID del programa recovery 3
-            'ajuste': 1,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico8,
-            'id_programa_relacionado': 22, // ID del programa recovery 3
-            'ajuste': -7,
             'duracion': 5
           },
         ];
@@ -1914,8 +1799,7 @@ class DatabaseHelper {
         int idProgramaAutomatico9 = await txn.insert('Programas_Automaticos', {
           'nombre': 'HIPERTROFIA',
           'imagen': 'assets/automatic_program/HYPERTROPHY_AUTO.png',
-          'descripcion':
-          'Programa experto. Entrenamiento para la mejora de la condición física.',
+          'descripcion': 'Diseñado para activar las fibras musculares de forma profunda para conseguir tonificar y fortalecer todo el cuerpo de forma efectiva.',
           'duracionTotal': 25,
           'tipo_equipamiento': 'BIO-JACKET',
         });
@@ -1926,30 +1810,30 @@ class DatabaseHelper {
             'id_programa_automatico': idProgramaAutomatico9,
             'id_programa_relacionado': 1, // ID del programa individual 1
             'ajuste': 0,
-            'duracion': 0.5
+            'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 10, // ID del programa individual 2
+            'id_programa_relacionado': 9, // ID del programa individual 2
             'ajuste': 7,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico9,
+            'id_programa_relacionado': 6, // ID del programa individual 3
+            'ajuste': -5,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 23, // ID del programa individual 3
-            'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 9, // ID del programa individual 4
-            'ajuste': -4,
-            'duracion': 2
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 9, // ID del programa individual 14
+            'id_programa_relacionado': 6, // ID del programa individual 4
             'ajuste': 1,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico9,
+            'id_programa_relacionado': 6, // ID del programa individual 14
+            'ajuste': 2,
             'duracion': 2
           },
           {
@@ -1960,13 +1844,31 @@ class DatabaseHelper {
           },
           {
             'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 12, // ID del programa individual 2
-            'ajuste': 0,
+            'id_programa_relacionado': 5, // ID del programa individual 2
+            'ajuste': 1,
             'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 6, // ID del programa individual 2
+            'id_programa_relacionado': 5, // ID del programa individual 2
+            'ajuste': 1,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico9,
+            'id_programa_relacionado': 5, // ID del programa recovery 3
+            'ajuste': 1,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico9,
+            'id_programa_relacionado': 9, // ID del programa recovery 3
+            'ajuste': 1,
+            'duracion': 1
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico9,
+            'id_programa_relacionado': 6, // ID del programa recovery 3
             'ajuste': 1,
             'duracion': 2
           },
@@ -1974,55 +1876,19 @@ class DatabaseHelper {
             'id_programa_automatico': idProgramaAutomatico9,
             'id_programa_relacionado': 6, // ID del programa recovery 3
             'ajuste': 1,
-            'duracion': 1
+            'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico9,
             'id_programa_relacionado': 6, // ID del programa recovery 3
             'ajuste': 1,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 12, // ID del programa recovery 3
-            'ajuste': 1,
-            'duracion': 0
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 5, // ID del programa recovery 3
-            'ajuste': -2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 5, // ID del programa recovery 3
-            'ajuste': 1,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 5, // ID del programa recovery 3
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 5, // ID del programa recovery 3
-            'ajuste': 2,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 12, // ID del programa recovery 3
-            'ajuste': 0,
-            'duracion': 1
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico9,
-            'id_programa_relacionado': 20, // ID del programa recovery 3
+            'id_programa_relacionado': 10, // ID del programa recovery 3
             'ajuste': -5,
-            'duracion': 5
+            'duracion': 4
           },
         ];
 
@@ -2079,9 +1945,9 @@ class DatabaseHelper {
       try {
         // Insertamos el programa automático "SLIM"
         int idProgramaAutomatico10 = await txn.insert('Programas_Automaticos', {
-          'nombre': 'DELGADO',
+          'nombre': 'SLIM',
           'imagen': 'assets/automatic_program/SLIM_AUTO.png',
-          'descripcion': 'Quema de grasa y creación de nuevas células.',
+          'descripcion': 'Programa con el cual se aceleran los procesos metabólicos y ayuda a tonificar el cuerpo mientras se trabaja en la eliminación de la grasa acumulada.',
           'duracionTotal': 25,
           'tipo_equipamiento': 'BIO-JACKET',
         });
@@ -2092,79 +1958,79 @@ class DatabaseHelper {
             'id_programa_automatico': idProgramaAutomatico10,
             'id_programa_relacionado': 1, // ID del programa individual 1
             'ajuste': 0,
-            'duracion': 0.5
+            'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 10, // ID del programa individual 2
+            'id_programa_relacionado': 9, // ID del programa individual 2
             'ajuste': 7,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 23, // ID del programa individual 3
-            'ajuste': 0,
-            'duracion': 0.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 3, // ID del programa individual 4
-            'ajuste': -4,
+            'id_programa_relacionado': 4, // ID del programa individual 3
+            'ajuste': -3,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 3, // ID del programa individual 14
+            'id_programa_relacionado': 4, // ID del programa individual 4
             'ajuste': 2,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 3, // ID del programa recovery 1
+            'id_programa_relacionado': 4, // ID del programa individual 14
             'ajuste': 2,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 23, // ID del programa individual 2
-            'ajuste': 0,
-            'duracion': 0.5
+            'id_programa_relacionado': 9, // ID del programa recovery 1
+            'ajuste': 1,
+            'duracion': 1
           },
           {
             'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 6, // ID del programa individual 2
+            'id_programa_relacionado': 8, // ID del programa individual 2
             'ajuste': 0,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 6, // ID del programa recovery 3
+            'id_programa_relacionado': 8, // ID del programa individual 2
             'ajuste': 1,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 6, // ID del programa recovery 3
-            'ajuste': 2,
-            'duracion': 2.5
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 16, // ID del programa recovery 3
-            'ajuste': -4,
-            'duracion': 2
-          },
-          {
-            'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 16, // ID del programa recovery 3
+            'id_programa_relacionado': 8, // ID del programa recovery 3
             'ajuste': 1,
             'duracion': 2
           },
           {
             'id_programa_automatico': idProgramaAutomatico10,
-            'id_programa_relacionado': 21, // ID del programa recovery 3
-            'ajuste': 0,
-            'duracion': 5
+            'id_programa_relacionado': 7, // ID del programa recovery 3
+            'ajuste': 1,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico10,
+            'id_programa_relacionado': 7, // ID del programa recovery 3
+            'ajuste': 1,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico10,
+            'id_programa_relacionado': 7, // ID del programa recovery 3
+            'ajuste': 1,
+            'duracion': 2
+          },
+          {
+            'id_programa_automatico': idProgramaAutomatico10,
+            'id_programa_relacionado': 10, // ID del programa recovery 3
+            'ajuste': -3,
+            'duracion': 3
           },
         ];
 

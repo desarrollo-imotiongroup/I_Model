@@ -14,7 +14,7 @@ import 'package:i_model/widgets/textview.dart';
 class DashboardScreen extends StatelessWidget
 {DashboardScreen({super.key});
 
- final DashboardController dashboardController = Get.put(DashboardController());
+ final DashboardController controller = Get.put(DashboardController());
 
  Widget handleStates({required double screenWidth, required Widget widget}){
    return SizedBox(
@@ -31,7 +31,7 @@ class DashboardScreen extends StatelessWidget
        description: translation(context).exitFromPanel,
        buttonText: translation(context).yesDelete,
        onPress: () {
-         dashboardController.resetEverything();
+         controller.resetEverything();
          Navigator.pushNamedAndRemoveUntil(
            context,
            Strings.menuScreen, (route) => false,
@@ -41,7 +41,7 @@ class DashboardScreen extends StatelessWidget
 
   @override
   Widget build(BuildContext context) {
-    dashboardController.onInit();
+    controller.onInit();
     MediaQueryData mediaQuery = MediaQuery.of(context);
     double screenWidth = mediaQuery.size.width;
     double screenHeight = mediaQuery.size.height;
@@ -76,7 +76,7 @@ class DashboardScreen extends StatelessWidget
                           children: [
                             // ListView.builder wrapped with Obx to make the list reactive
 
-                            dashboardController.newMacAddresses.isEmpty
+                            controller.newMacAddresses.isEmpty
                               ? handleStates(
                                   screenWidth: screenWidth,
                                   widget: TextView.title(
@@ -84,54 +84,56 @@ class DashboardScreen extends StatelessWidget
                                       fontSize: 12.sp,
                                   ),
                                 )
-                              : dashboardController.isLoading.value
-                                  ? handleStates(
-                                      screenWidth: screenWidth,
-                                      widget: Row(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          CircularProgressIndicator(
-                                            color: AppColors.pinkColor,
-                                          ),
-                                          SizedBox(width: screenWidth * 0.03,),
-                                          TextView.title(
-                                              Strings.loadingDevices,
-                                              fontSize: 11.sp,
-                                          )
-                                        ],
-                                      ),
-                                    )
-                                  : SizedBox(
+                              // : controller.isLoading.value
+                              //     ? handleStates(
+                              //         screenWidth: screenWidth,
+                              //         widget: Row(
+                              //           mainAxisAlignment: MainAxisAlignment.center,
+                              //           children: [
+                              //             CircularProgressIndicator(
+                              //               color: AppColors.pinkColor,
+                              //             ),
+                              //             SizedBox(width: screenWidth * 0.03,),
+                              //             TextView.title(
+                              //                 Strings.loadingDevices,
+                              //                 fontSize: 11.sp,
+                              //             )
+                              //           ],
+                              //         ),
+                              //       )
+                              //     :
+                            : SizedBox(
                                 height: screenHeight * 0.1,  // Set fixed height for ListView
                                 width: screenWidth * 0.8,
                                 child: ListView.builder(
                                 padding: EdgeInsets.zero,
                                 scrollDirection: Axis.horizontal,
-                                itemCount: dashboardController.newMacAddresses.length,
+                                itemCount: controller.newMacAddresses.length,
                                 itemBuilder: (context, index) {
 
-                                  dashboardController.isUpdate.value;
+                                  controller.isUpdate.value;
 
                                   return GestureDetector(
                                       onTap: () async {
-                                          dashboardController.selectedDeviceIndex.value = index;
-                                          await dashboardController.selectDevice(dashboardController.newMacAddresses[index]);
-                                          dashboardController.selectedMacAddress.value = dashboardController.newMacAddresses[index];
+                                          controller.selectedDeviceIndex.value = index;
+                                          await controller.selectDevice(controller.newMacAddresses[index]);
+                                          controller.selectedMacAddress[
+                                            controller.selectedDeviceIndex.value] = controller.newMacAddresses[index];
                                       },
                                       child: Obx(() =>
                                           MciWidget(
-                                            isUpdated: dashboardController.isUpdate.value,
-                                            mciName: dashboardController.selectedClients.containsKey(index)
-                                                ? dashboardController.selectedClients[index]!['name']
+                                            isUpdated: controller.isUpdate.value,
+                                            mciName: controller.selectedClients.containsKey(index)
+                                                ? controller.selectedClients[index]!['name']
                                                 : Strings.nothing,
-                                            mciId: (dashboardController.bluetoothNames[dashboardController.newMacAddresses[index]]) ?? '',
-                                            batteryStatus: dashboardController.batteryStatuses[dashboardController.newMacAddresses[index]],
-                                            isConnected: dashboardController.deviceConnectionStatus[dashboardController.newMacAddresses[index]] == 'desconectado'
+                                            mciId: (controller.bluetoothNames[controller.newMacAddresses[index]]) ?? '',
+                                            batteryStatus: controller.batteryStatuses[controller.newMacAddresses[index]],
+                                            isConnected: controller.deviceConnectionStatus[controller.newMacAddresses[index]] == 'desconectado'
                                                 ? false
                                                 : true,
-                                            isSelected: (dashboardController.selectedDeviceIndex.value == index
-                                                && (dashboardController.deviceConnectionStatus[dashboardController.newMacAddresses[index]] == 'conectado'
-                                                   || dashboardController.deviceConnectionStatus[dashboardController.newMacAddresses[index]] == 'connected'))
+                                            isSelected: (controller.selectedDeviceIndex.value == index
+                                                && (controller.deviceConnectionStatus[controller.newMacAddresses[index]] == 'conectado'
+                                                   || controller.deviceConnectionStatus[controller.newMacAddresses[index]] == 'connected'))
                                                 ? true  // Set border width when selected
                                                 : false,
 
@@ -163,7 +165,7 @@ class DashboardScreen extends StatelessWidget
                   ),
 
                   Obx(() =>
-                    dashboardController.isDashboardLoading.value
+                    controller.isDashboardLoading.value
                       ? SizedBox(
                       height: screenHeight * 0.7,
                       child: handleStates(screenWidth: screenWidth,
@@ -180,10 +182,16 @@ class DashboardScreen extends StatelessWidget
                         )
                       ],
                     ),),)
-                      : AbsorbPointer(absorbing: dashboardController.isBluetoothConnected.value ? false : true,
-                       child: IndexedStack(
-                           index: dashboardController.selectedDeviceIndex.value == (-1) ? 0 : dashboardController.selectedDeviceIndex.value,
-                           children: List.generate(3, (index){
+                        : AbsorbPointer(
+                            absorbing: (controller.isBluetoothConnected.value &&
+                                (controller.deviceConnectionStatus[controller.newMacAddresses[controller.selectedDeviceIndex.value]] == 'conectado'
+                                || (controller.deviceConnectionStatus[controller.newMacAddresses[controller.selectedDeviceIndex.value]] == 'connected')
+                                ))
+                                ? false
+                                : true,
+                            child: IndexedStack(
+                           index: controller.selectedDeviceIndex.value == (-1) ? 0 : controller.selectedDeviceIndex.value,
+                           children: List.generate(controller.totalMCIs, (index){
 
                              return ExpandedPanelView(index: index);
 

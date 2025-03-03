@@ -1,11 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET"/>
-<!--    <uses-permission android:name="android.permission.BLUETOOTH" />-->
-<!--    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />-->
-<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
-<!--    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" /> &lt;!&ndash; for Android 12 and above &ndash;&gt;-->
-<!--    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />&lt;!&ndash; for Android 12 and above &ndash;&gt;-->
 
     <!-- 📡 Permisos de Internet -->
     <uses-permission android:name="android.permission.INTERNET" />

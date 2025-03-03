@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:i_model/config/language_constants.dart';
 import 'package:i_model/core/colors.dart';
 import 'package:i_model/core/strings.dart';
 import 'package:i_model/view_models/dashboard_controller.dart';
+import 'package:i_model/views/overlays/alert_overlay.dart';
 import 'package:i_model/widgets/ekcal_page_view.dart';
 import 'package:i_model/widgets/image_widget.dart';
 import 'package:i_model/widgets/line_painter_with_seconds.dart';
 
 class DashboardFourthColumn extends StatelessWidget {
-  DashboardFourthColumn({super.key});
+  final int index;
+  DashboardFourthColumn({required this.index, super.key});
 
   final DashboardController controller = Get.put(DashboardController());
 
@@ -101,19 +104,19 @@ class DashboardFourthColumn extends StatelessWidget {
                   children: [
                     /// Contraction time line painter
                     LinePainterWithSeconds(
-                        progressValue: controller.contractionProgress.value,
-                        secondsPerCycle: controller.isContractionPauseCycleActive.value
-                            ? controller.remainingContractionSeconds.value.toInt()
-                            : controller.contractionSeconds.value,
+                        progressValue: controller.contractionProgress[index],
+                        secondsPerCycle: controller.isContractionPauseCycleActive[index]
+                            ? controller.remainingContractionSeconds[index].toInt()
+                            : controller.contractionSeconds[index],
                     ),
                     SizedBox(height: screenHeight * 0.04),
 
                     /// Pause time line painter
                     LinePainterWithSeconds(
-                      progressValue: controller.pauseProgress.value,
-                      secondsPerCycle: controller.isContractionPauseCycleActive.value
-                          ? controller.remainingPauseSeconds.value.toInt()
-                          : controller.pauseSeconds.value,
+                      progressValue: controller.pauseProgress[index],
+                      secondsPerCycle: controller.isContractionPauseCycleActive[index]
+                          ? controller.remainingPauseSeconds[index].toInt()
+                          : controller.pauseSeconds[index],
                       isPause: true,
                     ),
                   ],
@@ -130,7 +133,7 @@ class DashboardFourthColumn extends StatelessWidget {
                           controller.changeActiveState();
                         },
                         child: imageWidget(
-                            image: controller.isActive.value
+                            image: controller.isActive[index]
                                 ? Strings.activeIcon
                                 : Strings.inActiveIcon,
                             height: screenHeight * 0.1),
@@ -138,7 +141,13 @@ class DashboardFourthColumn extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: (){
-                        controller.resetProgramValues();
+                        alertOverlay(context,
+                            heading: translation(context).areYouSure,
+                            description: Strings.resetAll,
+                            buttonText: translation(context).yesDelete,
+                            onPress: () {
+                              controller.resetProgramValues(controller.selectedMacAddress[index], index);
+                            });
                       },
                       child: imageWidget(
                           image: Strings.resetIcon, height: screenHeight * 0.1),

@@ -97,6 +97,7 @@ class Strings{
   static const userUpdated = 'Usuario actualizado correctamente';
   static const adminDeleted = 'Administrador borrado correctamente';
   static const resetPassError = 'Error al resetear la contraseña';
+  static const resetAll = '¿Estás seguro de restablecer todos los datos?';
 
 
   /// Shared Preferences
