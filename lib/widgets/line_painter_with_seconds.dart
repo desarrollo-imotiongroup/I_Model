@@ -9,11 +9,15 @@ class LinePainterWithSeconds extends StatelessWidget {
   final double progressValue;
   final int secondsPerCycle;
   final bool isPause;
+  final bool isActiveRecovery;
+  final Function()? onPauseTap;
 
   const LinePainterWithSeconds({
     required this.progressValue,
     required this.secondsPerCycle,
     this.isPause = false,
+    this.isActiveRecovery = false,
+    this.onPauseTap,
     super.key});
 
   @override
@@ -26,6 +30,9 @@ class LinePainterWithSeconds extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         LinePainterWidget(
+          onPauseTap: onPauseTap,
+          isPause: isPause,
+          isActiveRecovery: isActiveRecovery,
           title: isPause
               ? translation(context).pauseTime
               : translation(context).contractionTime,

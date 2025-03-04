@@ -242,6 +242,8 @@ class Strings{
   static const String min_29_icon = 'assets/counter/29-MIN.png';
   static const String min_30_icon = 'assets/counter/30-MIN.png';
 
+  /// Audio
+  static const beepAudio = 'audio/beep.mp3';
 
 
   /// Routes

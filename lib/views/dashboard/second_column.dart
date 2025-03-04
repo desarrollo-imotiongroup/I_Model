@@ -17,7 +17,7 @@ class DashboardSecondColumn extends StatelessWidget {
 
   DashboardSecondColumn({required this.index, super.key});
 
-  final DashboardController controller = Get.put(DashboardController());
+  final DashboardController controller = Get.find<DashboardController>();
 
   @override
   Widget build(BuildContext context) {
@@ -103,7 +103,12 @@ class DashboardSecondColumn extends StatelessWidget {
         SizedBox(height: screenHeight * 0.015,),
 
         /// Frequency and pulse widget
-        Obx(() => FrequencyWidget(frequency: controller.frequency[index], pulse: controller.pulse[index]), ),
+        Obx(() => FrequencyWidget(
+              frequency: controller.frequency[index],
+              pulse: controller.pulse[index],
+              duration: controller.formatProgramDuration(
+                  controller.remainingProgramDuration[index]),
+            )),
         SizedBox(height: screenHeight * 0.02,),
 
         /// Time Counter and Up down arrow

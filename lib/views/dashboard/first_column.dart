@@ -14,7 +14,7 @@ class DashboardFirstColumn extends StatelessWidget {
 
   DashboardFirstColumn({required this.index, super.key});
 
-  final DashboardController dashboardController = Get.put(DashboardController());
+  final DashboardController dashboardController = Get.find<DashboardController>();
 
   @override
   Widget build(BuildContext context) {

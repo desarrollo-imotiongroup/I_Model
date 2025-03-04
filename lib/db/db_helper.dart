@@ -1740,7 +1740,7 @@ class DatabaseHelper {
             'id_programa_automatico': idProgramaAutomatico8,
             'id_programa_relacionado': 10, // ID del programa recovery 3
             'ajuste': -4,
-            'duracion': 5
+            'duracion': 6
           },
         ];
 

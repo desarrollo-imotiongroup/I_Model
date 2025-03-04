@@ -13,7 +13,8 @@ class DashboardFourthColumn extends StatelessWidget {
   final int index;
   DashboardFourthColumn({required this.index, super.key});
 
-  final DashboardController controller = Get.put(DashboardController());
+  final DashboardController controller = Get.find<DashboardController>();
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +114,10 @@ class DashboardFourthColumn extends StatelessWidget {
 
                     /// Pause time line painter
                     LinePainterWithSeconds(
+                      isActiveRecovery: controller.isActiveRecovery[index],
+                      onPauseTap: (){
+                        controller.setActiveRecovery(index);
+                      },
                       progressValue: controller.pauseProgress[index],
                       secondsPerCycle: controller.isContractionPauseCycleActive[index]
                           ? controller.remainingPauseSeconds[index].toInt()

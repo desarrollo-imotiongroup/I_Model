@@ -90,6 +90,7 @@ void programListOverlay(
                         else{
                           controller.contractionSeconds[deviceIndex] =  0;
                           controller.pauseSeconds[deviceIndex] = 0;
+                          print('RRR: ${programList[index]['duracionTotal']}');
 
                           for(int i=0; i<programList[index]['subprogramas'].length; i++){
                             controller.automaticProgramValues[deviceIndex].add(
@@ -114,7 +115,7 @@ void programListOverlay(
                             print('frequency: ${controller.automaticProgramValues[deviceIndex][i]['frequency']}');
                             print('pulse: ${controller.automaticProgramValues[deviceIndex][i]['pulse']}');
                           }
-                          controller.onAutoProgramSelected(programList[index]);
+                          controller.onAutoProgramSelected(programList[index], deviceIndex);
 
                           // controller.contractionSeconds.value =  programList[index]['subprogramas'][0]['contraccion'].toInt();
                           // controller.pauseSeconds.value = (programList[index]['subprogramas'][0]['pausa']).toInt();

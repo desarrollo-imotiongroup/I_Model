@@ -987,3 +987,108 @@
 //   }
 //   print("Pause cycle for ${program['subProgramName']} completed.");
 // }
+
+
+
+
+
+// Future<void> startContractionForMultiplePrograms(int deviceIndex, String macAddress) async {
+//   if (automaticProgramValues[deviceIndex].isEmpty) {
+//     print("No programs to process.");
+//     return;
+//   }
+//
+//   initializeStateForDevice(deviceIndex);
+//   isContractionPauseCycleActive[deviceIndex] = true;
+//
+//   logDeviceState(deviceIndex, "Starting contraction for multiple programs.");
+//
+//   for (; currentProgramIndex[deviceIndex] < automaticProgramValues[deviceIndex].length; currentProgramIndex[deviceIndex]++) {
+//     var program = automaticProgramValues[deviceIndex][currentProgramIndex[deviceIndex]];
+//
+//     double durationInMinutes = program['duration'];
+//     int totalProgramSeconds = (durationInMinutes * 60).toInt();
+//
+//     logDeviceState(deviceIndex, "Starting program: ${program['subProgramName']} for $totalProgramSeconds seconds.");
+//
+//     selectedProgramImage[deviceIndex] = program['image'];
+//     selectedProgramName[deviceIndex] = program['subProgramName'];
+//     frequency[deviceIndex] = program['frequency'].toInt();
+//     pulse[deviceIndex] = program['pulse'].toInt();
+//
+//     await startPulseCycle(program);
+//
+//     while (elapsedTime[deviceIndex] < totalProgramSeconds) {
+//
+//       if (elapsedTime[deviceIndex] >= totalProgramSeconds) {
+//         cancelTimersForDevice(deviceIndex); // Cancel timers before breaking
+//         break;
+//       }
+//
+//       print('elapsedTime: ${elapsedTime[deviceIndex]}');
+//       print('totalProgramSeconds: $totalProgramSeconds');
+//
+//       if (_currentCyclePhase[deviceIndex] == CyclePhase.pause && _remainingPauseTime[deviceIndex] > 0) {
+//         print("[Device $deviceIndex] Transitioning from pause to contraction.");
+//         _currentCyclePhase[deviceIndex] = CyclePhase.contraction;
+//         isElectroOn[deviceIndex] = true; // Ensure electrostimulation is on
+//         await runContractionCycle(program, _remainingContractionTime[deviceIndex], deviceIndex, macAddress);
+//         if (isTimerPaused[deviceIndex]) return;
+//         elapsedTime[deviceIndex] += _remainingContractionTime[deviceIndex];
+//         _remainingContractionTime[deviceIndex] = 0;
+//         continue;
+//       } else if (_currentCyclePhase[deviceIndex] == CyclePhase.contraction && _remainingContractionTime[deviceIndex] > 0) {
+//         logStateTransition(deviceIndex, "contraction", "pause");
+//         await runContractionCycle(program, _remainingContractionTime[deviceIndex], deviceIndex, macAddress);
+//         if (isTimerPaused[deviceIndex]) return;
+//         elapsedTime[deviceIndex] += _remainingContractionTime[deviceIndex];
+//         _remainingContractionTime[deviceIndex] = 0;
+//         _currentCyclePhase[deviceIndex] = CyclePhase.pause;
+//         if (elapsedTime[deviceIndex] >= totalProgramSeconds) break;
+//         continue;
+//       } else if (_currentCyclePhase[deviceIndex] == null || _currentCyclePhase[deviceIndex] == CyclePhase.contraction) {
+//         int contractionDuration = program['contraction'].toInt();
+//         int remainingTime = totalProgramSeconds - elapsedTime[deviceIndex];
+//         int contractionRunTime = (remainingTime < contractionDuration) ? remainingTime : contractionDuration;
+//         _remainingContractionTime[deviceIndex] = contractionRunTime;
+//         _currentCyclePhase[deviceIndex] = CyclePhase.contraction;
+//         logStateTransition(deviceIndex, "null/contraction", "contraction");
+//         await runContractionCycle(program, contractionRunTime, deviceIndex, macAddress);
+//         if (isTimerPaused[deviceIndex]) return;
+//         elapsedTime[deviceIndex] += contractionRunTime;
+//         _remainingContractionTime[deviceIndex] = 0;
+//         _currentCyclePhase[deviceIndex] = CyclePhase.pause;
+//         if (elapsedTime[deviceIndex] >= totalProgramSeconds) break;
+//       }
+//
+//       if (_currentCyclePhase[deviceIndex] == CyclePhase.pause) {
+//         int pauseDuration = program['pause'].toInt();
+//         if (pauseDuration == 0) {
+//           logDeviceState(deviceIndex, "Pause duration is zero. Skipping pause cycle.");
+//           _currentCyclePhase[deviceIndex] = CyclePhase.contraction;
+//           isElectroOn[deviceIndex] = false;
+//           continue;
+//         }
+//         int remainingTime = totalProgramSeconds - elapsedTime[deviceIndex];
+//         int pauseRunTime = (remainingTime < pauseDuration) ? remainingTime : pauseDuration;
+//         _remainingPauseTime[deviceIndex] = pauseRunTime;
+//         logStateTransition(deviceIndex, "contraction", "pause");
+//         await startAutoPauseTimeCycle(program, pauseRunTime, deviceIndex, macAddress);
+//         if (isTimerPaused[deviceIndex]) return;
+//         elapsedTime[deviceIndex] += pauseRunTime;
+//         _remainingPauseTime[deviceIndex] = 0;
+//         _currentCyclePhase[deviceIndex] = CyclePhase.contraction;
+//       }
+//     }
+//
+//     currentIndex[deviceIndex] ++ ;
+//     cancelTimersForDevice(deviceIndex);
+//     elapsedTime[deviceIndex] = 0;
+//     _remainingContractionTime[deviceIndex] = 0;
+//     _remainingPauseTime[deviceIndex] = 0;
+//     _currentCyclePhase[deviceIndex] = null;
+//   }
+//
+//   update();
+//   logDeviceState(deviceIndex, "All programs completed.");
+// }

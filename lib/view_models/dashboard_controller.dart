@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:i_model/bluetooth/ble_command_service.dart';
@@ -91,6 +92,7 @@ class DashboardController extends GetxController {
   RxList<int> remainingSeconds = <int>[].obs;
   RxList<int> minutes = <int>[].obs;
   RxList<bool> isTimerPaused = <bool>[].obs;
+  RxList<bool> isDurationTimerPaused = <bool>[].obs;
   List<Timer?> timer = [];
   RxList<String> timerImage = <String>[].obs;
 
@@ -104,10 +106,12 @@ class DashboardController extends GetxController {
   RxList<int> contractionSeconds = <int>[].obs;
   RxList<double> contractionProgress = <double>[].obs;
   RxList<double> pauseProgress = <double>[].obs;
+  RxList<bool> isActiveRecovery = <bool>[].obs;
 
   ///  Timer? contractionCycleTimer;
   List<Timer?> contractionCycleTimer = [];
   List<Timer?> pauseCycleTimer = [];
+  List<Timer?> remainingDurationTimer = [];
   RxList<double> remainingContractionSeconds = <double>[].obs;
   RxList<double> remainingPauseSeconds = <double>[].obs;
   RxList<bool> isContractionPauseCycleActive = <bool>[].obs;
@@ -117,6 +121,7 @@ class DashboardController extends GetxController {
   List<int> elapsedTime = <int>[];
   List<int> _remainingContractionTime = <int>[];
   List<int> _remainingPauseTime = <int>[];
+  List<int> remainingSecondsAfterPause = <int>[];
   List<CyclePhase?> _currentCyclePhase = <CyclePhase?>[];
 
 
@@ -125,7 +130,8 @@ class DashboardController extends GetxController {
   RxList<List<Program>> programsStatus = <List<Program>>[].obs;
 
   /// DONE UNTIL HERE
-
+  ///
+  final AudioPlayer _audioPlayer = AudioPlayer();
   int totalMCIs = 0;
   /// Bluetooth connectivity
   BleConnectionService bleConnectionService = BleConnectionService();
@@ -142,6 +148,7 @@ class DashboardController extends GetxController {
       initializeBluetoothConnection();
       isFirstTime = false;
     }
+    print('onInit called');
     // SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     // int initialMinutes = sharedPreferences.getInt(Strings.maxTimeSP) ?? 25;
     // remainingSeconds[selectedDeviceIndex.value == (-1) ? 0 : selectedDeviceIndex.value] = initialMinutes * 60;
@@ -208,16 +215,19 @@ class DashboardController extends GetxController {
     remainingSeconds.value = List.generate(totalMCIs, (index) => initialMinutes * 60);
     minutes.value = List.generate(totalMCIs, (index) => 0);
     isTimerPaused.value = List.generate(totalMCIs, (index) => true);
+    isDurationTimerPaused.value = List.generate(totalMCIs, (index) => false);
     timer = List.generate(totalMCIs, (index) => null);
     timerImage.value = List.generate(totalMCIs, (index) => Strings.min_25_icon);
 
     /// Contraction and pause Timers / Line painters
     contractionCycleTimer = List.generate(totalMCIs, (index) => null);
     pauseCycleTimer = List.generate(totalMCIs, (index) => null);
+    remainingDurationTimer = List.generate(totalMCIs, (index) => null);
     pauseSeconds.value = List.generate(totalMCIs, (index) => 0);
     contractionSeconds.value = List.generate(totalMCIs, (index) => 0);
     contractionProgress.value = List.generate(totalMCIs, (index) => 0.0);
     pauseProgress.value = List.generate(totalMCIs, (index) => 0.0);
+    isActiveRecovery.value = List.generate(totalMCIs, (index) => false);
     remainingContractionSeconds.value = List.generate(totalMCIs, (index) => 0.0);
     remainingPauseSeconds.value = List.generate(totalMCIs, (index) => 0.0);
     isContractionPauseCycleActive.value = List.generate(totalMCIs, (index) => false);
@@ -225,6 +235,7 @@ class DashboardController extends GetxController {
 
     currentProgramIndex = List.generate(totalMCIs, (index) => 0);
     elapsedTime = List.generate(totalMCIs, (index) => 0);
+    remainingSecondsAfterPause = List.generate(totalMCIs, (index) => 0);
     _remainingContractionTime = List.generate(totalMCIs, (index) => 0);
     _remainingPauseTime = List.generate(totalMCIs, (index) => 0);
     _currentCyclePhase = List.generate(totalMCIs, (index) => null);
@@ -356,6 +367,11 @@ class DashboardController extends GetxController {
     remainingPauseSeconds[selectedDeviceIndex.value] = 0;
   }
 
+  setActiveRecovery(int deviceIndex){
+    isActiveRecovery[deviceIndex] = !isActiveRecovery[deviceIndex];
+    update();
+  }
+
   /// Fetching automatic programs from SQL
   Future<List<Map<String, dynamic>>> fetchAutoPrograms() async {
     // List<Map<String, dynamic>> allAutomaticPrograms = [];
@@ -411,7 +427,7 @@ class DashboardController extends GetxController {
    List<Map<String, dynamic>> autoProgramGrupos = [];
    List<Map<String, dynamic>> subprogramasNotifier = [];
 
-  void onAutoProgramSelected(Map<String, dynamic>? programA) async {
+  void onAutoProgramSelected(Map<String, dynamic>? programA, int deviceIndex) async {
     if (programA == null) return;
 
     // Debug: Check the programA structure
@@ -477,6 +493,7 @@ class DashboardController extends GetxController {
       print('cronaxiasNotifier: $autoProgramCronaxias');
       print('gruposMuscularesNotifier: $autoProgramGrupos');
       print('subprogramasNotifier: $subprogramasNotifier');
+      remainingSeconds[deviceIndex] = (programA['duracionTotal'] * 60).toInt();
     } catch (e) {
       debugPrint("❌ Error en onAutoProgramSelected: $e");
     }
@@ -532,6 +549,7 @@ class DashboardController extends GetxController {
   /// Main Timer
   void startTimer(int deviceIndex) {
     isTimerPaused[deviceIndex] = false;
+    // isDurationTimerPaused[deviceIndex] = true;
     update();
 
     if (timer[deviceIndex] != null) {
@@ -546,12 +564,16 @@ class DashboardController extends GetxController {
         else{
           timer.cancel();
           cancelTimersOnTimeUp(deviceIndex);
+          playResetAudio();
         }
       } else {
         timer.cancel();
 
       }
-      update();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        update();
+      });
+
     });
   }
 
@@ -621,7 +643,8 @@ class DashboardController extends GetxController {
       if (pauseProgress[deviceIndex] > 0) {
         remainingPauseSeconds[deviceIndex] = (totalDurationInSeconds * pauseProgress[deviceIndex]).ceilToDouble();
         pauseProgress[deviceIndex] -= decrementAmount;
-      } else {
+      }
+      else {
         pauseProgress[deviceIndex] = 0;
         remainingPauseSeconds[deviceIndex] = 0;
         pauseCycleTimer[deviceIndex]?.cancel();
@@ -648,7 +671,15 @@ class DashboardController extends GetxController {
     contractionProgress[deviceIndex] = 0;
     pauseProgress[deviceIndex] = 0;
     isContractionPauseCycleActive[deviceIndex] = false;
+    selectedProgramImage[deviceIndex] = Strings.celluliteIcon;
+    selectedMainProgramName[deviceIndex] = Strings.nothing;
+    selectedProgramName[deviceIndex] = Strings.nothing;
+    frequency[deviceIndex] = 0;
+    pulse[deviceIndex] = 0;
+    isProgramSelected[deviceIndex] = false;
+
   }
+  int currentSeconds = 0;
 
   pauseTimer() {
     isTimerPaused[selectedDeviceIndex.value] = true;
@@ -1193,7 +1224,7 @@ class DashboardController extends GetxController {
       timer[selectedDeviceIndex.value]?.cancel();
     }
     stopElectrostimulationProcess(macAddress, deviceIndex);
-
+    playResetAudio();
     resetProgramTimerValue();
   }
 
@@ -1251,10 +1282,11 @@ class DashboardController extends GetxController {
   RxList<String> processedDevices = <String>[].obs;
 
 
-  RxBool isLoading = false.obs;
+  // RxBool isLoading = false.obs;
 
   initializeBluetoothConnection() async {
-    isLoading.value = true;
+    print('initializeBluetoothConnection (from inside function)');
+    // isLoading.value = true;
     await initializeAndConnectBLE();
     // List<String> list = await bleConnectionService.scanTargetDevices();
     // print('list: $list');
@@ -1277,7 +1309,9 @@ class DashboardController extends GetxController {
     });
     print('Subscription called');
     isUpdate.value = true;
-    update();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      update();
+    });
   }
 
   Future<void> initializeAndConnectBLE() async {
@@ -1338,8 +1372,7 @@ class DashboardController extends GetxController {
               print('ConnectadoONo: ${deviceConnectionStatus[newMacAddresses[0]]}');
               print('ConnectadoONo: ${deviceConnectionStatus[newMacAddresses[1]]}');
               print('macAddress: $macAddress');
-              isLoading.value = false;
-              print('isLoading.value: ${isLoading.value}');
+              // isLoading.value = false;
             },
             onError: (error) {
               debugPrint("❌ Error en la conexión de $macAddress: $error");
@@ -1351,7 +1384,10 @@ class DashboardController extends GetxController {
 
       _connectionSubscriptions[macAddress] = subscription;
     }
-    update();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      update();
+    });
   }
 
   Future<void> selectDevice(String macAddress) async {
@@ -1386,9 +1422,9 @@ class DashboardController extends GetxController {
 
     // Scan for available devices before attempting to connect
     List<String> availableDevices = await bleConnectionService.scanTargetDevices();
-    if(availableDevices.isEmpty){
-      isLoading.value = false;
-    }
+    // if(availableDevices.isEmpty){
+    //   isLoading.value = false;
+    // }
 
     // Check if the specific device is available
     if (!availableDevices.contains(macAddress)) {
@@ -1553,23 +1589,33 @@ class DashboardController extends GetxController {
     };
   }
 
+  Future<void> playResetAudio() async {
+    await _audioPlayer.play(AssetSource(Strings.beepAudio));
+  }
+
+  String formatProgramDuration(int totalSeconds) {
+    int minutes = totalSeconds ~/ 60;
+    int seconds = totalSeconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
+  }
+
   /// Deep seek solution
 
-  void logStateTransition(int deviceIndex, String fromPhase, String toPhase) {
-    print("[Device $deviceIndex] Transitioning from $fromPhase to $toPhase");
-    logDeviceState(deviceIndex, "State after transition:");
-  }
+  // void logStateTransition(int deviceIndex, String fromPhase, String toPhase) {
+  //   print("[Device $deviceIndex] Transitioning from $fromPhase to $toPhase");
+  //   logDeviceState(deviceIndex, "State after transition:");
+  // }
 
 
-  void logDeviceState(int deviceIndex, String message) {
-    print("[Device $deviceIndex] $message");
-    print("[Device $deviceIndex] elapsedTime: ${elapsedTime[deviceIndex]}");
-    print("[Device $deviceIndex] _currentCyclePhase: ${_currentCyclePhase[deviceIndex]}");
-    print("[Device $deviceIndex] _remainingContractionTime: ${_remainingContractionTime[deviceIndex]}");
-    print("[Device $deviceIndex] _remainingPauseTime: ${_remainingPauseTime[deviceIndex]}");
-    print("[Device $deviceIndex] isElectroOn: ${isElectroOn[deviceIndex]}");
-    print("[Device $deviceIndex] isTimerPaused: ${isTimerPaused[deviceIndex]}");
-  }
+  // void logDeviceState(int deviceIndex, String message) {
+  //   print("[Device $deviceIndex] $message");
+  //   print("[Device $deviceIndex] elapsedTime: ${elapsedTime[deviceIndex]}");
+  //   print("[Device $deviceIndex] _currentCyclePhase: ${_currentCyclePhase[deviceIndex]}");
+  //   print("[Device $deviceIndex] _remainingContractionTime: ${_remainingContractionTime[deviceIndex]}");
+  //   print("[Device $deviceIndex] _remainingPauseTime: ${_remainingPauseTime[deviceIndex]}");
+  //   print("[Device $deviceIndex] isElectroOn: ${isElectroOn[deviceIndex]}");
+  //   print("[Device $deviceIndex] isTimerPaused: ${isTimerPaused[deviceIndex]}");
+  // }
 
   // Example of state initialization for each device
   void initializeStateForDevice(int deviceIndex) {
@@ -1594,6 +1640,36 @@ class DashboardController extends GetxController {
     pauseCycleTimer[deviceIndex] = null;
   }
 
+  // calculateRemainingDuration(int deviceIndex, int totalProgramSeconds, bool shouldBreakWhileLoop){
+  //   if(remainingSecondsAfterPause[deviceIndex] != 0){
+  //     remainingProgramDuration[deviceIndex] = remainingSecondsAfterPause[deviceIndex];
+  //   }
+  //   else {
+  //     remainingProgramDuration[deviceIndex] = totalProgramSeconds;
+  //   }
+  //
+  //   remainingDurationTimer[deviceIndex] = Timer.periodic(Duration(seconds: 1), (timer) {
+  //     if(isTimerPaused[deviceIndex]){
+  //       timer.cancel();
+  //     }
+  //     if (!isTimerPaused[deviceIndex]) {
+  //       // Subtract 1 second per tick
+  //       remainingProgramDuration[deviceIndex]--;
+  //       remainingSecondsAfterPause[deviceIndex] = remainingProgramDuration[deviceIndex];
+  //
+  //       // print("Remaining seconds for device $deviceIndex: ${remainingProgramDuration[deviceIndex]}");
+  //
+  //       if (remainingProgramDuration[deviceIndex] <= 0) {
+  //         // print("Remaining seconds for device $deviceIndex: 0");
+  //         shouldBreakWhileLoop = true;
+  //         remainingSecondsAfterPause[deviceIndex] = 0;
+  //         timer.cancel();
+  //         return;
+  //       }
+  //     }
+  //   });
+  // }
+
   Future<void> startContractionForMultiplePrograms(int deviceIndex, String macAddress) async {
     if (automaticProgramValues[deviceIndex].isEmpty) {
       print("No programs to process.");
@@ -1602,17 +1678,14 @@ class DashboardController extends GetxController {
 
     initializeStateForDevice(deviceIndex);
     isContractionPauseCycleActive[deviceIndex] = true;
-
-    logDeviceState(deviceIndex, "Starting contraction for multiple programs.");
+    // logDeviceState(deviceIndex, "Starting contraction for multiple programs.");
 
     for (; currentProgramIndex[deviceIndex] < automaticProgramValues[deviceIndex].length; currentProgramIndex[deviceIndex]++) {
       var program = automaticProgramValues[deviceIndex][currentProgramIndex[deviceIndex]];
-
       double durationInMinutes = program['duration'];
       int totalProgramSeconds = (durationInMinutes * 60).toInt();
 
-      logDeviceState(deviceIndex, "Starting program: ${program['subProgramName']} for $totalProgramSeconds seconds.");
-
+      // logDeviceState(deviceIndex, "Starting program: ${program['subProgramName']} for $totalProgramSeconds seconds.");
       selectedProgramImage[deviceIndex] = program['image'];
       selectedProgramName[deviceIndex] = program['subProgramName'];
       frequency[deviceIndex] = program['frequency'].toInt();
@@ -1620,16 +1693,62 @@ class DashboardController extends GetxController {
 
       await startPulseCycle(program);
 
-      while (elapsedTime[deviceIndex] < totalProgramSeconds) {
+      // Flag to signal the while loop to exit when time is up.
+      bool shouldBreakWhileLoop = false;
 
-        if (elapsedTime[deviceIndex] >= totalProgramSeconds) {
-          cancelTimersForDevice(deviceIndex); // Cancel timers before breaking
-          break;
+
+      // Assume totalProgramSeconds is defined and used to initialize remainingProgramDuration.
+      if(remainingSecondsAfterPause[deviceIndex] != 0){
+        remainingProgramDuration[deviceIndex] = remainingSecondsAfterPause[deviceIndex];
+      }
+      else {
+        remainingProgramDuration[deviceIndex] = totalProgramSeconds;
+      }
+
+      remainingDurationTimer[deviceIndex] = Timer.periodic(Duration(seconds: 1), (timer) {
+        if(isTimerPaused[deviceIndex]){
+          timer.cancel();
         }
+        if (!isTimerPaused[deviceIndex]) {
+          // Subtract 1 second per tick
+          remainingProgramDuration[deviceIndex]--;
+          remainingSecondsAfterPause[deviceIndex] = remainingProgramDuration[deviceIndex];
 
-        print('elapsedTime: ${elapsedTime[deviceIndex]}');
-        print('totalProgramSeconds: $totalProgramSeconds');
+          // print("Remaining seconds for device $deviceIndex: ${remainingProgramDuration[deviceIndex]}");
 
+          if (remainingProgramDuration[deviceIndex] <= 0) {
+            // print("Remaining seconds for device $deviceIndex: 0");
+            shouldBreakWhileLoop = true;
+            remainingSecondsAfterPause[deviceIndex] = 0;
+            timer.cancel();
+            return;
+          }
+        }
+      });
+
+      // Start a timer that prints the remaining seconds each second.
+      // remainingDurationTimer[deviceIndex] = Timer.periodic(Duration(seconds: 1), (timer) {
+      //   if (!isTimerPaused[deviceIndex]){
+      //       currentSeconds = DateTime.now().difference(lastTime).inSeconds;
+      //
+      //     remainingProgramDuration[deviceIndex] = totalProgramSeconds - currentSeconds;
+      //     if (remainingProgramDuration[deviceIndex] <= 0) {
+      //       // When total time is reached, print zero...
+      //       print("Remaining seconds for device $deviceIndex: 0");
+      //       // ...and signal the while loop to break.
+      //       shouldBreakWhileLoop = true;
+      //       timer.cancel();
+      //       return;
+      //     }
+      //     print("Remaining seconds for device $deviceIndex: ${remainingProgramDuration[deviceIndex]}");
+      //   }
+      //
+      // });
+
+      // Main loop for processing contraction and pause cycles.
+      while (elapsedTime[deviceIndex] < totalProgramSeconds && !shouldBreakWhileLoop) {
+        // Your existing cycle logic goes here.
+        // For example:
         if (_currentCyclePhase[deviceIndex] == CyclePhase.pause && _remainingPauseTime[deviceIndex] > 0) {
           print("[Device $deviceIndex] Transitioning from pause to contraction.");
           _currentCyclePhase[deviceIndex] = CyclePhase.contraction;
@@ -1640,7 +1759,7 @@ class DashboardController extends GetxController {
           _remainingContractionTime[deviceIndex] = 0;
           continue;
         } else if (_currentCyclePhase[deviceIndex] == CyclePhase.contraction && _remainingContractionTime[deviceIndex] > 0) {
-          logStateTransition(deviceIndex, "contraction", "pause");
+          // logStateTransition(deviceIndex, "contraction", "pause");
           await runContractionCycle(program, _remainingContractionTime[deviceIndex], deviceIndex, macAddress);
           if (isTimerPaused[deviceIndex]) return;
           elapsedTime[deviceIndex] += _remainingContractionTime[deviceIndex];
@@ -1654,7 +1773,7 @@ class DashboardController extends GetxController {
           int contractionRunTime = (remainingTime < contractionDuration) ? remainingTime : contractionDuration;
           _remainingContractionTime[deviceIndex] = contractionRunTime;
           _currentCyclePhase[deviceIndex] = CyclePhase.contraction;
-          logStateTransition(deviceIndex, "null/contraction", "contraction");
+          // logStateTransition(deviceIndex, "null/contraction", "contraction");
           await runContractionCycle(program, contractionRunTime, deviceIndex, macAddress);
           if (isTimerPaused[deviceIndex]) return;
           elapsedTime[deviceIndex] += contractionRunTime;
@@ -1666,7 +1785,7 @@ class DashboardController extends GetxController {
         if (_currentCyclePhase[deviceIndex] == CyclePhase.pause) {
           int pauseDuration = program['pause'].toInt();
           if (pauseDuration == 0) {
-            logDeviceState(deviceIndex, "Pause duration is zero. Skipping pause cycle.");
+            // logDeviceState(deviceIndex, "Pause duration is zero. Skipping pause cycle.");
             _currentCyclePhase[deviceIndex] = CyclePhase.contraction;
             isElectroOn[deviceIndex] = false;
             continue;
@@ -1674,25 +1793,33 @@ class DashboardController extends GetxController {
           int remainingTime = totalProgramSeconds - elapsedTime[deviceIndex];
           int pauseRunTime = (remainingTime < pauseDuration) ? remainingTime : pauseDuration;
           _remainingPauseTime[deviceIndex] = pauseRunTime;
-          logStateTransition(deviceIndex, "contraction", "pause");
+          // logStateTransition(deviceIndex, "contraction", "pause");
           await startAutoPauseTimeCycle(program, pauseRunTime, deviceIndex, macAddress);
           if (isTimerPaused[deviceIndex]) return;
           elapsedTime[deviceIndex] += pauseRunTime;
           _remainingPauseTime[deviceIndex] = 0;
           _currentCyclePhase[deviceIndex] = CyclePhase.contraction;
         }
+
+        // Optionally add a small delay if needed to avoid a tight loop:
+        await Future.delayed(Duration(milliseconds: 100));
       }
 
-      currentIndex[deviceIndex] ++ ;
-      cancelTimersForDevice(deviceIndex);
+      // Ensure the timer is cancelled if it hasn't already.
+      remainingDurationTimer[deviceIndex]?.cancel();
+
+      // Reset your state for the next program iteration.
       elapsedTime[deviceIndex] = 0;
       _remainingContractionTime[deviceIndex] = 0;
       _remainingPauseTime[deviceIndex] = 0;
       _currentCyclePhase[deviceIndex] = null;
+      currentIndex[deviceIndex]++;
     }
 
-    update();
-    logDeviceState(deviceIndex, "All programs completed.");
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      update();
+    });
+    // logDeviceState(deviceIndex, "All programs completed.");
   }
 
   Future<void> runContractionCycle(var program, int runTimeSeconds, int deviceIndex, String macAddress) async {
@@ -1956,6 +2083,7 @@ class DashboardController extends GetxController {
       timer[i]?.cancel();
       contractionCycleTimer[i]?.cancel();
       pauseCycleTimer[i]?.cancel();
+      remainingDurationTimer[i]?.cancel();
     }
     nameController.dispose();
     bleConnectionService.disconnectAllDevices();
