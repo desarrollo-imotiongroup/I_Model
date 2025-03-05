@@ -42,10 +42,10 @@ class DashboardThirdColumn extends StatelessWidget {
                         title: translation(context).buttocks,
                         image: Strings.buttocksIcon,
                         onIncrease: () {
-                          controller.changeButtocksPercentage(isIncrease: true);
+                          controller.changeButtocksPercentage(index, isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeButtocksPercentage(isDecrease: true);
+                          controller.changeButtocksPercentage(index, isDecrease: true);
                         },
                         percentage: controller.buttocksPercentage[index],
                         intensityColor: controller.buttocksIntensityColor[index],
@@ -68,6 +68,10 @@ class DashboardThirdColumn extends StatelessWidget {
                             [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[index][7].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
+                              inActive: true,
+                              deviceIndex: index,
+                              canal: 5,
+                              percentage: 0
                           );
                         },
                       ),
@@ -79,9 +83,9 @@ class DashboardThirdColumn extends StatelessWidget {
                         title: translation(context).hamstrings,
                         image: Strings.hamstringsIcon,
                         onIncrease: () {
-                          controller.changeHamStringsPercentage(isIncrease: true);},
+                          controller.changeHamStringsPercentage(index, isIncrease: true);},
                         onDecrease: () {
-                          controller.changeHamStringsPercentage(isDecrease: true);},
+                          controller.changeHamStringsPercentage(index, isDecrease: true);},
                         percentage: controller.hamStringsPercentage[index],
                         intensityColor: controller.hamstringsIntensityColor[index],
                         programStatus: controller.programsStatus[index][8].status!.value,
@@ -103,6 +107,10 @@ class DashboardThirdColumn extends StatelessWidget {
                             [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[index][8].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
+                              inActive: true,
+                              deviceIndex: index,
+                              canal: 6,
+                              percentage: 0
                           );
                         },
                       ),
@@ -114,10 +122,10 @@ class DashboardThirdColumn extends StatelessWidget {
                         title: Strings.calves,
                         image: Strings.calvesIcon,
                         onIncrease: () {
-                          controller.changeCalvesPercentage(isIncrease: true);
+                          controller.changeCalvesPercentage(index, isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeCalvesPercentage(isDecrease: true);
+                          controller.changeCalvesPercentage(index, isDecrease: true);
                         },
                         percentage: controller.calvesPercentage[index],
                         intensityColor: controller.calvesIntensityColor[index],
@@ -140,6 +148,10 @@ class DashboardThirdColumn extends StatelessWidget {
                             [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[index][9].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
+                              inActive: true,
+                              deviceIndex: index,
+                              canal: 3,
+                              percentage: 0
                           );
                         },
                       ),
@@ -156,12 +168,10 @@ class DashboardThirdColumn extends StatelessWidget {
                         title: translation(context).upperBack,
                         image: Strings.upperBackIcon,
                         onIncrease: () {
-                          controller.changeUpperBackPercentage(
-                              isIncrease: true);
+                          controller.changeUpperBackPercentage(index, isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeUpperBackPercentage(
-                              isDecrease: true);
+                          controller.changeUpperBackPercentage(index, isDecrease: true);
                         },
                         percentage: controller.upperBackPercentage[index],
                         intensityColor: controller.upperBackIntensityColor[index],
@@ -184,6 +194,10 @@ class DashboardThirdColumn extends StatelessWidget {
                             [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[index][4].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
+                              inActive: true,
+                              deviceIndex: index,
+                              canal: 0,
+                              percentage: 0
                           );
                         },
                       ),
@@ -194,12 +208,10 @@ class DashboardThirdColumn extends StatelessWidget {
                         title: translation(context).middleBack,
                         image: Strings.middleBackIcon,
                         onIncrease: () {
-                          controller.changeMiddleBackPercentage(
-                              isIncrease: true);
+                          controller.changeMiddleBackPercentage(index, isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeMiddleBackPercentage(
-                              isDecrease: true);
+                          controller.changeMiddleBackPercentage(index, isDecrease: true);
                         },
                         percentage: controller.middleBackPercentage[index],
                         intensityColor: controller.middleBackIntensityColor[index],
@@ -222,6 +234,10 @@ class DashboardThirdColumn extends StatelessWidget {
                             [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[index][5].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
+                              inActive: true,
+                              deviceIndex: index,
+                              canal: 1,
+                              percentage: 0
                           );
                         },
                       ),
@@ -232,10 +248,10 @@ class DashboardThirdColumn extends StatelessWidget {
                         title: translation(context).lumbars,
                         image: Strings.lumbarsIcon,
                         onIncrease: () {
-                          controller.changeLumbarPercentage(isIncrease: true);
+                          controller.changeLumbarPercentage(index, isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeLumbarPercentage(isDecrease: true);
+                          controller.changeLumbarPercentage(index, isDecrease: true);
                         },
                         percentage: controller.lumbarPercentage[index],
                         intensityColor: controller.lumbarsIntensityColor[index],
@@ -258,6 +274,10 @@ class DashboardThirdColumn extends StatelessWidget {
                             [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[index][6].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
+                              inActive: true,
+                              deviceIndex: index,
+                              canal: 2,
+                              percentage: 0
                           );
                         },
                       ),
@@ -268,10 +288,10 @@ class DashboardThirdColumn extends StatelessWidget {
                         title: translation(context).buttocks,
                         image: Strings.buttocksIcon,
                         onIncrease: () {
-                          controller.changeButtocksPercentage(isIncrease: true);
+                          controller.changeButtocksPercentage(index, isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeButtocksPercentage(isDecrease: true);
+                          controller.changeButtocksPercentage(index, isDecrease: true);
                         },
                         percentage: controller.buttocksPercentage[index],
                         intensityColor: controller.buttocksIntensityColor[index],
@@ -294,6 +314,10 @@ class DashboardThirdColumn extends StatelessWidget {
                             [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[index][7].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
+                              inActive: true,
+                              deviceIndex: index,
+                              canal: 3,
+                              percentage: 0
                           );
                         },
                       ),
@@ -304,12 +328,10 @@ class DashboardThirdColumn extends StatelessWidget {
                         title: translation(context).hamstrings,
                         image: Strings.hamstringsIcon,
                         onIncrease: () {
-                          controller.changeHamStringsPercentage(
-                              isIncrease: true);
+                          controller.changeHamStringsPercentage(index, isIncrease: true);
                         },
                         onDecrease: () {
-                          controller.changeHamStringsPercentage(
-                              isDecrease: true);
+                          controller.changeHamStringsPercentage(index, isDecrease: true);
                         },
                         percentage: controller.hamStringsPercentage[index],
                         intensityColor: controller.hamstringsIntensityColor[index],
@@ -332,6 +354,10 @@ class DashboardThirdColumn extends StatelessWidget {
                             [ProgramStatus.active, ProgramStatus.blocked].contains(controller.programsStatus[index][8].status!.value)
                                 ? ProgramStatus.inactive
                                 : ProgramStatus.active,
+                              inActive: true,
+                              deviceIndex: index,
+                              canal: 4,
+                              percentage: 0
                           );
                         },
                       ),

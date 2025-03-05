@@ -112,6 +112,11 @@ class DashboardScreen extends StatelessWidget
                                 itemBuilder: (context, index) {
 
                                   controller.isUpdate.value;
+                                  print('---|||---');
+                                  print('BatteryStatus: ${controller.batteryStatuses[controller.newMacAddresses[index]]}');
+                                  print('MacAddress: ${controller.newMacAddresses[index]}');
+                                  print('DeviceConnectionStatus: ${controller.deviceConnectionStatus[controller.newMacAddresses[index]]}');
+                                  print('MCIID: ${controller.bluetoothNames[controller.newMacAddresses[index]]}');
 
                                   return GestureDetector(
                                       onTap: () async {

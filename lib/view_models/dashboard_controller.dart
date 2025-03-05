@@ -112,6 +112,7 @@ class DashboardController extends GetxController {
   List<Timer?> contractionCycleTimer = [];
   List<Timer?> pauseCycleTimer = [];
   List<Timer?> remainingDurationTimer = [];
+  List<Timer?> _periodicTimers = [];
   RxList<double> remainingContractionSeconds = <double>[].obs;
   RxList<double> remainingPauseSeconds = <double>[].obs;
   RxList<bool> isContractionPauseCycleActive = <bool>[].obs;
@@ -130,17 +131,46 @@ class DashboardController extends GetxController {
   RxList<List<Program>> programsStatus = <List<Program>>[].obs;
   List<int> jumpSeconds = <int>[];
   List<DateTime?> programEndTime = <DateTime>[];
+  // List<DateTime> _tapTimes = [];
+  // RxBool isBlocked = false.obs;
+  List<List<Map<String, dynamic>>>? buttonStates;
+
 
 
   /// DONE UNTIL HERE
-
+  Map<int, Timer?> debounceTimers = {};
   final AudioPlayer _audioPlayer = AudioPlayer();
   int totalMCIs = 0;
   /// Bluetooth connectivity
   BleConnectionService bleConnectionService = BleConnectionService();
   BleCommandService bleCommandService = BleCommandService();
   late StreamSubscription _subscription;
-  ValueNotifier<List<String>> successfullyConnectedDevices = ValueNotifier([]);
+  ValueNotifier<List<String>> successfullyConnectedBleDevices = ValueNotifier([]);
+
+
+  // BluetoothClassicService classicConnectionService = BluetoothClassicService();
+  // final ClassicCommandService classicCommandService = ClassicCommandService();
+
+
+  ///SUSCRIPCIONES BLUETOOTH
+
+  late StreamSubscription _subscriptionClassic;
+
+  ///VALUENOTIFIERS
+
+  ValueNotifier<List<String>> successfullyConnectedClassicDevices =
+  ValueNotifier([]); final Map<String, String> deviceConnectionStatusBle = {};
+  final Map<String, String> deviceConnectionStatusBt = {};
+  Map<String, int> batteryStatusesBle = {};
+  Map<String, int> batteryStatusesBt = {};
+  Map<String, String> bluetoothNamesBle = {};
+  Map<String, String> bluetoothNamesBt = {};
+  final Map<String, String> electroStateForDeviceBle = {};
+  final Map<String, String> electroStateForDeviceBt = {};
+  // final Map<String, Timer> _periodicTimers = {};
+  final Map<String, StreamSubscription<bool>> _bleConnectionSubscriptions = {};
+  final Map<String, StreamSubscription<bool>> _classicConnectionSubscriptions =
+  {};
 
   bool isFirstTime = true;
 
@@ -226,6 +256,7 @@ class DashboardController extends GetxController {
     contractionCycleTimer = List.generate(totalMCIs, (index) => null);
     pauseCycleTimer = List.generate(totalMCIs, (index) => null);
     remainingDurationTimer = List.generate(totalMCIs, (index) => null);
+    _periodicTimers = List.generate(totalMCIs, (index) => null);
     pauseSeconds.value = List.generate(totalMCIs, (index) => 0);
     contractionSeconds.value = List.generate(totalMCIs, (index) => 0);
     contractionProgress.value = List.generate(totalMCIs, (index) => 0.0);
@@ -247,7 +278,15 @@ class DashboardController extends GetxController {
     currentIndex = List.generate(totalMCIs, (index) => 0);
     jumpSeconds = List.generate(totalMCIs, (index) => 1);
     programEndTime = List.generate(totalMCIs, (index) => null);
-
+    // buttonStates = List.generate(totalMCIs, (_) => {
+    //   'tapTimes': <DateTime>[],
+    //   'isBlocked': false,
+    // });
+    buttonStates = List.generate(10, (_) =>
+        List.generate(totalMCIs, (_) => {
+          'tapTimes': <DateTime>[],
+          'isBlocked': false,
+        }));
     programsStatus = RxList.generate(
       totalMCIs,
           (index) => <Program>[
@@ -311,14 +350,30 @@ class DashboardController extends GetxController {
   // }
 
   /// Update the status of a program
-  void updateProgramStatus(String programName, ProgramStatus newStatus) {
-    var program = programsStatus[selectedDeviceIndex.value].firstWhereOrNull((p) => p.name == programName);
+  Future<void> updateProgramStatus(
+    String programName,
+    ProgramStatus newStatus, {
+    bool inActive = false,
+    int? deviceIndex,
+    int? percentage,
+    int? canal,
+  }) async {
+    var program = programsStatus[selectedDeviceIndex.value]
+        .firstWhereOrNull((p) => p.name == programName);
     if (program != null) {
       program.status!.value = newStatus;
 
+      if (inActive) {
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex!],
+          1,
+          canal!, // canal mapeado
+          0,
+          percentage!,
+        );
+      }
     }
     update();
-
   }
 
   /// Intensity colors
@@ -547,6 +602,7 @@ class DashboardController extends GetxController {
         // Optionally trigger a rebuild if needed, e.g., controller.update();
       }
     });
+
 
     return formattedTime;
   }
@@ -920,8 +976,30 @@ class DashboardController extends GetxController {
     return value.clamp(min, max);
   }
 
+
+  trackPress(int programIndex){
+    final now = DateTime.now();
+    (buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'] as List<DateTime>).add(now);
+    buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'] = buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'].where((time) => now.difference(time).inSeconds < 2).toList();
+
+    if (buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'].length >= 8) {
+      buttonStates![programIndex][selectedDeviceIndex.value]['isBlocked'] = true;
+
+      Future.delayed(Duration(seconds: 2), () {
+        buttonStates![programIndex][selectedDeviceIndex.value]['isBlocked'] = false;
+        buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'].clear();
+      });
+    }
+    update();
+  }
+
+
   /// Change individual program percentages
-  void changeChestPercentage({bool isDecrease = false, bool isIncrease = false}) {
+  changeChestPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![0][selectedDeviceIndex.value]['isBlocked']) return;
+    trackPress(0);
+
+
     if (programsStatus[selectedDeviceIndex.value][0].status!.value == ProgramStatus.active) {
       if (isIncrease) {
         chestPercentage[selectedDeviceIndex.value] = clampValue(chestPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
@@ -930,11 +1008,22 @@ class DashboardController extends GetxController {
         chestPercentage[selectedDeviceIndex.value] = clampValue(chestPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(chestPercentage[selectedDeviceIndex.value], isChest: true);
+
+      await bleCommandService.controlSingleChannel(
+        selectedMacAddress[deviceIndex],
+        1,
+        5, // canal mapeado
+        0,
+        chestPercentage[selectedDeviceIndex.value],
+      );
       update();
     }
   }
 
-  void changeArmsPercentage({bool isDecrease = false, bool isIncrease = false}) {
+  changeArmsPercentage(deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![1][selectedDeviceIndex.value]['isBlocked']) return;
+    trackPress(1);
+
     if (programsStatus[selectedDeviceIndex.value][1].status!.value == ProgramStatus.active) {
       if (isIncrease) {
         armsPercentage[selectedDeviceIndex.value] = clampValue(
@@ -945,12 +1034,22 @@ class DashboardController extends GetxController {
             armsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(armsPercentage[selectedDeviceIndex.value], isArms: true);
+
+      await bleCommandService.controlSingleChannel(
+        selectedMacAddress[deviceIndex],
+        1,
+        isPantSelected[deviceIndex] ? 0 : 8, // canal mapeado
+        0,
+        armsPercentage[selectedDeviceIndex.value],
+      );
       update();
     }
   }
 
+  changeAbdomenPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![2][selectedDeviceIndex.value]['isBlocked']) return;
+    trackPress(2);
 
-  void changeAbdomenPercentage({bool isDecrease = false, bool isIncrease = false}) {
     if (programsStatus[selectedDeviceIndex.value][2].status!.value == ProgramStatus.active) {
       if (isIncrease) {
         abdomenPercentage[selectedDeviceIndex.value] = clampValue(
@@ -961,11 +1060,23 @@ class DashboardController extends GetxController {
             abdomenPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(abdomenPercentage[selectedDeviceIndex.value], isAbdomen: true);
+
+      await bleCommandService.controlSingleChannel(
+        selectedMacAddress[deviceIndex],
+        1,
+        isPantSelected[deviceIndex] ? 1 : 6, // canal mapeado
+        0,
+        abdomenPercentage[selectedDeviceIndex.value],
+      );
+
       update();
     }
   }
 
-  void changeLegsPercentage({bool isDecrease = false, bool isIncrease = false}) {
+  changeLegsPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![3][selectedDeviceIndex.value]['isBlocked']) return;
+    trackPress(3);
+
     if (programsStatus[selectedDeviceIndex.value][3].status!.value == ProgramStatus.active) {
       if (isIncrease) {
         legsPercentage[selectedDeviceIndex.value] = clampValue(
@@ -976,11 +1087,22 @@ class DashboardController extends GetxController {
             legsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(legsPercentage[selectedDeviceIndex.value], isLegs: true);
+
+      await bleCommandService.controlSingleChannel(
+        selectedMacAddress[deviceIndex],
+        1,
+        isPantSelected[deviceIndex] ? 2 : 7, // canal mapeado
+        0,
+        legsPercentage[selectedDeviceIndex.value],
+      );
       update();
     }
   }
 
-  void changeUpperBackPercentage({bool isDecrease = false, bool isIncrease = false}) {
+  Future<void> changeUpperBackPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![4][selectedDeviceIndex.value]['isBlocked']) return;
+
+    trackPress(4);
     if (programsStatus[selectedDeviceIndex.value][4].status!.value == ProgramStatus.active) {
       if (isIncrease) {
         upperBackPercentage[selectedDeviceIndex.value] = clampValue(
@@ -991,11 +1113,22 @@ class DashboardController extends GetxController {
             upperBackPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(upperBackPercentage[selectedDeviceIndex.value], isUpperBack: true);
+
+      await bleCommandService.controlSingleChannel(
+        selectedMacAddress[deviceIndex],
+        1,
+        0, // canal mapeado
+        0,
+        upperBackPercentage[selectedDeviceIndex.value],
+      );
       update();
     }
   }
 
-  void changeMiddleBackPercentage({bool isDecrease = false, bool isIncrease = false}) {
+  Future<void> changeMiddleBackPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![5][selectedDeviceIndex.value]['isBlocked']) return;
+
+    trackPress(5);
     if (programsStatus[selectedDeviceIndex.value][5].status!.value == ProgramStatus.active) {
       if (isIncrease) {
         middleBackPercentage[selectedDeviceIndex.value] = clampValue(
@@ -1006,11 +1139,22 @@ class DashboardController extends GetxController {
             middleBackPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(middleBackPercentage[selectedDeviceIndex.value], isMiddleBack: true);
+
+      await bleCommandService.controlSingleChannel(
+        selectedMacAddress[deviceIndex],
+        1,
+        1, // canal mapeado
+        0,
+        middleBackPercentage[selectedDeviceIndex.value],
+      );
       update();
     }
   }
 
-  void changeLumbarPercentage({bool isDecrease = false, bool isIncrease = false}) {
+  Future<void> changeLumbarPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![6][selectedDeviceIndex.value]['isBlocked']) return;
+
+    trackPress(6);
     if (programsStatus[selectedDeviceIndex.value][6].status!.value == ProgramStatus.active) {
       if (isIncrease) {
         lumbarPercentage[selectedDeviceIndex.value] = clampValue(
@@ -1021,11 +1165,22 @@ class DashboardController extends GetxController {
             lumbarPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(lumbarPercentage[selectedDeviceIndex.value], isLumbars: true);
+
+      await bleCommandService.controlSingleChannel(
+        selectedMacAddress[deviceIndex],
+        1,
+        2, // canal mapeado
+        0,
+        lumbarPercentage[selectedDeviceIndex.value],
+      );
       update();
     }
   }
 
-  void changeButtocksPercentage({bool isDecrease = false, bool isIncrease = false}) {
+  Future<void> changeButtocksPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![7][selectedDeviceIndex.value]['isBlocked']) return;
+    trackPress(7);
+
     if (programsStatus[selectedDeviceIndex.value][7].status!.value == ProgramStatus.active) {
       if (isIncrease) {
         buttocksPercentage[selectedDeviceIndex.value] = clampValue(
@@ -1036,11 +1191,24 @@ class DashboardController extends GetxController {
             buttocksPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(buttocksPercentage[selectedDeviceIndex.value], isButtocks: true);
+
+      await bleCommandService.controlSingleChannel(
+        selectedMacAddress[deviceIndex],
+        1,
+        isPantSelected[deviceIndex] ? 5 : 3, // canal mapeado
+        0,
+        buttocksPercentage[selectedDeviceIndex.value],
+      );
+
+
       update();
     }
   }
 
-  void changeHamStringsPercentage({bool isDecrease = false, bool isIncrease = false}) {
+  Future<void> changeHamStringsPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![8][selectedDeviceIndex.value]['isBlocked']) return;
+    trackPress(8);
+
     if (programsStatus[selectedDeviceIndex.value][8].status!.value == ProgramStatus.active) {
       if (isIncrease) {
         hamStringsPercentage[selectedDeviceIndex.value] = clampValue(
@@ -1051,11 +1219,22 @@ class DashboardController extends GetxController {
             hamStringsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(hamStringsPercentage[selectedDeviceIndex.value], isHamstrings: true);
+
+      await bleCommandService.controlSingleChannel(
+        selectedMacAddress[deviceIndex],
+        1,
+        isPantSelected[deviceIndex] ? 6 : 4, // canal mapeado
+        0,
+        hamStringsPercentage[selectedDeviceIndex.value],
+      );
       update();
     }
   }
 
-  void changeCalvesPercentage({bool isDecrease = false, bool isIncrease = false}) {
+  Future<void> changeCalvesPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![9][selectedDeviceIndex.value]['isBlocked']) return;
+    trackPress(9);
+
     if (programsStatus[selectedDeviceIndex.value][9].status!.value == ProgramStatus.active) {
       if (isIncrease) {
         calvesPercentage[selectedDeviceIndex.value] = clampValue(
@@ -1066,13 +1245,24 @@ class DashboardController extends GetxController {
             calvesPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(calvesPercentage[selectedDeviceIndex.value], isCalves: true);
+
+      await bleCommandService.controlSingleChannel(
+        selectedMacAddress[deviceIndex],
+        1,
+        isPantSelected[deviceIndex] ? 3 : 0, // canal mapeado
+        0,
+        calvesPercentage[selectedDeviceIndex.value],
+      );
       update();
     }
   }
 
 
   /// Change percentages of all programs
-  void changeAllProgramsPercentage({bool isDecrease = false, bool isIncrease = false}) {
+  Future<void> changeAllProgramsPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+    if (buttonStates![0][selectedDeviceIndex.value]['isBlocked']) return;
+    trackPress(0);
+
     if (isIncrease || isDecrease) {
       int delta = isIncrease ? 1 : -1;
 
@@ -1163,6 +1353,36 @@ class DashboardController extends GetxController {
     }
 
     update();
+    await bleCommandService.controlAllChannels(
+      selectedMacAddress[deviceIndex],
+      1,
+      0,
+      isPantSelected[deviceIndex]
+          ? [
+        armsPercentage[deviceIndex],
+        abdomenPercentage[deviceIndex],
+        legsPercentage[deviceIndex],
+        calvesPercentage[deviceIndex],
+        0,
+        buttocksPercentage[deviceIndex],
+        hamStringsPercentage[deviceIndex],
+        0,
+        0,
+        0,
+      ]
+          : [
+        upperBackPercentage[deviceIndex],
+        middleBackPercentage[deviceIndex],
+        lumbarPercentage[deviceIndex],
+        buttocksPercentage[deviceIndex],
+        hamStringsPercentage[deviceIndex],
+        chestPercentage[deviceIndex],
+        abdomenPercentage[deviceIndex],
+        legsPercentage[deviceIndex],
+        armsPercentage[deviceIndex],
+        0,
+      ],
+    );
   }
 
   /// Select client
@@ -1191,7 +1411,7 @@ class DashboardController extends GetxController {
   ].obs;
 
   /// Reset all programs values
-  resetProgramValues(macAddress, deviceIndex, {bool isProgramFinished = false}) {
+  resetProgramValues(macAddress, deviceIndex, {bool isProgramFinished = false}) async {
     int index = isProgramFinished ? deviceIndex : selectedDeviceIndex.value;
 
     chestPercentage[index] = 0;
@@ -1240,11 +1460,17 @@ class DashboardController extends GetxController {
     stopElectrostimulationProcess(macAddress, index);
     playResetAudio();
     resetProgramTimerValue();
-
     update();
+    resetBleProgramValues(deviceIndex);
   }
 
-
+  resetBleProgramValues(int deviceIndex) async {
+    await bleCommandService.controlAllChannels(
+        selectedMacAddress[deviceIndex],
+        1,
+        0,
+        [0,0,0,0,0,0,0,0,0,0]);
+  }
   // void setClientInfoForDevice(int deviceIndex, dynamic clientData) {
   //   selectedClients[deviceIndex] = clientData;
   //   String newName = selectedClients[deviceIndex]!['name'];
@@ -1356,7 +1582,7 @@ class DashboardController extends GetxController {
       bleConnectionService.updateMacAddresses(newMacAddresses);
     }
 
-    successfullyConnectedDevices.value.clear();
+    successfullyConnectedBleDevices.value.clear();
     deviceConnectionStatus.clear();
 
     for (final macAddress in macAddresses) {
@@ -1368,15 +1594,24 @@ class DashboardController extends GetxController {
                 (isConnected) {
               print('Connected');
               if (isConnected) {
-                if (!successfullyConnectedDevices.value.contains(macAddress)) {
-                  successfullyConnectedDevices.value = [
-                    ...successfullyConnectedDevices.value,
+                if (!successfullyConnectedBleDevices.value.contains(macAddress)) {
+                  successfullyConnectedBleDevices.value = [
+                    ...successfullyConnectedBleDevices.value,
                     macAddress,
                   ];
+                  Future.delayed(Duration(seconds: 2));
+                  if (!processedDevices.contains(macAddress)) {
+                    bleConnectionService.processConnectedDevices(macAddress);
+                    processedDevices.add(macAddress);
+                  }
+                  Future.delayed(Duration(seconds: 1));
+                  startPeriodicTimer(macAddress);
+                  isBluetoothConnected.value = true;
                 }
+
               }
               else {
-                successfullyConnectedDevices.value = successfullyConnectedDevices
+                successfullyConnectedBleDevices.value = successfullyConnectedBleDevices
                     .value
                     .where((device) => device != macAddress)
                     .toList();
@@ -1406,6 +1641,107 @@ class DashboardController extends GetxController {
     });
   }
 
+
+
+  void startPeriodicTimer(String macAddress) {
+    if(selectedDeviceIndex.value == -1){
+      selectedDeviceIndex.value = 0;
+    }
+    // Cancela el timer existente para este dispositivo, si lo hay.
+    _periodicTimers[selectedDeviceIndex.value]?.cancel();
+
+    _periodicTimers[selectedDeviceIndex.value] =
+        Timer.periodic(Duration(seconds: 7), (timer) async {
+          try {
+            final stateData =
+            await bleCommandService.getElectrostimulatorState(macAddress, 1, 0);
+
+            String formattedState = "ℹ️ Estado del electroestimulador:\n";
+            formattedState += "Estado: ${stateData['state']}\n";
+            formattedState += "Batería: ${stateData['batteryStatus']}\n";
+
+            final String batteryStatusStr =
+                stateData['batteryStatus']?.toString() ?? "Desconocido";
+            // final int batteryStatusInt = _mapBatteryStatus(batteryStatusStr);
+
+
+                electroStateForDeviceBle[macAddress] = formattedState;
+                // batteryStatusesBle[macAddress] = batteryStatusInt;
+
+                // // Muestra SnackBar para "Límite de tarifa" si aún no se mostró.
+                // if (electroStateForDeviceBle[macAddress]?.toLowerCase() ==
+                //     "limite tarifa" &&
+                //     !_snackBarEstadoMostrado) {
+                //   _snackBarEstadoMostrado = true;
+                //   HelperMethods.showSnackBar(context, title: 'Límite de tarifa alcanzado', color: AppColors.orangeColor);
+                // }
+                //
+                // // Evita mostrar la advertencia si el usuario ya seleccionó "No volver a mostrar"
+                // if (batteryStatusInt == 0 &&
+                //     !_disableLowBatteryWarning &&
+                //     !_snackBarBateriaMostrado) {
+                //   lowBatteryWarning = true;
+                //   lowBatteryDeviceName = macAddress;
+                //
+                //   final screenHeight = MediaQuery.of(context).size.height;
+                //   final screenWidth = MediaQuery.of(context).size.width;
+                //   _snackBarBateriaMostrado = true;
+                //
+                //   scaffoldKeys[macAddress]?.currentState?.showSnackBar(
+                //     SnackBar(
+                //       content: Row(
+                //         children: [
+                //           Image.asset(
+                //             'assets/images/lowbattery.png',
+                //             height: screenHeight * 0.03,
+                //           ),
+                //           SizedBox(width: screenWidth * 0.01),
+                //           Text(
+                //             tr(context,
+                //                 "Batería muy baja en ${bluetoothNamesBle[macAddress]}")
+                //                 .toUpperCase(),
+                //             style: TextStyle(color: Colors.white, fontSize: 14.sp),
+                //             textAlign: TextAlign.center,
+                //           ),
+                //         ],
+                //       ),
+                //       action: SnackBarAction(
+                //         label: tr(context, 'No volver a mostrar').toUpperCase(),
+                //         textColor: Colors.white,
+                //         onPressed: () {
+                //           if (mounted) {
+                //             setState(() {
+                //               _disableLowBatteryWarning = true;
+                //               _snackBarBateriaMostrado = false;
+                //             });
+                //             scaffoldKeys[macAddress]
+                //                 ?.currentState
+                //                 ?.hideCurrentSnackBar();
+                //           }
+                //         },
+                //       ),
+                //       duration: Duration(days: 1),
+                //       backgroundColor: Colors.red,
+                //     ),
+                //   );
+                // }
+
+                // // Si la batería no está baja, reseteamos las variables
+                // if (batteryStatusInt != 0) {
+                //   _snackBarBateriaMostrado = false;
+                //   lowBatteryWarning = false;
+                //   lowBatteryDeviceName = "";
+                // }
+
+
+
+            // bleConnectionService.updateBatteryStatus(macAddress, batteryStatusInt);
+          } catch (e) {
+            debugPrint("Error al obtener el estado electro de $macAddress: $e");
+          }
+        });
+  }
+
   Future<void> selectDevice(String macAddress) async {
     if (deviceConnectionStatus[macAddress] == 'conectado' || deviceConnectionStatus[macAddress] == 'connected') {
     // if (deviceConnectionStatus[macAddress] == 'connected') {
@@ -1421,7 +1757,7 @@ class DashboardController extends GetxController {
       // Handle logic when the device is not connected
       /// mac address, but not connected/off
       print("❌ El dispositivo $macAddress no está conectado.");
-      if (!successfullyConnectedDevices.value.contains(macAddress)) {
+      if (!successfullyConnectedBleDevices.value.contains(macAddress)) {
         onTapConnectToDevice(macAddress);
       }
       else {
@@ -1470,16 +1806,16 @@ class DashboardController extends GetxController {
       bleConnectionService.connectionStateStream(macAddress).listen(
             (isConnected) {
           if (isConnected) {
-            if (!successfullyConnectedDevices.value.contains(macAddress)) {
-              successfullyConnectedDevices.value = [
-                ...successfullyConnectedDevices.value,
+            if (!successfullyConnectedBleDevices.value.contains(macAddress)) {
+              successfullyConnectedBleDevices.value = [
+                ...successfullyConnectedBleDevices.value,
                 macAddress,
               ];
             }
             print('Bluetooth connected');
             isBluetoothConnected.value = true;
           } else {
-            successfullyConnectedDevices.value = successfullyConnectedDevices.value
+            successfullyConnectedBleDevices.value = successfullyConnectedBleDevices.value
                 .where((device) => device != macAddress)
                 .toList();
           }
@@ -2078,6 +2414,7 @@ class DashboardController extends GetxController {
 
 
   resetEverything() {
+
     Future.delayed(Duration(milliseconds: 300), () {
       Get.delete<DashboardController>();
     });
@@ -2086,14 +2423,20 @@ class DashboardController extends GetxController {
   }
 
   @override
-  void onClose() {
+  Future<void> onClose() async {
     for(int i=0; i<totalMCIs; i++){
       timer[i]?.cancel();
       contractionCycleTimer[i]?.cancel();
       pauseCycleTimer[i]?.cancel();
       remainingDurationTimer[i]?.cancel();
+      _periodicTimers[i]?.cancel();
+
     }
     nameController.dispose();
+    await resetBleProgramValues(selectedDeviceIndex.value == -1
+        ? 0
+        : selectedDeviceIndex.value
+    );
     bleConnectionService.disconnectAllDevices();
     super.onClose();
   }

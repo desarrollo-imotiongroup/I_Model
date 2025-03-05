@@ -155,10 +155,10 @@ class DashboardSecondColumn extends StatelessWidget {
               },
               icon: controller.isTimerPaused[index] ? Strings.playIcon : Strings.pauseIcon,
               onIncrease: (){
-                controller.changeAllProgramsPercentage(isIncrease: true);
+                controller.changeAllProgramsPercentage(index, isIncrease: true);
               },
               onDecrease: (){
-                controller.changeAllProgramsPercentage(isDecrease: true);
+                controller.changeAllProgramsPercentage(index, isDecrease: true);
               },
             )
         )

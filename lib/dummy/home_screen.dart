@@ -1,96 +1,64 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:i_model/dummy/controller.dart';
+import 'package:flutter/services.dart';
 
-class HomeScreen extends StatelessWidget {
-  final DataController dataController = Get.put(DataController());
-  final int containerCount = 5;
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setSystemUIOverlayStyle(
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent, // Change to your desired color
+      statusBarIconBrightness: Brightness.dark, // For white icons
+    ),
+  );
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.landscapeLeft,
+    DeviceOrientation.landscapeRight,
+  ]).then((_) {
+    runApp(MaterialApp(
+      home: TapBlockerButton(),
+    ));
+  });
+}
 
-  HomeScreen({super.key});
+class TapBlockerButton extends StatefulWidget {
+  @override
+  _TapBlockerButtonState createState() => _TapBlockerButtonState();
+}
+
+class _TapBlockerButtonState extends State<TapBlockerButton> {
+  List<DateTime> _tapTimes = [];
+  bool _isBlocked = false;
+
+  void _onTap() {
+    if (_isBlocked) return;
+
+    final now = DateTime.now();
+    _tapTimes.add(now);
+
+    // Remove taps that are older than 2 seconds
+    _tapTimes = _tapTimes.where((time) => now.difference(time).inMilliseconds < 2000).toList();
+
+    // If there are 8 or more taps in the last 2 seconds, block the user
+    if (_tapTimes.length >= 8) {
+      setState(() {
+        _isBlocked = true;
+      });
+      // Disable tapping for 2 seconds
+      Timer(Duration(seconds: 2), () {
+        setState(() {
+          _isBlocked = false;
+          _tapTimes.clear(); // Reset the tap history after the block
+        });
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    dataController.initializePrograms(containerCount);
-
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(title: Text("IndexedStack with Timers")),
-        body: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              // Container Selection Row
-              Obx(() => SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(containerCount, (index) {
-                    return GestureDetector(
-                      onTap: () => dataController.selectContainer(index),
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 8),
-                        padding: EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: dataController.selectedIndex.value == index
-                              ? Colors.blue.withOpacity(0.6)
-                              : Colors.grey[300],
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Text(
-                          "Data ${index + 1}",
-                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    );
-                  }),
-                ),
-              )),
-              SizedBox(height: 20),
-
-              // IndexedStack for Container Content
-              Expanded(
-                child: Obx(() => IndexedStack(
-                  index: dataController.selectedIndex.value,
-                  children: List.generate(containerCount, (index) {
-                    return Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            "Value: ${dataController.chestPercentage[index]}",
-                            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 10),
-                          ElevatedButton(
-                            onPressed: () => dataController.updateProgramValue(),
-                            child: Text("Increment Value"),
-                          ),
-                          SizedBox(height: 10),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () => dataController.startTimer(index),
-                                child: Text("Start Timer"),
-                              ),
-                              SizedBox(width: 10),
-                              ElevatedButton(
-                                onPressed: () => dataController.stopTimer(index),
-                                child: Text("Stop Timer"),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    );
-                  }),
-                )),
-              ),
-            ],
-          ),
-        ),
-      ),
+    return ElevatedButton(
+      onPressed: _isBlocked ? null : _onTap,
+      child: Text(_isBlocked ? 'Please wait...' : 'Tap me'),
     );
   }
 }
-
