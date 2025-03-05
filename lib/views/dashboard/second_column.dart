@@ -137,7 +137,7 @@ class DashboardSecondColumn extends StatelessWidget {
               onPlayPause: (){
                 if (controller.isProgramSelected[index]) {
                   if (controller.isTimerPaused[index] && controller.minutes[index] > 0) {
-                    controller.startTimer(index);
+                    controller.startTimer(index, controller.selectedMacAddress[index]);
                     if(controller.selectedProgramType[index] == Strings.individual) {
                       controller.startContractionTimeCycle(index, controller.selectedMacAddress[index]);
                     }

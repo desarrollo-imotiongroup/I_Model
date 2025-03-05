@@ -128,9 +128,12 @@ class DashboardController extends GetxController {
   RxList<List<Map<String, dynamic>>> automaticProgramValues = <List<Map<String, dynamic>>>[].obs;
   // RxList<Map<String, dynamic>> automaticProgramValues = <Map<String, dynamic>>[].obs;
   RxList<List<Program>> programsStatus = <List<Program>>[].obs;
+  List<int> jumpSeconds = <int>[];
+  List<DateTime?> programEndTime = <DateTime>[];
+
 
   /// DONE UNTIL HERE
-  ///
+
   final AudioPlayer _audioPlayer = AudioPlayer();
   int totalMCIs = 0;
   /// Bluetooth connectivity
@@ -242,6 +245,9 @@ class DashboardController extends GetxController {
 
     automaticProgramValues.value = List.generate(totalMCIs, (index) => []);
     currentIndex = List.generate(totalMCIs, (index) => 0);
+    jumpSeconds = List.generate(totalMCIs, (index) => 1);
+    programEndTime = List.generate(totalMCIs, (index) => null);
+
     programsStatus = RxList.generate(
       totalMCIs,
           (index) => <Program>[
@@ -547,7 +553,7 @@ class DashboardController extends GetxController {
 
 
   /// Main Timer
-  void startTimer(int deviceIndex) {
+  void startTimer(int deviceIndex, String macAddress) {
     isTimerPaused[deviceIndex] = false;
     // isDurationTimerPaused[deviceIndex] = true;
     update();
@@ -559,11 +565,13 @@ class DashboardController extends GetxController {
     timer[deviceIndex] = Timer.periodic(Duration(seconds: 1), (timer) {
       if (!isTimerPaused[deviceIndex]) {
         if (remainingSeconds[deviceIndex] > 0) {
+          print('remainingSeconds[deviceIndex]: ${remainingSeconds[deviceIndex]}');
           remainingSeconds[deviceIndex] = remainingSeconds[deviceIndex] - 1;
         }
         else{
           timer.cancel();
-          cancelTimersOnTimeUp(deviceIndex);
+          // cancelTimersOnTimeUp(deviceIndex);
+          resetProgramValues(macAddress, deviceIndex, isProgramFinished: true);
           playResetAudio();
         }
       } else {
@@ -1183,49 +1191,57 @@ class DashboardController extends GetxController {
   ].obs;
 
   /// Reset all programs values
-  resetProgramValues(macAddress, deviceIndex) {
-    chestPercentage[selectedDeviceIndex.value] = 0;
-    armsPercentage[selectedDeviceIndex.value] = 0;
-    abdomenPercentage[selectedDeviceIndex.value] = 0;
-    legsPercentage[selectedDeviceIndex.value] = 0;
-    upperBackPercentage[selectedDeviceIndex.value] = 0;
-    middleBackPercentage[selectedDeviceIndex.value] = 0;
-    lumbarPercentage[selectedDeviceIndex.value] = 0;
-    buttocksPercentage[selectedDeviceIndex.value] = 0;
-    hamStringsPercentage[selectedDeviceIndex.value] = 0;
-    calvesPercentage[selectedDeviceIndex.value] = 0;
+  resetProgramValues(macAddress, deviceIndex, {bool isProgramFinished = false}) {
+    int index = isProgramFinished ? deviceIndex : selectedDeviceIndex.value;
 
-    chestIntensityColor[selectedDeviceIndex.value] = AppColors.lowIntensityColor;
-    armsIntensityColor[selectedDeviceIndex.value] = AppColors.lowIntensityColor;
-    abdomenIntensityColor[selectedDeviceIndex.value] = AppColors.lowIntensityColor;
-    legsIntensityColor[selectedDeviceIndex.value] = AppColors.lowIntensityColor;
-    upperBackIntensityColor[selectedDeviceIndex.value] = AppColors.lowIntensityColor;
-    middleBackIntensityColor[selectedDeviceIndex.value] = AppColors.lowIntensityColor;
-    lumbarsIntensityColor[selectedDeviceIndex.value] = AppColors.lowIntensityColor;
-    buttocksIntensityColor[selectedDeviceIndex.value] = AppColors.lowIntensityColor;
-    hamstringsIntensityColor[selectedDeviceIndex.value] = AppColors.lowIntensityColor;
-    calvesIntensityColor[selectedDeviceIndex.value] = AppColors.lowIntensityColor;
+    chestPercentage[index] = 0;
+    armsPercentage[index] = 0;
+    abdomenPercentage[index] = 0;
+    legsPercentage[index] = 0;
+    upperBackPercentage[index] = 0;
+    middleBackPercentage[index] = 0;
+    lumbarPercentage[index] = 0;
+    buttocksPercentage[index] = 0;
+    hamStringsPercentage[index] = 0;
+    calvesPercentage[index] = 0;
 
-    selectedProgramType[selectedDeviceIndex.value] = Strings.individual;
-    selectedProgramName[selectedDeviceIndex.value] = Strings.nothing;
-    selectedMainProgramName[selectedDeviceIndex.value] = Strings.nothing;
-    selectedProgramImage[selectedDeviceIndex.value] = Strings.celluliteIcon;
-    frequency[selectedDeviceIndex.value] = 0;
-    pulse[selectedDeviceIndex.value] = 0;
-    isProgramSelected[selectedDeviceIndex.value] = false;
-    isPantSelected[selectedDeviceIndex.value] = false;
-    isContractionPauseCycleActive[selectedDeviceIndex.value] = false;
-    selectedProgramDetails[selectedDeviceIndex.value] = {};
-    contractionSeconds[selectedDeviceIndex.value] = 0;
-    pauseSeconds[selectedDeviceIndex.value] = 0;
-    isTimerPaused[selectedDeviceIndex.value] = true;
+    chestIntensityColor[index] = AppColors.lowIntensityColor;
+    armsIntensityColor[index] = AppColors.lowIntensityColor;
+    abdomenIntensityColor[index] = AppColors.lowIntensityColor;
+    legsIntensityColor[index] = AppColors.lowIntensityColor;
+    upperBackIntensityColor[index] = AppColors.lowIntensityColor;
+    middleBackIntensityColor[index] = AppColors.lowIntensityColor;
+    lumbarsIntensityColor[index] = AppColors.lowIntensityColor;
+    buttocksIntensityColor[index] = AppColors.lowIntensityColor;
+    hamstringsIntensityColor[index] = AppColors.lowIntensityColor;
+    calvesIntensityColor[index] = AppColors.lowIntensityColor;
 
-    if (timer[selectedDeviceIndex.value] != null) {
-      timer[selectedDeviceIndex.value]?.cancel();
+    selectedProgramType[index] = Strings.individual;
+    selectedProgramName[index] = Strings.nothing;
+    selectedMainProgramName[index] = Strings.nothing;
+    selectedProgramImage[index] = Strings.celluliteIcon;
+    frequency[index] = 0;
+    pulse[index] = 0;
+    isProgramSelected[index] = false;
+    isPantSelected[index] = false;
+    isContractionPauseCycleActive[index] = false;
+    selectedProgramDetails[index] = {};
+    contractionSeconds[index] = 0;
+    pauseSeconds[index] = 0;
+    isTimerPaused[index] = true;
+    remainingProgramDuration[index] = 0;
+    remainingSecondsAfterPause[index] = 0;
+    jumpSeconds[index] = 1;
+    programEndTime[index] = null;
+
+    if (timer[index] != null) {
+      timer[index]?.cancel();
     }
-    stopElectrostimulationProcess(macAddress, deviceIndex);
+    stopElectrostimulationProcess(macAddress, index);
     playResetAudio();
     resetProgramTimerValue();
+
+    update();
   }
 
 
@@ -1669,6 +1685,8 @@ class DashboardController extends GetxController {
   //     }
   //   });
   // }
+  // int jumpSeconds = 1;
+
 
   Future<void> startContractionForMultiplePrograms(int deviceIndex, String macAddress) async {
     if (automaticProgramValues[deviceIndex].isEmpty) {
@@ -1696,14 +1714,20 @@ class DashboardController extends GetxController {
       // Flag to signal the while loop to exit when time is up.
       bool shouldBreakWhileLoop = false;
 
+      if(programEndTime[deviceIndex] != null){
+        jumpSeconds[deviceIndex] =  DateTime.now().difference(programEndTime[deviceIndex]!).inSeconds;
+        print('programStartTime: $jumpSeconds');
+      }
 
       // Assume totalProgramSeconds is defined and used to initialize remainingProgramDuration.
       if(remainingSecondsAfterPause[deviceIndex] != 0){
-        remainingProgramDuration[deviceIndex] = remainingSecondsAfterPause[deviceIndex];
+        remainingProgramDuration[deviceIndex] = remainingSecondsAfterPause[deviceIndex] - 1;
       }
       else {
-        remainingProgramDuration[deviceIndex] = totalProgramSeconds;
+        remainingProgramDuration[deviceIndex] = totalProgramSeconds - jumpSeconds[deviceIndex];
       }
+
+
 
       remainingDurationTimer[deviceIndex] = Timer.periodic(Duration(seconds: 1), (timer) {
         if(isTimerPaused[deviceIndex]){
@@ -1719,6 +1743,8 @@ class DashboardController extends GetxController {
           if (remainingProgramDuration[deviceIndex] <= 0) {
             // print("Remaining seconds for device $deviceIndex: 0");
             shouldBreakWhileLoop = true;
+            // jumpSeconds = 3;
+            programEndTime[deviceIndex] = DateTime.now();
             remainingSecondsAfterPause[deviceIndex] = 0;
             timer.cancel();
             return;
@@ -1726,24 +1752,6 @@ class DashboardController extends GetxController {
         }
       });
 
-      // Start a timer that prints the remaining seconds each second.
-      // remainingDurationTimer[deviceIndex] = Timer.periodic(Duration(seconds: 1), (timer) {
-      //   if (!isTimerPaused[deviceIndex]){
-      //       currentSeconds = DateTime.now().difference(lastTime).inSeconds;
-      //
-      //     remainingProgramDuration[deviceIndex] = totalProgramSeconds - currentSeconds;
-      //     if (remainingProgramDuration[deviceIndex] <= 0) {
-      //       // When total time is reached, print zero...
-      //       print("Remaining seconds for device $deviceIndex: 0");
-      //       // ...and signal the while loop to break.
-      //       shouldBreakWhileLoop = true;
-      //       timer.cancel();
-      //       return;
-      //     }
-      //     print("Remaining seconds for device $deviceIndex: ${remainingProgramDuration[deviceIndex]}");
-      //   }
-      //
-      // });
 
       // Main loop for processing contraction and pause cycles.
       while (elapsedTime[deviceIndex] < totalProgramSeconds && !shouldBreakWhileLoop) {
