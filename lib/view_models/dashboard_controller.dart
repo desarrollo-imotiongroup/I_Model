@@ -976,29 +976,60 @@ class DashboardController extends GetxController {
     return value.clamp(min, max);
   }
 
+  // ------------------
+// Tap Tracking Logic
+// ------------------
 
-  trackPress(int programIndex){
+  Future<void> trackPress(int programIndex, Future<void> Function() sendCommand) async {
     final now = DateTime.now();
-    (buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'] as List<DateTime>).add(now);
-    buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'] = buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'].where((time) => now.difference(time).inSeconds < 2).toList();
+    var state = buttonStates![programIndex][selectedDeviceIndex.value];
 
-    if (buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'].length >= 8) {
-      buttonStates![programIndex][selectedDeviceIndex.value]['isBlocked'] = true;
+    // Record the current tap.
+    (state['tapTimes'] as List<DateTime>).add(now);
+    // Remove taps older than 2 seconds.
+    state['tapTimes'] = (state['tapTimes'] as List<DateTime>)
+        .where((time) => now.difference(time).inSeconds < 2)
+        .toList();
 
+    print("trackPress: current tapTimes for programIndex $programIndex: ${state['tapTimes']}");
+
+    // If 8 or more taps occur within 2 seconds, immediately send command and block.
+    if ((state['tapTimes'] as List<DateTime>).length >= 8) {
+      print("trackPress: 8 taps reached for programIndex $programIndex. Blocking and sending command immediately.");
+      state['isBlocked'] = true;
+      debounceTimers[programIndex]?.cancel();
+
+      // Immediately send command.
+      await sendCommand();
+      update();
+
+      // Block for 2 seconds then reset.
       Future.delayed(Duration(seconds: 2), () {
-        buttonStates![programIndex][selectedDeviceIndex.value]['isBlocked'] = false;
-        buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'].clear();
+        state['isBlocked'] = false;
+        (state['tapTimes'] as List<DateTime>).clear();
+        print("trackPress: Unblocked programIndex $programIndex after 2 seconds.");
+        update();
+      });
+    } else {
+      // Otherwise, cancel any pending debounce timer...
+      debounceTimers[programIndex]?.cancel();
+      // ...and schedule sending the command after a 2-second pause.
+      debounceTimers[programIndex] = Timer(Duration(seconds: 2), () async {
+        print("trackPress: Debounce timer fired for programIndex $programIndex. Sending command.");
+        await sendCommand();
+        update();
       });
     }
     update();
   }
 
+// --------------------------
+// Change Percentage Functions
+// --------------------------
 
-  /// Change individual program percentages
-  changeChestPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+// Example: Change Chest Percentage
+  Future<void> changeChestPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![0][selectedDeviceIndex.value]['isBlocked']) return;
-    trackPress(0);
-
 
     if (programsStatus[selectedDeviceIndex.value][0].status!.value == ProgramStatus.active) {
       if (isIncrease) {
@@ -1009,259 +1040,548 @@ class DashboardController extends GetxController {
       }
       calculateIntensityColor(chestPercentage[selectedDeviceIndex.value], isChest: true);
 
-      await bleCommandService.controlSingleChannel(
-        selectedMacAddress[deviceIndex],
-        1,
-        5, // canal mapeado
-        0,
-        chestPercentage[selectedDeviceIndex.value],
-      );
+      await trackPress(0, () async {
+        print("changeChestPercentage: Sending BLE command for chest.");
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex],
+          1,
+          5, // canal mapeado
+          0,
+          chestPercentage[selectedDeviceIndex.value],
+        );
+      });
       update();
     }
   }
 
-  changeArmsPercentage(deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+// Change Arms Percentage
+  Future<void> changeArmsPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![1][selectedDeviceIndex.value]['isBlocked']) return;
-    trackPress(1);
 
     if (programsStatus[selectedDeviceIndex.value][1].status!.value == ProgramStatus.active) {
       if (isIncrease) {
-        armsPercentage[selectedDeviceIndex.value] = clampValue(
-            armsPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+        armsPercentage[selectedDeviceIndex.value] = clampValue(armsPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
       }
       if (isDecrease) {
-        armsPercentage[selectedDeviceIndex.value] = clampValue(
-            armsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+        armsPercentage[selectedDeviceIndex.value] = clampValue(armsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(armsPercentage[selectedDeviceIndex.value], isArms: true);
 
-      await bleCommandService.controlSingleChannel(
-        selectedMacAddress[deviceIndex],
-        1,
-        isPantSelected[deviceIndex] ? 0 : 8, // canal mapeado
-        0,
-        armsPercentage[selectedDeviceIndex.value],
-      );
+      await trackPress(1, () async {
+        print("changeArmsPercentage: Sending BLE command for arms.");
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex],
+          1,
+          isPantSelected[deviceIndex] ? 0 : 8, // canal mapeado
+          0,
+          armsPercentage[selectedDeviceIndex.value],
+        );
+      });
       update();
     }
   }
 
-  changeAbdomenPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+// Change Abdomen Percentage
+  Future<void> changeAbdomenPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![2][selectedDeviceIndex.value]['isBlocked']) return;
-    trackPress(2);
 
     if (programsStatus[selectedDeviceIndex.value][2].status!.value == ProgramStatus.active) {
       if (isIncrease) {
-        abdomenPercentage[selectedDeviceIndex.value] = clampValue(
-            abdomenPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+        abdomenPercentage[selectedDeviceIndex.value] = clampValue(abdomenPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
       }
       if (isDecrease) {
-        abdomenPercentage[selectedDeviceIndex.value] = clampValue(
-            abdomenPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+        abdomenPercentage[selectedDeviceIndex.value] = clampValue(abdomenPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(abdomenPercentage[selectedDeviceIndex.value], isAbdomen: true);
 
-      await bleCommandService.controlSingleChannel(
-        selectedMacAddress[deviceIndex],
-        1,
-        isPantSelected[deviceIndex] ? 1 : 6, // canal mapeado
-        0,
-        abdomenPercentage[selectedDeviceIndex.value],
-      );
-
+      await trackPress(2, () async {
+        print("changeAbdomenPercentage: Sending BLE command for abdomen.");
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex],
+          1,
+          isPantSelected[deviceIndex] ? 1 : 6, // canal mapeado
+          0,
+          abdomenPercentage[selectedDeviceIndex.value],
+        );
+      });
       update();
     }
   }
 
-  changeLegsPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+// Change Legs Percentage
+  Future<void> changeLegsPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![3][selectedDeviceIndex.value]['isBlocked']) return;
-    trackPress(3);
 
     if (programsStatus[selectedDeviceIndex.value][3].status!.value == ProgramStatus.active) {
       if (isIncrease) {
-        legsPercentage[selectedDeviceIndex.value] = clampValue(
-            legsPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+        legsPercentage[selectedDeviceIndex.value] = clampValue(legsPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
       }
       if (isDecrease) {
-        legsPercentage[selectedDeviceIndex.value] = clampValue(
-            legsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+        legsPercentage[selectedDeviceIndex.value] = clampValue(legsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(legsPercentage[selectedDeviceIndex.value], isLegs: true);
 
-      await bleCommandService.controlSingleChannel(
-        selectedMacAddress[deviceIndex],
-        1,
-        isPantSelected[deviceIndex] ? 2 : 7, // canal mapeado
-        0,
-        legsPercentage[selectedDeviceIndex.value],
-      );
+      await trackPress(3, () async {
+        print("changeLegsPercentage: Sending BLE command for legs.");
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex],
+          1,
+          isPantSelected[deviceIndex] ? 2 : 7, // canal mapeado
+          0,
+          legsPercentage[selectedDeviceIndex.value],
+        );
+      });
       update();
     }
   }
 
+// Change Upper Back Percentage
   Future<void> changeUpperBackPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![4][selectedDeviceIndex.value]['isBlocked']) return;
 
-    trackPress(4);
     if (programsStatus[selectedDeviceIndex.value][4].status!.value == ProgramStatus.active) {
       if (isIncrease) {
-        upperBackPercentage[selectedDeviceIndex.value] = clampValue(
-            upperBackPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+        upperBackPercentage[selectedDeviceIndex.value] = clampValue(upperBackPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
       }
       if (isDecrease) {
-        upperBackPercentage[selectedDeviceIndex.value] = clampValue(
-            upperBackPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+        upperBackPercentage[selectedDeviceIndex.value] = clampValue(upperBackPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(upperBackPercentage[selectedDeviceIndex.value], isUpperBack: true);
 
-      await bleCommandService.controlSingleChannel(
-        selectedMacAddress[deviceIndex],
-        1,
-        0, // canal mapeado
-        0,
-        upperBackPercentage[selectedDeviceIndex.value],
-      );
+      await trackPress(4, () async {
+        print("changeUpperBackPercentage: Sending BLE command for upper back.");
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex],
+          1,
+          0, // canal mapeado
+          0,
+          upperBackPercentage[selectedDeviceIndex.value],
+        );
+      });
       update();
     }
   }
 
+// Change Middle Back Percentage
   Future<void> changeMiddleBackPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![5][selectedDeviceIndex.value]['isBlocked']) return;
 
-    trackPress(5);
     if (programsStatus[selectedDeviceIndex.value][5].status!.value == ProgramStatus.active) {
       if (isIncrease) {
-        middleBackPercentage[selectedDeviceIndex.value] = clampValue(
-            middleBackPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+        middleBackPercentage[selectedDeviceIndex.value] = clampValue(middleBackPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
       }
       if (isDecrease) {
-        middleBackPercentage[selectedDeviceIndex.value] = clampValue(
-            middleBackPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+        middleBackPercentage[selectedDeviceIndex.value] = clampValue(middleBackPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(middleBackPercentage[selectedDeviceIndex.value], isMiddleBack: true);
 
-      await bleCommandService.controlSingleChannel(
-        selectedMacAddress[deviceIndex],
-        1,
-        1, // canal mapeado
-        0,
-        middleBackPercentage[selectedDeviceIndex.value],
-      );
+      await trackPress(5, () async {
+        print("changeMiddleBackPercentage: Sending BLE command for middle back.");
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex],
+          1,
+          1, // canal mapeado
+          0,
+          middleBackPercentage[selectedDeviceIndex.value],
+        );
+      });
       update();
     }
   }
 
+// Change Lumbar Percentage
   Future<void> changeLumbarPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![6][selectedDeviceIndex.value]['isBlocked']) return;
 
-    trackPress(6);
     if (programsStatus[selectedDeviceIndex.value][6].status!.value == ProgramStatus.active) {
       if (isIncrease) {
-        lumbarPercentage[selectedDeviceIndex.value] = clampValue(
-            lumbarPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+        lumbarPercentage[selectedDeviceIndex.value] = clampValue(lumbarPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
       }
       if (isDecrease) {
-        lumbarPercentage[selectedDeviceIndex.value] = clampValue(
-            lumbarPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+        lumbarPercentage[selectedDeviceIndex.value] = clampValue(lumbarPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(lumbarPercentage[selectedDeviceIndex.value], isLumbars: true);
 
-      await bleCommandService.controlSingleChannel(
-        selectedMacAddress[deviceIndex],
-        1,
-        2, // canal mapeado
-        0,
-        lumbarPercentage[selectedDeviceIndex.value],
-      );
+      await trackPress(6, () async {
+        print("changeLumbarPercentage: Sending BLE command for lumbar.");
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex],
+          1,
+          2, // canal mapeado
+          0,
+          lumbarPercentage[selectedDeviceIndex.value],
+        );
+      });
       update();
     }
   }
 
+// Change Buttocks Percentage
   Future<void> changeButtocksPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![7][selectedDeviceIndex.value]['isBlocked']) return;
-    trackPress(7);
 
     if (programsStatus[selectedDeviceIndex.value][7].status!.value == ProgramStatus.active) {
       if (isIncrease) {
-        buttocksPercentage[selectedDeviceIndex.value] = clampValue(
-            buttocksPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+        buttocksPercentage[selectedDeviceIndex.value] = clampValue(buttocksPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
       }
       if (isDecrease) {
-        buttocksPercentage[selectedDeviceIndex.value] = clampValue(
-            buttocksPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+        buttocksPercentage[selectedDeviceIndex.value] = clampValue(buttocksPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(buttocksPercentage[selectedDeviceIndex.value], isButtocks: true);
 
-      await bleCommandService.controlSingleChannel(
-        selectedMacAddress[deviceIndex],
-        1,
-        isPantSelected[deviceIndex] ? 5 : 3, // canal mapeado
-        0,
-        buttocksPercentage[selectedDeviceIndex.value],
-      );
-
-
+      await trackPress(7, () async {
+        print("changeButtocksPercentage: Sending BLE command for buttocks.");
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex],
+          1,
+          isPantSelected[deviceIndex] ? 5 : 3, // canal mapeado
+          0,
+          buttocksPercentage[selectedDeviceIndex.value],
+        );
+      });
       update();
     }
   }
 
+// Change HamStrings Percentage
   Future<void> changeHamStringsPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![8][selectedDeviceIndex.value]['isBlocked']) return;
-    trackPress(8);
 
     if (programsStatus[selectedDeviceIndex.value][8].status!.value == ProgramStatus.active) {
       if (isIncrease) {
-        hamStringsPercentage[selectedDeviceIndex.value] = clampValue(
-            hamStringsPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+        hamStringsPercentage[selectedDeviceIndex.value] = clampValue(hamStringsPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
       }
       if (isDecrease) {
-        hamStringsPercentage[selectedDeviceIndex.value] = clampValue(
-            hamStringsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+        hamStringsPercentage[selectedDeviceIndex.value] = clampValue(hamStringsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(hamStringsPercentage[selectedDeviceIndex.value], isHamstrings: true);
 
-      await bleCommandService.controlSingleChannel(
-        selectedMacAddress[deviceIndex],
-        1,
-        isPantSelected[deviceIndex] ? 6 : 4, // canal mapeado
-        0,
-        hamStringsPercentage[selectedDeviceIndex.value],
-      );
+      await trackPress(8, () async {
+        print("changeHamStringsPercentage: Sending BLE command for hamstrings.");
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex],
+          1,
+          isPantSelected[deviceIndex] ? 6 : 4, // canal mapeado
+          0,
+          hamStringsPercentage[selectedDeviceIndex.value],
+        );
+      });
       update();
     }
   }
 
+// Change Calves Percentage
   Future<void> changeCalvesPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![9][selectedDeviceIndex.value]['isBlocked']) return;
-    trackPress(9);
 
     if (programsStatus[selectedDeviceIndex.value][9].status!.value == ProgramStatus.active) {
       if (isIncrease) {
-        calvesPercentage[selectedDeviceIndex.value] = clampValue(
-            calvesPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+        calvesPercentage[selectedDeviceIndex.value] = clampValue(calvesPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
       }
       if (isDecrease) {
-        calvesPercentage[selectedDeviceIndex.value] = clampValue(
-            calvesPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+        calvesPercentage[selectedDeviceIndex.value] = clampValue(calvesPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
       }
       calculateIntensityColor(calvesPercentage[selectedDeviceIndex.value], isCalves: true);
 
-      await bleCommandService.controlSingleChannel(
-        selectedMacAddress[deviceIndex],
-        1,
-        isPantSelected[deviceIndex] ? 3 : 0, // canal mapeado
-        0,
-        calvesPercentage[selectedDeviceIndex.value],
-      );
+      await trackPress(9, () async {
+        print("changeCalvesPercentage: Sending BLE command for calves.");
+        await bleCommandService.controlSingleChannel(
+          selectedMacAddress[deviceIndex],
+          1,
+          isPantSelected[deviceIndex] ? 3 : 0, // canal mapeado
+          0,
+          calvesPercentage[selectedDeviceIndex.value],
+        );
+      });
       update();
     }
   }
+
+
+  // trackPress(int programIndex){
+  //   final now = DateTime.now();
+  //   (buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'] as List<DateTime>).add(now);
+  //   buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'] = buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'].where((time) => now.difference(time).inSeconds < 2).toList();
+  //
+  //   if (buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'].length >= 8) {
+  //     buttonStates![programIndex][selectedDeviceIndex.value]['isBlocked'] = true;
+  //
+  //     Future.delayed(Duration(seconds: 2), () {
+  //       buttonStates![programIndex][selectedDeviceIndex.value]['isBlocked'] = false;
+  //       buttonStates![programIndex][selectedDeviceIndex.value]['tapTimes'].clear();
+  //     });
+  //   }
+  //   update();
+  // }
+  //
+  // /// Change individual program percentages
+  // changeChestPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+  //   if (buttonStates![0][selectedDeviceIndex.value]['isBlocked']) return;
+  //   trackPress(0);
+  //
+  //
+  //   if (programsStatus[selectedDeviceIndex.value][0].status!.value == ProgramStatus.active) {
+  //     if (isIncrease) {
+  //       chestPercentage[selectedDeviceIndex.value] = clampValue(chestPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+  //     }
+  //     if (isDecrease) {
+  //       chestPercentage[selectedDeviceIndex.value] = clampValue(chestPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+  //     }
+  //     calculateIntensityColor(chestPercentage[selectedDeviceIndex.value], isChest: true);
+  //
+  //     await bleCommandService.controlSingleChannel(
+  //       selectedMacAddress[deviceIndex],
+  //       1,
+  //       5, // canal mapeado
+  //       0,
+  //       chestPercentage[selectedDeviceIndex.value],
+  //     );
+  //     update();
+  //   }
+  // }
+  //
+  // changeArmsPercentage(deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+  //   if (buttonStates![1][selectedDeviceIndex.value]['isBlocked']) return;
+  //   trackPress(1);
+  //
+  //   if (programsStatus[selectedDeviceIndex.value][1].status!.value == ProgramStatus.active) {
+  //     if (isIncrease) {
+  //       armsPercentage[selectedDeviceIndex.value] = clampValue(
+  //           armsPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+  //     }
+  //     if (isDecrease) {
+  //       armsPercentage[selectedDeviceIndex.value] = clampValue(
+  //           armsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+  //     }
+  //     calculateIntensityColor(armsPercentage[selectedDeviceIndex.value], isArms: true);
+  //
+  //     await bleCommandService.controlSingleChannel(
+  //       selectedMacAddress[deviceIndex],
+  //       1,
+  //       isPantSelected[deviceIndex] ? 0 : 8, // canal mapeado
+  //       0,
+  //       armsPercentage[selectedDeviceIndex.value],
+  //     );
+  //     update();
+  //   }
+  // }
+  //
+  // changeAbdomenPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+  //   if (buttonStates![2][selectedDeviceIndex.value]['isBlocked']) return;
+  //   trackPress(2);
+  //
+  //   if (programsStatus[selectedDeviceIndex.value][2].status!.value == ProgramStatus.active) {
+  //     if (isIncrease) {
+  //       abdomenPercentage[selectedDeviceIndex.value] = clampValue(
+  //           abdomenPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+  //     }
+  //     if (isDecrease) {
+  //       abdomenPercentage[selectedDeviceIndex.value] = clampValue(
+  //           abdomenPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+  //     }
+  //     calculateIntensityColor(abdomenPercentage[selectedDeviceIndex.value], isAbdomen: true);
+  //
+  //     await bleCommandService.controlSingleChannel(
+  //       selectedMacAddress[deviceIndex],
+  //       1,
+  //       isPantSelected[deviceIndex] ? 1 : 6, // canal mapeado
+  //       0,
+  //       abdomenPercentage[selectedDeviceIndex.value],
+  //     );
+  //
+  //     update();
+  //   }
+  // }
+  //
+  // changeLegsPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+  //   if (buttonStates![3][selectedDeviceIndex.value]['isBlocked']) return;
+  //   trackPress(3);
+  //
+  //   if (programsStatus[selectedDeviceIndex.value][3].status!.value == ProgramStatus.active) {
+  //     if (isIncrease) {
+  //       legsPercentage[selectedDeviceIndex.value] = clampValue(
+  //           legsPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+  //     }
+  //     if (isDecrease) {
+  //       legsPercentage[selectedDeviceIndex.value] = clampValue(
+  //           legsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+  //     }
+  //     calculateIntensityColor(legsPercentage[selectedDeviceIndex.value], isLegs: true);
+  //
+  //     await bleCommandService.controlSingleChannel(
+  //       selectedMacAddress[deviceIndex],
+  //       1,
+  //       isPantSelected[deviceIndex] ? 2 : 7, // canal mapeado
+  //       0,
+  //       legsPercentage[selectedDeviceIndex.value],
+  //     );
+  //     update();
+  //   }
+  // }
+  //
+  // Future<void> changeUpperBackPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+  //   if (buttonStates![4][selectedDeviceIndex.value]['isBlocked']) return;
+  //
+  //   trackPress(4);
+  //   if (programsStatus[selectedDeviceIndex.value][4].status!.value == ProgramStatus.active) {
+  //     if (isIncrease) {
+  //       upperBackPercentage[selectedDeviceIndex.value] = clampValue(
+  //           upperBackPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+  //     }
+  //     if (isDecrease) {
+  //       upperBackPercentage[selectedDeviceIndex.value] = clampValue(
+  //           upperBackPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+  //     }
+  //     calculateIntensityColor(upperBackPercentage[selectedDeviceIndex.value], isUpperBack: true);
+  //
+  //     await bleCommandService.controlSingleChannel(
+  //       selectedMacAddress[deviceIndex],
+  //       1,
+  //       0, // canal mapeado
+  //       0,
+  //       upperBackPercentage[selectedDeviceIndex.value],
+  //     );
+  //     update();
+  //   }
+  // }
+  //
+  // Future<void> changeMiddleBackPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+  //   if (buttonStates![5][selectedDeviceIndex.value]['isBlocked']) return;
+  //
+  //   trackPress(5);
+  //   if (programsStatus[selectedDeviceIndex.value][5].status!.value == ProgramStatus.active) {
+  //     if (isIncrease) {
+  //       middleBackPercentage[selectedDeviceIndex.value] = clampValue(
+  //           middleBackPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+  //     }
+  //     if (isDecrease) {
+  //       middleBackPercentage[selectedDeviceIndex.value] = clampValue(
+  //           middleBackPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+  //     }
+  //     calculateIntensityColor(middleBackPercentage[selectedDeviceIndex.value], isMiddleBack: true);
+  //
+  //     await bleCommandService.controlSingleChannel(
+  //       selectedMacAddress[deviceIndex],
+  //       1,
+  //       1, // canal mapeado
+  //       0,
+  //       middleBackPercentage[selectedDeviceIndex.value],
+  //     );
+  //     update();
+  //   }
+  // }
+  //
+  // Future<void> changeLumbarPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+  //   if (buttonStates![6][selectedDeviceIndex.value]['isBlocked']) return;
+  //
+  //   trackPress(6);
+  //   if (programsStatus[selectedDeviceIndex.value][6].status!.value == ProgramStatus.active) {
+  //     if (isIncrease) {
+  //       lumbarPercentage[selectedDeviceIndex.value] = clampValue(
+  //           lumbarPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+  //     }
+  //     if (isDecrease) {
+  //       lumbarPercentage[selectedDeviceIndex.value] = clampValue(
+  //           lumbarPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+  //     }
+  //     calculateIntensityColor(lumbarPercentage[selectedDeviceIndex.value], isLumbars: true);
+  //
+  //     await bleCommandService.controlSingleChannel(
+  //       selectedMacAddress[deviceIndex],
+  //       1,
+  //       2, // canal mapeado
+  //       0,
+  //       lumbarPercentage[selectedDeviceIndex.value],
+  //     );
+  //     update();
+  //   }
+  // }
+  //
+  // Future<void> changeButtocksPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+  //   if (buttonStates![7][selectedDeviceIndex.value]['isBlocked']) return;
+  //   trackPress(7);
+  //
+  //   if (programsStatus[selectedDeviceIndex.value][7].status!.value == ProgramStatus.active) {
+  //     if (isIncrease) {
+  //       buttocksPercentage[selectedDeviceIndex.value] = clampValue(
+  //           buttocksPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+  //     }
+  //     if (isDecrease) {
+  //       buttocksPercentage[selectedDeviceIndex.value] = clampValue(
+  //           buttocksPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+  //     }
+  //     calculateIntensityColor(buttocksPercentage[selectedDeviceIndex.value], isButtocks: true);
+  //
+  //     await bleCommandService.controlSingleChannel(
+  //       selectedMacAddress[deviceIndex],
+  //       1,
+  //       isPantSelected[deviceIndex] ? 5 : 3, // canal mapeado
+  //       0,
+  //       buttocksPercentage[selectedDeviceIndex.value],
+  //     );
+  //
+  //
+  //     update();
+  //   }
+  // }
+  //
+  // Future<void> changeHamStringsPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+  //   if (buttonStates![8][selectedDeviceIndex.value]['isBlocked']) return;
+  //   trackPress(8);
+  //
+  //   if (programsStatus[selectedDeviceIndex.value][8].status!.value == ProgramStatus.active) {
+  //     if (isIncrease) {
+  //       hamStringsPercentage[selectedDeviceIndex.value] = clampValue(
+  //           hamStringsPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+  //     }
+  //     if (isDecrease) {
+  //       hamStringsPercentage[selectedDeviceIndex.value] = clampValue(
+  //           hamStringsPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+  //     }
+  //     calculateIntensityColor(hamStringsPercentage[selectedDeviceIndex.value], isHamstrings: true);
+  //
+  //     await bleCommandService.controlSingleChannel(
+  //       selectedMacAddress[deviceIndex],
+  //       1,
+  //       isPantSelected[deviceIndex] ? 6 : 4, // canal mapeado
+  //       0,
+  //       hamStringsPercentage[selectedDeviceIndex.value],
+  //     );
+  //     update();
+  //   }
+  // }
+  //
+  // Future<void> changeCalvesPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
+  //   if (buttonStates![9][selectedDeviceIndex.value]['isBlocked']) return;
+  //   trackPress(9);
+  //
+  //   if (programsStatus[selectedDeviceIndex.value][9].status!.value == ProgramStatus.active) {
+  //     if (isIncrease) {
+  //       calvesPercentage[selectedDeviceIndex.value] = clampValue(
+  //           calvesPercentage[selectedDeviceIndex.value] + 1, minPercentage, maxPercentage);
+  //     }
+  //     if (isDecrease) {
+  //       calvesPercentage[selectedDeviceIndex.value] = clampValue(
+  //           calvesPercentage[selectedDeviceIndex.value] - 1, minPercentage, maxPercentage);
+  //     }
+  //     calculateIntensityColor(calvesPercentage[selectedDeviceIndex.value], isCalves: true);
+  //
+  //     await bleCommandService.controlSingleChannel(
+  //       selectedMacAddress[deviceIndex],
+  //       1,
+  //       isPantSelected[deviceIndex] ? 3 : 0, // canal mapeado
+  //       0,
+  //       calvesPercentage[selectedDeviceIndex.value],
+  //     );
+  //     update();
+  //   }
+  // }
 
 
   /// Change percentages of all programs
   Future<void> changeAllProgramsPercentage(int deviceIndex, {bool isDecrease = false, bool isIncrease = false}) async {
     if (buttonStates![0][selectedDeviceIndex.value]['isBlocked']) return;
-    trackPress(0);
+
 
     if (isIncrease || isDecrease) {
       int delta = isIncrease ? 1 : -1;
@@ -1353,36 +1673,38 @@ class DashboardController extends GetxController {
     }
 
     update();
-    await bleCommandService.controlAllChannels(
-      selectedMacAddress[deviceIndex],
-      1,
-      0,
-      isPantSelected[deviceIndex]
-          ? [
-        armsPercentage[deviceIndex],
-        abdomenPercentage[deviceIndex],
-        legsPercentage[deviceIndex],
-        calvesPercentage[deviceIndex],
+    trackPress(0, () async{
+      await bleCommandService.controlAllChannels(
+        selectedMacAddress[deviceIndex],
+        1,
         0,
-        buttocksPercentage[deviceIndex],
-        hamStringsPercentage[deviceIndex],
-        0,
-        0,
-        0,
-      ]
-          : [
-        upperBackPercentage[deviceIndex],
-        middleBackPercentage[deviceIndex],
-        lumbarPercentage[deviceIndex],
-        buttocksPercentage[deviceIndex],
-        hamStringsPercentage[deviceIndex],
-        chestPercentage[deviceIndex],
-        abdomenPercentage[deviceIndex],
-        legsPercentage[deviceIndex],
-        armsPercentage[deviceIndex],
-        0,
-      ],
-    );
+        isPantSelected[deviceIndex]
+            ? [
+          armsPercentage[deviceIndex],
+          abdomenPercentage[deviceIndex],
+          legsPercentage[deviceIndex],
+          calvesPercentage[deviceIndex],
+          0,
+          buttocksPercentage[deviceIndex],
+          hamStringsPercentage[deviceIndex],
+          0,
+          0,
+          0,
+        ]
+            : [
+          upperBackPercentage[deviceIndex],
+          middleBackPercentage[deviceIndex],
+          lumbarPercentage[deviceIndex],
+          buttocksPercentage[deviceIndex],
+          hamStringsPercentage[deviceIndex],
+          chestPercentage[deviceIndex],
+          abdomenPercentage[deviceIndex],
+          legsPercentage[deviceIndex],
+          armsPercentage[deviceIndex],
+          0,
+        ],
+      );
+    });
   }
 
   /// Select client
@@ -1811,6 +2133,8 @@ class DashboardController extends GetxController {
                 ...successfullyConnectedBleDevices.value,
                 macAddress,
               ];
+              startPeriodicTimer(macAddress);
+
             }
             print('Bluetooth connected');
             isBluetoothConnected.value = true;
